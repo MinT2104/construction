@@ -1,0 +1,18 @@
+// Define types for menu items for better type safety (optional but recommended)
+interface BaseMenuItem {
+  label: string;
+  path: string;
+  type: "single" | "category" | "house-design";
+}
+
+interface MenuItemType {
+  label: string;
+  path?: string;
+  submenu?: BaseMenuItem[];
+  isUseSidebar: boolean;
+  type: "single" | "category" | "house-design";
+  parentLabel?: string;
+  parentPath?: string;
+}
+
+export type { MenuItemType, BaseMenuItem };
