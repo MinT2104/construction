@@ -180,7 +180,9 @@ const ProjectShowCaseSection = () => {
             variant="default"
             className="bg-primary text-white hover:bg-primary/90 px-6 py-4 h-auto text-base font-medium"
           >
-            <Link href="/projects">Xem tất cả công trình</Link>
+            <Link href="/xay-nha/cong-trinh-tieu-bieu">
+              Xem tất cả công trình
+            </Link>
           </Button>
         </div>
       </div>

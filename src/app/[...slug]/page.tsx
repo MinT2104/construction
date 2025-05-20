@@ -12,6 +12,7 @@ import { BaseMenuItem, MenuItemType } from "@/lib/types/common/menu.interface";
 import Image from "next/image";
 import { Post } from "@/lib/types/modules/post.interface";
 import Link from "next/link";
+import PriceInfoSection from "@/components/application/Home/components/PriceInfoSection";
 
 // Sử dụng kiểu tham số chính xác cho Next.js 14
 type Props = {
@@ -48,15 +49,18 @@ async function Page({ params }: Props) {
     menuItems: MenuItemType[];
     parentMenuItem?: MenuItemType;
   }) => (
-    <div className="container mx-auto py-8 px-4">
-      <Breadcrumb slug={slug} menuItems={menuItems} />
-      <div className="flex flex-col lg:flex-row gap-6 mt-12">
-        <div className="flex-grow lg:w-[70%]">{children}</div>
-        {parentMenuItem?.isUseSidebar && (
-          <div className="lg:w-[30%]">
-            <Sidebar />
-          </div>
-        )}
+    <div>
+      <PriceInfoSection />
+      <div className="container mx-auto py-8 px-4">
+        <Breadcrumb slug={slug} menuItems={menuItems} />
+        <div className="flex flex-col lg:flex-row gap-6 mt-12">
+          <div className="flex-grow lg:w-[70%]">{children}</div>
+          {parentMenuItem?.isUseSidebar && (
+            <div className="lg:w-[30%]">
+              <Sidebar />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -4,6 +4,8 @@ import ServiceSection from "@/components/application/Home/components/ServiceSect
 import HeroBannerSection from "@/components/application/Home/components/HeroBannerSection";
 import ProjectShowCaseSection from "@/components/application/Home/components/ProjectShowCaseSection";
 import HouseDesignSection from "@/components/application/Home/components/HouseDesignSection";
+import PriceInfoSection from "@/components/application/Home/components/PriceInfoSection";
+
 export default function Home() {
   return (
     <div>
@@ -11,6 +13,7 @@ export default function Home() {
 
       {/* Hero Section - Banner giới thiệu with animation */}
       <HeroBannerSection />
+      <PriceInfoSection />
       {/* Cost Calculator Section - Standalone section with eye-catching design */}
       <CalculatorSection />
 
@@ -26,7 +29,7 @@ export default function Home() {
 
       <div className="fixed left-4 bottom-4 z-50 flex flex-col space-y-3">
         <a
-          href="tel:0961993915"
+          href="tel:0936267359"
           className="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors"
         >
           <svg
@@ -45,7 +48,7 @@ export default function Home() {
           </svg>
         </a>
         <a
-          href="https://zalo.me/0961993915"
+          href="https://zalo.me/0936267359"
           className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
         >
           <svg
@@ -57,7 +60,7 @@ export default function Home() {
           </svg>
         </a>
         <a
-          href="https://m.me/congtyxaydung"
+          href="https://m.me/kientaonhadep"
           className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors"
         >
           <svg

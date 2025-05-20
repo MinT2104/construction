@@ -6,11 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -137,9 +132,6 @@ const CalculatorSection = () => {
                           <SelectItem value="Xây nhà trọn gói">
                             Xây nhà trọn gói
                           </SelectItem>
-                          <SelectItem value="Sửa chữa cải tạo">
-                            Sửa chữa cải tạo
-                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -153,8 +145,10 @@ const CalculatorSection = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Trung bình">Trung bình</SelectItem>
-                          <SelectItem value="Cao cấp">Cao cấp</SelectItem>
-                          <SelectItem value="Tiêu chuẩn">Tiêu chuẩn</SelectItem>
+                          <SelectItem value="Trung bình - khá">
+                            Trung bình - khá
+                          </SelectItem>
+                          <SelectItem value="Khá">Khá</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -169,163 +163,187 @@ const CalculatorSection = () => {
                         <SelectContent>
                           <SelectItem value="1">1</SelectItem>
                           <SelectItem value="2">2</SelectItem>
-                          <SelectItem value="3">3</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4">
                     <div className="lg:col-span-2">
                       <label className="block text-gray-700 text-sm font-medium mb-1">
                         Chiều rộng (Vd: 2.5m):
                       </label>
-                      <Input type="text" placeholder="Nhập chiều rộng" />
+                      <Input
+                        min={1}
+                        type="number"
+                        placeholder="Nhập chiều rộng"
+                      />
                     </div>
                     <div className="lg:col-span-2">
                       <label className="block text-gray-700 text-sm font-medium mb-1">
                         Chiều dài (Vd: 10.5m):
                       </label>
-                      <Input type="text" placeholder="Nhập chiều dài" />
+                      <Input
+                        min={1}
+                        type="number"
+                        placeholder="Nhập chiều dài"
+                      />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Số tầng (Trừ tum, lửng):
+                      </label>
+                      <Input min={1} type="number" placeholder="Nhập số tầng" />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Hẻm:
+                      </label>
+                      <Select defaultValue="1">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn số mặt tiền" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">Rộng hơn 5m</SelectItem>
+                          <SelectItem value="2">Rộng 3m - 5m</SelectItem>
+                          <SelectItem value="3">Nhỏ hơn 3m</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </div>
 
                 {/* Thông tin công năng - Collapsible */}
-                <Collapsible>
-                  <CollapsibleTrigger className="w-full bg-gray-100 hover:bg-gray-200 transition-colors p-3 text-left font-bold text-gray-700 flex justify-between items-center">
-                    Thông tin công năng
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </CollapsibleTrigger>
+                <div className="w-full bg-gray-100 hover:bg-gray-200 transition-colors p-3 text-left font-bold text-gray-700 flex justify-between items-center">
+                  Thông tin công năng
+                </div>
 
-                  <CollapsibleContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Lửng (Vd: 30m2):
-                        </label>
-                        <Input type="text" placeholder="Nhập diện tích" />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Tum (Vd: 30m2):
-                        </label>
-                        <Input type="text" placeholder="Nhập diện tích" />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Sân thượng:
-                        </label>
-                        <Select defaultValue="Sân thượng">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại sân thượng" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Sân thượng">
-                              Sân thượng
-                            </SelectItem>
-                            <SelectItem value="Không có">Không có</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Ban công:
-                        </label>
-                        <Select defaultValue="Không có">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại ban công" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Không có">Không có</SelectItem>
-                            <SelectItem value="Có">Có</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Móng:
-                        </label>
-                        <Select defaultValue="Móng băng">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại móng" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Móng băng">Móng băng</SelectItem>
-                            <SelectItem value="Móng đơn">Móng đơn</SelectItem>
-                            <SelectItem value="Móng cọc">Móng cọc</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Mái:
-                        </label>
-                        <Select defaultValue="Mái tôn">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại mái" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Mái tôn">Mái tôn</SelectItem>
-                            <SelectItem value="Mái bê tông">
-                              Mái bê tông
-                            </SelectItem>
-                            <SelectItem value="Mái ngói">Mái ngói</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Tầng hầm:
-                        </label>
-                        <Select defaultValue="Không hầm">
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại tầng hầm" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Không hầm">Không hầm</SelectItem>
-                            <SelectItem value="Có hầm">Có hầm</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Sân vườn (Vd: 10m2):
-                        </label>
-                        <Input type="text" placeholder="Nhập diện tích" />
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                  <div className="md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                  <div>
                     <label className="block text-gray-700 text-sm font-medium mb-1">
-                      Số điện thoại:
+                      Lửng (Vd: 30m2):
                     </label>
-                    <Input
-                      type="tel"
-                      placeholder="Nhập số điện thoại của bạn"
-                    />
+                    <Input min={1} type="number" placeholder="Nhập diện tích" />
                   </div>
                   <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Tum (Vd: 30m2):
+                    </label>
+                    <Input min={1} type="number" placeholder="Nhập diện tích" />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Sân thượng:
+                    </label>
+                    <Select defaultValue="Sân thượng">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại sân thượng" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Sân thượng">Sân thượng</SelectItem>
+                        <SelectItem value="Không có">Không có</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Ban công:
+                    </label>
+                    <Select defaultValue="Không có">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại ban công" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Không có">Không có</SelectItem>
+                        <SelectItem value="Có">Có</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Móng:
+                    </label>
+                    <Select defaultValue="Móng băng">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại móng" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Móng băng">Móng băng</SelectItem>
+                        <SelectItem value="Móng đơn">Móng đơn</SelectItem>
+                        <SelectItem value="Móng cọc">
+                          Móng cọc (Móng đài)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Mái:
+                    </label>
+                    <Select defaultValue="Mái tôn">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại mái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Mái tôn">Mái tôn</SelectItem>
+                        <SelectItem value="Mái bê tông cốt thép">
+                          Mái BTCT
+                        </SelectItem>
+                        <SelectItem value="Mái xà gồ + ngói">
+                          Mái xà gồ + ngói
+                        </SelectItem>
+                        <SelectItem value="Mái BTCT + ngói">
+                          Mái BTCT + ngói
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Tầng hầm:
+                    </label>
+                    <Select defaultValue="Không hầm">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại tầng hầm" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Không hầm">Không hầm</SelectItem>
+                        <SelectItem value="Độ sâu 1.0 - 1.2">
+                          Độ sâu 1.0 - 1.2
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 1.2 - 1.5">
+                          Độ sâu 1.2 - 1.5
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 1.5 - 1.7">
+                          Độ sâu 1.5 - 1.7
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 1.7 - 2.0">
+                          Độ sâu 1.7 - 2.0
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 2.0 - 2.5">
+                          Độ sâu 2.0 - 2.5
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 2.5 - 3.0">
+                          Độ sâu 2.5 - 3.0
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Sân vườn (Vd: 10m2):
+                    </label>
+                    <Input min={1} type="number" placeholder="Nhập diện tích" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                  <div>
                     <Button
-                      type="submit"
+                      type="button"
                       variant="secondary"
                       className="w-full font-semibold"
                     >

@@ -34,28 +34,98 @@ const menuItems: MenuItemType[] = [
     ],
   },
   {
-    label: "Dịch Vụ",
+    label: "Thiết kế",
     isUseSidebar: true,
     type: "category",
     submenu: [
       {
-        label: "Thiết kế kiến trúc",
-        path: "/dich-vu/thiet-ke-kien-truc",
+        label: "Thiết kế biệt thự",
+        path: "/thiet-ke/thiet-ke-biet-thu",
         type: "category",
       },
       {
-        label: "Thi công xây dựng",
-        path: "/dich-vu/thi-cong-xay-dung",
+        label: "Thiết kế nhà phố",
+        path: "/thiet-ke/thiet-ke-nha-pho",
         type: "category",
       },
       {
-        label: "Sửa chữa cải tạo",
-        path: "/dich-vu/sua-chua-ca-tao",
+        label: "Thiết kế nội thất",
+        path: "/thiet-ke/thiet-ke-noi-that",
         type: "category",
       },
       {
-        label: "Tư vấn giám sát công trình",
-        path: "/dich-vu/tu-van-giam-sat-cong-trinh",
+        label: "Quy trình thiết kế",
+        path: "/thiet-ke/quy-trinh-thiet-ke",
+        type: "category",
+      },
+      {
+        label: "Những lưu ý khi thiết kế",
+        path: "/thiet-ke/nhung-luu-y-khi-thiet-ke",
+        type: "category",
+      },
+    ],
+  },
+  {
+    label: "Xây nhà",
+    isUseSidebar: true,
+    type: "category",
+    submenu: [
+      {
+        label: "Công trình tiêu biểu",
+        path: "/xay-nha/cong-trinh-tieu-bieu",
+        type: "category",
+      },
+      {
+        label: "Xây nhà tại TP HCM",
+        path: "/xay-nha/xay-nha-tai-tp-hcm",
+        type: "category",
+      },
+      {
+        label: "Xây dựng nhà đẹp",
+        path: "/xay-nha/xay-dung-nha-dep",
+        type: "category",
+      },
+      {
+        label: "Công trình đã hoàn thành",
+        path: "/xay-nha/cong-trinh-da-hoan-thanh",
+        type: "category",
+      },
+      {
+        label: "Quy trình xây dựng",
+        path: "/xay-nha/quy-trinh-xay-dung",
+        type: "category",
+      },
+      {
+        label: "Chi phí xây nhà phố",
+        path: "/xay-nha/chi-phi-xay-nha-pho",
+        type: "category",
+      },
+      {
+        label: "Những lưu ý khi xây nhà",
+        path: "/xay-nha/nhung-luu-y-khi-xay-nha",
+        type: "category",
+      },
+    ],
+  },
+  {
+    label: "Sửa nhà",
+    path: "/sua-nha",
+    isUseSidebar: true,
+    type: "category",
+    submenu: [
+      {
+        label: "Đơn giá sửa nhà các quận tại TP HCM",
+        path: "/sua-nha/don-gia-sua-nha-cac-quan-tai-tp-hcm",
+        type: "category",
+      },
+      {
+        label: "Công trình đã hoàn thành",
+        path: "/sua-nha/cong-trinh-da-hoan-thanh",
+        type: "category",
+      },
+      {
+        label: "Sửa nhà nâng tầng",
+        path: "/sua-nha/quy-trinh-sua-nha",
         type: "category",
       },
     ],
@@ -97,9 +167,10 @@ const menuItems: MenuItemType[] = [
       },
     ],
   },
+  // tư vấn giám sát
   {
-    label: "Công Trình Xây Dựng Thực Tế",
-    path: "/cong-trinh-xay-dung",
+    label: "Tư vấn giám sát",
+    path: "/tu-van-giam-sat",
     isUseSidebar: true,
     type: "category",
   },
@@ -109,50 +180,55 @@ const menuItems: MenuItemType[] = [
     type: "single",
     submenu: [
       {
-        label: "Báo giá thiết kế kiến trúc",
-        path: "/bao-gia/thiet-ke-kien-truc",
+        label: "Thiết kế nhà",
+        path: "/bao-gia/thiet-ke-nha",
         type: "single",
       },
       {
-        label: "Báo giá thi công phần thô",
-        path: "/bao-gia/thi-cong-phan-tho",
+        label: "Xây nhà trọn gói",
+        path: "/bao-gia/xay-nha-tron-goi",
         type: "single",
       },
       {
-        label: "Báo giá thi công trọn gói",
-        path: "/bao-gia/thi-cong-trong-goi",
+        label: "Xây nhà phần thô",
+        path: "/bao-gia/xay-nha-phan-tho",
         type: "single",
       },
       {
-        label: "File bảng giá tải về",
+        label: "Hoàn thiện nhà ở",
         path: "/bao-gia/download",
         type: "single",
       },
       {
-        label: "Câu hỏi thường gặp (FAQ)",
-        path: "/bao-gia/cau-hoi-thuong-gap",
+        label: "Sửa nhà trọn gói",
+        path: "/bao-gia/sua-nha-tron-goi",
         type: "single",
       },
     ],
   },
   {
-    label: "Kinh Nghiệm & Blog",
+    label: "Cẩm nang XD",
     isUseSidebar: true,
     type: "category",
     submenu: [
       {
-        label: "Cẩm nang xây dựng",
-        path: "/blog/cam-nang-xay-dung",
+        label: "Luật xây dựng nhà ở",
+        path: "/cam-nang/luat-xay-dung-nha-o",
         type: "category",
       },
       {
-        label: "Hướng dẫn thủ tục pháp lý",
-        path: "/blog/huong-dan-thu-tuc-phap-ly",
+        label: "Cẩm nang xây nhà",
+        path: "/cam-nang/cam-nang-xay-nha",
         type: "category",
       },
       {
-        label: "Mẹo tiết kiệm chi phí",
-        path: "/blog/cam-nang-tiet-kiem-chi-phi",
+        label: "Tư vấn sửa nhà",
+        path: "/cam-nang/tu-van-sua-nha",
+        type: "category",
+      },
+      {
+        label: "Phong thủy",
+        path: "/cam-nang/phong-thuy",
         type: "category",
       },
     ],

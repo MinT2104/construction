@@ -8,6 +8,7 @@ const nextConfig = {
       "graph.facebook.com",
       "via.placeholder.com",
       "placehold.co",
+      "kientrucvietquang.net",
     ],
   },
 };
