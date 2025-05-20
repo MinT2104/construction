@@ -18,12 +18,10 @@ const Header = () => {
   const mainHeaderRef = useRef<HTMLDivElement>(null);
   const stickyNavRef = useRef<HTMLDivElement>(null);
 
-  // Handle scroll effect for main header
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
 
-      // Handle sticky navigation
       if (mainHeaderRef.current && stickyNavRef.current) {
         const mainHeaderHeight = mainHeaderRef.current.offsetHeight;
         if (window.scrollY > mainHeaderHeight) {
