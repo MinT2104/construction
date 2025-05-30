@@ -5,6 +5,15 @@ export function findMenuItemByPath(
   menuItems: MenuItemType[],
   path: string
 ): MenuItemType | null {
+  // Kiểm tra path có hợp lệ không
+  if (!path || path.length < 1 || !path.startsWith("/")) {
+    return null;
+  }
+
+  // Chuẩn hóa path - xóa các dấu / ở cuối nếu có
+  const normalizedPath =
+    path.endsWith("/") && path !== "/" ? path.slice(0, -1) : path;
+
   // Hàm đệ quy để tìm kiếm trong menu và submenu ở mọi cấp độ
   function findItem(
     items: MenuItemType[],
@@ -45,7 +54,7 @@ export function findMenuItemByPath(
     return null;
   }
 
-  return findItem(menuItems, path);
+  return findItem(menuItems, normalizedPath);
 }
 
 // Tạo breadcrumb path từ slug

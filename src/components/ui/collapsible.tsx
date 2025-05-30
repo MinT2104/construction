@@ -46,7 +46,7 @@ export function Collapsible({
 }
 
 export interface CollapsibleTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
@@ -63,16 +63,29 @@ export function CollapsibleTrigger({
     );
   }
 
+  const handleClick = () => {
+    context.toggle();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      context.toggle();
+    }
+  };
+
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       aria-expanded={context.isOpen}
-      onClick={context.toggle}
-      className={cn("w-full text-left", className)}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      className={cn("w-full text-left cursor-pointer", className)}
       {...props}
     >
       {children}
-    </button>
+    </div>
   );
 }
 

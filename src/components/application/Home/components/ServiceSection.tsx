@@ -91,13 +91,23 @@ const projectArticles = [
     image: "/images/mock_blogs/blog_5.avif", // Replace with actual image path
     slug: "/nang-tang-anh-nghia",
   },
+];
+
+// Featured video data
+const featuredVideos = [
   {
-    id: "p6",
-    title: "Cải tạo nhà phố trọn gói nhà cấp 4 5x21m Anh Quang ở Thủ Đức",
-    excerpt:
-      "Ngôi nhà của bạn đang cần sửa chữa những hạng mục nào? Đối với từng dự án cải tạo nhà...",
-    image: "/images/mock_blogs/blog_6.avif", // Replace with actual image path
-    slug: "/cai-tao-anh-quang",
+    id: "v1",
+    title:
+      "Báo giá chi phí sửa nhà diện tích 36m2 - Đơn giá sửa nhà 2025 | Trọng Hoài 0936267359",
+    videoId: "3Im7cso2ZZM",
+    duration: "24:15",
+  },
+  {
+    id: "v2",
+    title:
+      "Hướng dẫn thi công văn phòng | Báo giá thi công văn phòng | Trọng Hoài 0936267359",
+    videoId: "kFIN0Wd9lik",
+    duration: "08:53",
   },
 ];
 
@@ -121,84 +131,128 @@ function ServiceSection() {
 
         {/* Blog Posts Grid & Project List */}
         <div className="grid grid-cols-1 md:grid-cols-5 items-start gap-4">
-          {/* Blog Posts Section (Left) */}
-          <div className="md:col-span-3 mb-12 md:mb-0">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {blogPosts.slice(0, 4).map(
-                (
-                  post // Displaying first 4 blog posts
-                ) => (
-                  <Card
-                    key={post.id}
-                    className="overflow-hidden transition-all duration-300 flex flex-col bg-card rounded-lg border border-border max-h-[476px] min-h-[476px]"
-                  >
-                    <Link href={post.slug} className="block group">
-                      <div className="relative w-full h-52 sm:h-56 overflow-hidden">
-                        <Image
-                          src={post.image}
-                          alt={post.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    </Link>
-                    <CardContent className="p-5 sm:p-6 flex flex-col flex-grow">
-                      <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
-                        <Link
-                          href={`/blog/category/${post.category
-                            .toLowerCase()
-                            .replace(/\s+/g, "-")}`}
-                          className="inline-block"
+          {/* Left Section with Featured Blog and Videos */}
+          <div className="md:col-span-3 mb-12 md:mb-0 space-y-6">
+            {/* Featured Blog Card with Overlay Text */}
+            <div className="relative overflow-hidden rounded-lg h-[400px] group">
+              <Link href={blogPosts[0].slug} className="block absolute inset-0">
+                <Image
+                  src={blogPosts[0].image}
+                  alt={blogPosts[0].title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
+                <div className="absolute bottom-0 left-0 p-6 w-full">
+                  <span className="inline-block px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full mb-3">
+                    {blogPosts[0].category}
+                  </span>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                    {blogPosts[0].title}
+                  </h3>
+                  <p className="text-white/80 text-sm md:text-base line-clamp-2 mb-4">
+                    {blogPosts[0].excerpt}
+                  </p>
+                  <span className="inline-flex items-center text-white font-medium text-sm group-hover:underline">
+                    Đọc thêm
+                    <svg
+                      className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform duration-200"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M13 7l5 5-5 5"
+                      />
+                    </svg>
+                  </span>
+                </div>
+              </Link>
+            </div>
+
+            {/* Featured Videos Header */}
+            <div className="flex items-center pt-4 mb-4">
+              <h3 className="text-xl font-bold text-foreground flex items-center">
+                <svg
+                  className="w-5 h-5 mr-2 text-primary"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+                </svg>
+                Video nổi bật
+              </h3>
+              <div className="ml-4 h-0.5 bg-primary/60 flex-grow"></div>
+              <Link
+                href="/videos"
+                className="text-primary text-sm font-medium hover:underline ml-4 flex items-center"
+              >
+                Xem tất cả
+                <svg
+                  className="w-4 h-4 ml-1"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" />
+                </svg>
+              </Link>
+            </div>
+
+            {/* Featured Videos Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {featuredVideos.map((video) => (
+                <div
+                  key={video.id}
+                  className="relative group rounded-lg overflow-hidden shadow-md border border-border/40 bg-card hover:shadow-lg transition-all duration-300 flex flex-col"
+                >
+                  <div className="relative aspect-video w-full overflow-hidden">
+                    <div className="absolute inset-0 bg-black/10 z-10 pointer-events-none"></div>
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.videoId}?rel=0&showinfo=0&modestbranding=1`}
+                      title={video.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full"
+                      loading="lazy"
+                    ></iframe>
+                  </div>
+                  <div className="p-3 sm:p-4 flex-grow bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
+                    <h4 className="font-medium text-foreground line-clamp-2 mb-2 hover:text-primary transition-colors">
+                      {video.title}
+                    </h4>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground flex items-center">
+                        <svg
+                          className="w-4 h-4 mr-1 text-primary/70"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          <span className="font-semibold uppercase tracking-wider px-3 py-1 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors text-[11px] sm:text-xs">
-                            {post.category}
-                          </span>
-                        </Link>
-                        <span className="text-[11px] sm:text-xs">
-                          {new Date(post.date).toLocaleDateString("vi-VN", {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          })}
-                        </span>
-                      </div>
-                      <Link href={post.slug} className="block mb-2">
-                        <CardTitle className="text-lg sm:text-xl font-bold text-foreground hover:text-primary transition-colors line-clamp-2 leading-tight">
-                          {post.title}
-                        </CardTitle>
-                      </Link>
-                      <p className="text-sm sm:text-base text-muted-foreground mb-4 flex-grow line-clamp-3">
-                        {post.excerpt}
-                      </p>
-                      <Button
-                        asChild
-                        variant="link"
-                        className="p-0 h-auto self-start text-primary hover:text-primary/80 group mt-auto"
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+                        </svg>
+                        {video.duration}
+                      </span>
+                      <Link
+                        href={`https://www.youtube.com/watch?v=${video.videoId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-medium text-primary hover:underline flex items-center"
                       >
-                        <Link
-                          href={post.slug}
-                          className="font-semibold text-sm sm:text-base inline-flex items-center"
+                        Xem trên YouTube
+                        <svg
+                          className="w-3 h-3 ml-1"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          Đọc thêm
-                          <svg
-                            className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform duration-200"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M13 7l5 5-5 5"
-                            />
-                          </svg>
-                        </Link>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )
-              )}
+                          <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -207,39 +261,35 @@ function ServiceSection() {
             <div className="space-y-4">
               {" "}
               {/* Using space-y for vertical list items */}
-              {projectArticles.map(
-                (
-                  project // Using projects from 5th item onwards
-                ) => (
-                  <Link
-                    href={project.slug}
-                    key={project.id}
-                    className="block group p-3 sm:p-4 bg-card rounded-lg border border-border transition-all duration-300 max-h-[148px] min-h-[148px]"
-                  >
-                    <div className="flex items-center space-x-3 sm:space-x-4">
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden flex-shrink-0">
-                        <Image
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="flex-grow min-w-0">
-                        <h4 className="text-sm sm:text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight mb-0.5 sm:mb-1">
-                          {project.title}
-                        </h4>
-                        <p className="text-xs text-muted-foreground line-clamp-1 sm:line-clamp-2 mb-1 sm:mb-1.5">
-                          {project.excerpt}
-                        </p>
-                        <span className="text-xs text-primary font-semibold group-hover:underline">
-                          Xem chi tiết
-                        </span>
-                      </div>
+              {projectArticles.map((project) => (
+                <Link
+                  href={project.slug}
+                  key={project.id}
+                  className="block group p-3 sm:p-4 bg-card rounded-lg border border-border transition-all duration-300 max-h-[148px] min-h-[148px]"
+                >
+                  <div className="flex items-center space-x-3 sm:space-x-4">
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden flex-shrink-0">
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
-                  </Link>
-                )
-              )}
+                    <div className="flex-grow min-w-0">
+                      <h4 className="text-sm sm:text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight mb-0.5 sm:mb-1">
+                        {project.title}
+                      </h4>
+                      <p className="text-xs text-muted-foreground line-clamp-1 sm:line-clamp-2 mb-1 sm:mb-1.5">
+                        {project.excerpt}
+                      </p>
+                      <span className="text-xs text-primary font-semibold group-hover:underline">
+                        Xem chi tiết
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </div>

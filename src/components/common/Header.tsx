@@ -283,16 +283,49 @@ const Header = () => {
                 className="h-8 w-auto flex-shrink-0 cursor-pointer"
               />
               <div className="relative overflow-hidden flex-1">
-                <div className="animate-slide-left-infinite whitespace-nowrap">
-                  <span className="inline-block text-green-800 font-medium text-xs md:text-sm mx-4">
+                <div className="animate-slide-left-infinite whitespace-nowrap flex items-center">
+                  <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
                     KIẾN TẠO KHÔNG GIAN SỐNG HOÀN HẢO - XÂY DỰNG TƯƠNG LAI BỀN
                     VỮNG
                   </span>
-                  <span className="inline-block text-green-800 font-medium text-xs md:text-sm mx-4">
+                  <span className="inline-flex items-center text-primary mx-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                    </svg>
+                  </span>
+                  <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
                     CHẤT LƯỢNG TẠO NIỀM TIN - UY TÍN DỰNG THƯƠNG HIỆU
                   </span>
-                  <span className="inline-block text-green-800 font-medium text-xs md:text-sm mx-4">
+                  <span className="inline-flex items-center text-primary mx-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                    </svg>
+                  </span>
+                  <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
                     THIẾT KẾ ĐỘT PHÁ - THI CÔNG CHUYÊN NGHIỆP
+                  </span>
+                  <span className="inline-flex items-center text-primary mx-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                    </svg>
                   </span>
                 </div>
               </div>

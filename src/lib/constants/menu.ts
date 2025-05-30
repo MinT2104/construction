@@ -3,6 +3,7 @@ import { MenuItemType } from "../types/common/menu.interface";
 const menuItems: MenuItemType[] = [
   {
     label: "Giới thiệu",
+    path: "/gioi-thieu",
     isUseSidebar: true,
     type: "single",
     submenu: [
@@ -35,6 +36,7 @@ const menuItems: MenuItemType[] = [
   },
   {
     label: "Thiết kế",
+    path: "/thiet-ke",
     isUseSidebar: true,
     type: "category",
     submenu: [
@@ -67,6 +69,7 @@ const menuItems: MenuItemType[] = [
   },
   {
     label: "Xây nhà",
+    path: "/xay-nha",
     isUseSidebar: true,
     type: "category",
     submenu: [
@@ -132,6 +135,7 @@ const menuItems: MenuItemType[] = [
   },
   {
     label: "Mẫu Nhà Đẹp",
+    path: "/mau-nha-dep",
     isUseSidebar: false,
     type: "house-design",
     submenu: [
@@ -176,6 +180,7 @@ const menuItems: MenuItemType[] = [
   },
   {
     label: "Báo Giá",
+    path: "/bao-gia",
     isUseSidebar: true,
     type: "single",
     submenu: [
@@ -208,6 +213,7 @@ const menuItems: MenuItemType[] = [
   },
   {
     label: "Cẩm nang XD",
+    path: "/cam-nang",
     isUseSidebar: true,
     type: "category",
     submenu: [

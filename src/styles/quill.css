@@ -1,0 +1,58 @@
+/* Custom styles for Quill editor */
+
+.quill {
+  @apply overflow-hidden rounded-md border border-input bg-background ring-offset-background;
+}
+
+.quill .ql-toolbar {
+  @apply border-b border-input bg-muted/50 px-3 py-2;
+}
+
+.quill .ql-container {
+  @apply border-0 bg-background text-foreground;
+}
+
+.quill .ql-editor {
+  @apply min-h-[200px] p-4 font-sans text-sm;
+}
+
+.quill .ql-editor.ql-blank::before {
+  @apply text-muted-foreground not-italic;
+}
+
+.quill .ql-formats button {
+  @apply h-8 w-8 rounded-sm hover:bg-muted;
+}
+
+.quill .ql-formats button.ql-active {
+  @apply bg-muted text-foreground;
+}
+
+/* Dark mode support */
+.dark .quill .ql-toolbar {
+  @apply border-border bg-muted;
+}
+
+.dark .quill .ql-container {
+  @apply bg-background text-foreground;
+}
+
+.dark .quill .ql-snow.ql-toolbar button:hover,
+.dark .quill .ql-snow .ql-toolbar button:hover,
+.dark .quill .ql-snow.ql-toolbar button.ql-active,
+.dark .quill .ql-snow .ql-toolbar button.ql-active {
+  @apply bg-muted;
+}
+
+.dark .quill .ql-snow .ql-stroke {
+  stroke: hsl(var(--foreground));
+}
+
+.dark .quill .ql-snow .ql-fill,
+.dark .quill .ql-snow .ql-stroke.ql-fill {
+  fill: hsl(var(--foreground));
+}
+
+.dark .quill .ql-editor.ql-blank::before {
+  @apply text-muted-foreground;
+}

@@ -4,6 +4,9 @@ import { Roboto_Condensed } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
+import PageTransitionProvider from "@/components/common/PageTransition";
+import NavigationProgress from "@/components/common/NProgress";
+
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin"], // hoặc ['latin-ext'] nếu cần ký tự tiếng Việt
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], // thêm các weight bạn cần
@@ -24,9 +27,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${robotoCondensed.variable} antialiased`}>
-        <Header />
-        {children}
-        <Footer />
+        <NavigationProgress />
+        <PageTransitionProvider>
+          <Header />
+          <main className="min-h-[60vh]">{children}</main>
+          <Footer />
+        </PageTransitionProvider>
       </body>
     </html>
   );

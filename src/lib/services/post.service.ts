@@ -1,5 +1,4 @@
 export async function fetchPostBySlug(slug: string) {
-  console.log("slug", slug);
   // Fake fetch - real data style
   return {
     id: "post-001",
