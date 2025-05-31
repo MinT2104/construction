@@ -31,6 +31,14 @@ export interface BlogPost {
     name: string;
     slug: string;
   }>;
+  author?: {
+    _id: string;
+    name: string;
+    imageUrl: string;
+    bio: string;
+  };
+  viewCount?: number;
+  readingTime?: number;
 }
 
 export interface BlogPostCreate {

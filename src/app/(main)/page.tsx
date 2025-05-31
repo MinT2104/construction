@@ -1,4 +1,3 @@
-"use client";
 import CalculatorSection from "@/components/application/Home/components/CalculatorSection";
 import ServiceSection from "@/components/application/Home/components/ServiceSection";
 import HeroBannerSection from "@/components/application/Home/components/HeroBannerSection";
@@ -9,7 +8,7 @@ import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div></div>}>
       <div>
         {/* Top Banner - Thương hiệu 13 năm */}
 

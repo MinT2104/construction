@@ -9,7 +9,7 @@ const DynamicComponentWithNoSSR = dynamic(
 
 export default function CreatePostPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div></div>}>
       <DynamicComponentWithNoSSR />
     </Suspense>
   );

@@ -3,11 +3,75 @@ import Image from "next/image";
 import Link from "next/link";
 import { Post } from "@/lib/types/modules/post.interface";
 import { PostHeader, SectionHeader } from "./components";
-import { Tag } from "lucide-react";
+import { Tag, FileX } from "lucide-react";
+import { BlogPost } from "@/lib/types/modules/blog.interface";
+import { blogService } from "@/lib/services/blog.service";
+import { BaseMenuItem } from "@/lib/types/common/menu.interface";
+import { SITE_URL, SITE_NAME } from "@/lib/utils/seo-utils";
 
 interface SinglePostViewProps {
-  post: Post;
+  post: BlogPost;
 }
+
+const EmptyState = () => {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+      <FileX className="w-16 h-16 text-gray-400 mb-4" />
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        Không tìm thấy nội dung
+      </h3>
+      <p className="text-gray-600 max-w-md mb-6">
+        Nội dung bài viết này đang được cập nhật hoặc không tồn tại.
+      </p>
+    </div>
+  );
+};
+
+// JSON-LD Schema cho bài viết
+const BlogPostSchema = ({ post }: { post: BlogPost }) => {
+  if (!post) return null;
+
+  // Chuẩn bị dữ liệu cho Schema
+  const authorName = post.author?.name || SITE_NAME;
+  const publishDate = post.createdAt;
+  const modifiedDate = post.updatedAt;
+  const postUrl = `${SITE_URL}/bai-viet/${post.slug}`;
+  const imageUrl = post.featuredImage?.url || `${SITE_URL}/og-image.jpg`;
+
+  // Schema Article
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt || post.meta?.seoDescription || "",
+    image: imageUrl,
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/logo.png`,
+      },
+    },
+    datePublished: publishDate,
+    dateModified: modifiedDate,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": postUrl,
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+};
 
 const SinglePostView: React.FC<SinglePostViewProps> = ({ post }) => {
   // Giả lập màu sắc ngẫu nhiên cho tags
@@ -29,39 +93,52 @@ const SinglePostView: React.FC<SinglePostViewProps> = ({ post }) => {
     return tagColors[index % tagColors.length];
   };
 
+  if (!post) return <EmptyState />;
+
   return (
     <article className="max-w-none">
+      {/* Schema Markup */}
+      <BlogPostSchema post={post} />
+
       {/* Header */}
       <PostHeader post={post} />
 
       {/* Content section */}
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto px-4 md:px-0 max-w-4xl">
         <div className="flex flex-col gap-8">
           {/* Main content */}
           <div className="w-full">
             {/* Article content */}
             <div className="prose prose-lg prose-slate max-w-none">
-              {post.content}
+              {post?.content ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: post.content,
+                  }}
+                ></div>
+              ) : (
+                <EmptyState />
+              )}
             </div>
 
             {/* Tags - moved to bottom with improved design */}
-            {post.tags && post.tags.length > 0 && (
+            {post?.tags && post?.tags?.length > 0 && (
               <div className="mt-12 mb-10 pt-8 border-t border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900 mb-5 flex items-center">
                   <Tag className="mr-2 h-5 w-5 text-gray-600" />
                   <span>Từ khoá</span>
                 </h3>
                 <div className="flex flex-wrap gap-3">
-                  {post.tags.map((tag, index) => {
+                  {post?.tags?.map((tag, index) => {
                     const colorStyle = getTagColor(index);
                     return (
                       <Link
-                        href={`/tag/${tag}`}
-                        key={tag}
+                        href={`/tag/${tag.slug}`}
+                        key={tag.slug}
                         className={`px-4 py-2 rounded-lg ${colorStyle.bg} ${colorStyle.text} text-sm font-medium ${colorStyle.hover} transition-colors flex items-center shadow-sm border border-gray-100`}
                       >
                         <span className="mr-1">#</span>
-                        {tag}
+                        {tag.name}
                       </Link>
                     );
                   })}
@@ -70,7 +147,7 @@ const SinglePostView: React.FC<SinglePostViewProps> = ({ post }) => {
             )}
 
             {/* Related posts section */}
-            <RelatedPosts />
+            <RelatedPosts slug={post.categories?.[0]?.slug || ""} post={post} />
           </div>
         </div>
       </div>
@@ -78,7 +155,22 @@ const SinglePostView: React.FC<SinglePostViewProps> = ({ post }) => {
   );
 };
 
-const RelatedPosts: React.FC = () => {
+const handleGetRelatedPosts = async (categorySlug: string) => {
+  const relatedPosts = await blogService.getBlogsByCategory(categorySlug, 1, 3);
+  return relatedPosts;
+};
+
+const RelatedPosts: React.FC<{ slug: string; post: BlogPost }> = async ({
+  slug,
+  post,
+}) => {
+  const relatedPosts = await handleGetRelatedPosts(slug);
+  const filteredPosts = relatedPosts.rows.filter(
+    (post) => post._id !== post._id
+  );
+
+  if (filteredPosts.length === 0) return null;
+
   return (
     <div className="mt-16 pt-8 border-t border-gray-200">
       <SectionHeader
@@ -88,61 +180,31 @@ const RelatedPosts: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {/* This would be populated with actual related posts */}
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div className="relative h-48">
-            <Image
-              src="/images/houses/house_2.avif"
-              alt="Related post"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="p-4">
-            <h4 className="font-bold text-lg mb-2 line-clamp-2">
-              Tổng Hợp 5 Phong Cách Thiết Kế Nội Thất Được Ưa Chuộng 2025
-            </h4>
-            <p className="text-gray-600 text-sm">
-              {new Date("2025-01-01").toLocaleDateString("vi-VN")} • 5 phút đọc
-            </p>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div className="relative h-48">
-            <Image
-              src="/images/houses/house_3.avif"
-              alt="Related post"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="p-4">
-            <h4 className="font-bold text-lg mb-2 line-clamp-2">
-              5 Sai Lầm Khi Tự Thiết Kế Nhà Mà Ai Cũng Gặp
-            </h4>
-            <p className="text-gray-600 text-sm">
-              {new Date("2024-12-12").toLocaleDateString("vi-VN")} • 4 phút đọc
-            </p>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-          <div className="relative h-48">
-            <Image
-              src="/images/houses/house_4.avif"
-              alt="Related post"
-              fill
-              className="object-cover"
-            />
-          </div>
-          <div className="p-4">
-            <h4 className="font-bold text-lg mb-2 line-clamp-2">
-              Tối Ưu Hóa Không Gian Nhỏ Với Thiết Kế Thông Minh
-            </h4>
-            <p className="text-gray-600 text-sm">
-              {new Date("2025-01-07").toLocaleDateString("vi-VN")} • 6 phút đọc
-            </p>
-          </div>
-        </div>
+        {filteredPosts.map((relatedPost) => (
+          <Link
+            href={`/bai-viet/${relatedPost.slug}`}
+            key={relatedPost._id}
+            className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <div className="relative h-48">
+              <Image
+                src={relatedPost.featuredImage?.url || ""}
+                alt={relatedPost.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="p-4">
+              <h4 className="font-bold text-lg mb-2 line-clamp-2">
+                {relatedPost.title}
+              </h4>
+              <p className="text-gray-600 text-sm">
+                {new Date(relatedPost.createdAt).toLocaleDateString("vi-VN")} •
+                6 phút đọc
+              </p>
+            </div>
+          </Link>
+        ))}
       </div>
     </div>
   );

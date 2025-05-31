@@ -3,6 +3,7 @@ interface BaseMenuItem {
   label: string;
   path: string;
   type: "single" | "category" | "house-design";
+  description?: string;
 }
 
 interface MenuItemType {
@@ -13,6 +14,7 @@ interface MenuItemType {
   type: "single" | "category" | "house-design";
   parentLabel?: string;
   parentPath?: string;
+  description?: string;
 }
 
 export type { MenuItemType, BaseMenuItem };

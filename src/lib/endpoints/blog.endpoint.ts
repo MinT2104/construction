@@ -9,4 +9,6 @@ export const blogEndpoints = {
   updateBlog: "/blog/:id",
   deleteBlog: "/blog/:id",
   updateFeatured: "/blog/featured/:id",
+
+  getBlogFeatured: "/blog/featured",
 };

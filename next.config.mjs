@@ -9,7 +9,10 @@ const nextConfig = {
       "via.placeholder.com",
       "placehold.co",
       "kientrucvietquang.net",
+      "i.ytimg.com",
     ],
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
 

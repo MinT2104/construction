@@ -177,24 +177,6 @@ const AdminBlogPage = () => {
     setDeleteId(null);
   };
 
-  const openEditModal = (post: BlogPost) => {
-    setSelectedPost(post);
-    setIsModalOpen(true);
-  };
-
-  const openCreateModal = () => {
-    setSelectedPost(undefined);
-    setIsModalOpen(true);
-  };
-
-  const handleModalSubmit = async (postData: FormValues) => {
-    if (selectedPost) {
-      await handleUpdatePost(postData);
-    } else {
-      await handleCreatePost(postData);
-    }
-  };
-
   // Define which top-level menu items are relevant for blog categories
   const relevantBlogCategoryLabels = [
     "Giới thiệu",
@@ -573,6 +555,7 @@ const AdminBlogPage = () => {
           return p;
         });
         setPosts(updatedPosts);
+        loadPosts();
 
         // Hiển thị thông báo thành công
         toast.success(

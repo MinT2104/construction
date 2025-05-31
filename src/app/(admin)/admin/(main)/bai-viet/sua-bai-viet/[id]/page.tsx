@@ -8,7 +8,7 @@ const DynamicComponentWithNoSSR = dynamic(
 
 export default function EditPostPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div></div>}>
       <DynamicComponentWithNoSSR />
     </Suspense>
   );

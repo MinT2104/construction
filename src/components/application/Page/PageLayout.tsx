@@ -3,13 +3,19 @@ import Breadcrumb from "@/components/common/Breadcrumb";
 import Sidebar from "@/components/common/Sidebar";
 import PriceInfoSection from "@/components/application/Home/components/PriceInfoSection";
 import { MapPin } from "lucide-react";
-import { MenuItemType } from "@/lib/types/common/menu.interface";
 
 interface PageLayoutProps {
   children: React.ReactNode;
   slug: string[];
-  menuItems: MenuItemType[];
-  parentMenuItem?: MenuItemType;
+  menuItems:
+    | {
+        label: string;
+        path: string;
+      }[]
+    | null;
+  parentMenuItem?: {
+    isUseSidebar: boolean;
+  };
 }
 
 const PageLayout = ({
@@ -29,7 +35,7 @@ const PageLayout = ({
             <MapPin className="h-5 w-5 font-bold" />
             <span className="ml-2">Bạn đang ở đây</span>
           </div>
-          <Breadcrumb slug={slug} menuItems={menuItems} />
+          <Breadcrumb menuItems={menuItems || []} />
         </div>
       </div>
     </div>

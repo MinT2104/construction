@@ -5,31 +5,31 @@ const menuItems: MenuItemType[] = [
     label: "Giới thiệu",
     path: "/gioi-thieu",
     isUseSidebar: true,
-    type: "single",
+    type: "category",
     submenu: [
       {
         label: "Về chúng tôi",
-        path: "/ve-chung-toi",
+        path: "/gioi-thieu/ve-chung-toi",
         type: "single",
       },
       {
         label: "Tầm nhìn sứ mệnh",
-        path: "/ve-chung-toi/tam-nhin-su-menh",
+        path: "/gioi-thieu/tam-nhin-su-menh",
         type: "single",
       },
       {
         label: "Giấy phép hoạt động, chứng chỉ",
-        path: "/ve-chung-toi/giay-phep-hoat-dong-chung-chi",
+        path: "/gioi-thieu/giay-phep-hoat-dong-chung-chi",
         type: "single",
       },
       {
         label: "Cam kết chất lượng",
-        path: "/ve-chung-toi/cam-ket-chat-luong",
+        path: "/gioi-thieu/cam-ket-chat-luong",
         type: "single",
       },
       {
         label: "Tuyển dụng",
-        path: "/ve-chung-toi/tuyen-dung",
+        path: "/gioi-thieu/tuyen-dung",
         type: "single",
       },
     ],
@@ -182,7 +182,7 @@ const menuItems: MenuItemType[] = [
     label: "Báo Giá",
     path: "/bao-gia",
     isUseSidebar: true,
-    type: "single",
+    type: "category",
     submenu: [
       {
         label: "Thiết kế nhà",

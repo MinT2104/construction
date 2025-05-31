@@ -28,6 +28,25 @@ class BlogService {
     return BlogService.instance;
   }
 
+  async getAllBlog(query?: any): Promise<PaginatedResponse<BlogPost[]>> {
+    try {
+      const response: any = await axiosInstance.get(blogEndpoints.getAllBlog, {
+        params: query || {},
+      });
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching all blog posts:", error);
+      // Return default empty response instead of throwing the error
+      return {
+        rows: [],
+        total: 0,
+        page: query?.page || 1,
+        pageSize: query?.limit || 10,
+        totalPages: 0,
+      };
+    }
+  }
+
   async getPosts(categoryPath?: string): Promise<BlogPost[]> {
     try {
       const response = await axiosInstance.get(blogEndpoints.getAllBlog, {
@@ -73,7 +92,7 @@ class BlogService {
       const response = await axiosInstance.get(
         blogEndpoints.getBlogSlug.replace(":slug", slug)
       );
-      return response.data;
+      return response.data.data;
     } catch (error) {
       console.error(`Error fetching blog post with slug ${slug}:`, error);
       return null;
@@ -179,6 +198,16 @@ class BlogService {
       return response.data;
     } catch (error) {
       console.error(`Error updating featured blog post with id ${id}:`, error);
+      return null;
+    }
+  }
+
+  async getBlogFeatured(): Promise<any> {
+    try {
+      const response = await axiosInstance.get(blogEndpoints.getBlogFeatured);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching featured blog posts:", error);
       return null;
     }
   }

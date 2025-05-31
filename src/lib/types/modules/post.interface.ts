@@ -14,4 +14,5 @@ export interface Post {
   views?: number;
   commentsCount?: number;
   slug?: string;
+  status?: string;
 }

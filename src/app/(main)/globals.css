@@ -135,3 +135,7 @@
 .break-inside-avoid {
   break-inside: avoid;
 }
+
+.ql-video {
+  max-width: 100%;
+}

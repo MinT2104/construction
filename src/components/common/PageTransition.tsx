@@ -92,7 +92,7 @@ export const PageTransitionProvider = ({
   children,
 }: PageTransitionProviderProps) => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div></div>}>
       <PageTransitionContent>{children}</PageTransitionContent>
     </Suspense>
   );

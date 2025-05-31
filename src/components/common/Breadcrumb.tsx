@@ -4,13 +4,15 @@ import { getBreadcrumbItems } from "@/lib/utils/menu-utils";
 import { MenuItemType } from "@/lib/types/common/menu.interface";
 
 interface BreadcrumbProps {
-  slug: string[];
-  menuItems: MenuItemType[];
+  menuItems: {
+    label: string;
+    path: string;
+    parentLabel?: string;
+    parentPath?: string;
+  }[];
 }
 
-export default function Breadcrumb({ slug, menuItems }: BreadcrumbProps) {
-  const breadcrumbItems = getBreadcrumbItems(menuItems, slug);
-
+export default function Breadcrumb({ menuItems }: BreadcrumbProps) {
   return (
     <nav className="py-3" aria-label="Breadcrumb">
       <ol className="flex flex-wrap items-center">
@@ -23,8 +25,8 @@ export default function Breadcrumb({ slug, menuItems }: BreadcrumbProps) {
           </Link>
         </li>
 
-        {breadcrumbItems.map((item, index) => {
-          const isLast = index === breadcrumbItems.length - 1;
+        {menuItems.map((item, index) => {
+          const isLast = index === menuItems.length - 1;
 
           return (
             <li key={item.path} className="flex items-center">

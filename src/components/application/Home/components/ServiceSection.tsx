@@ -2,6 +2,9 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { blogService } from "@/lib/services/blog.service";
+import { BlogPost } from "@/lib/types/modules/blog.interface";
+import { videoService } from "@/lib/services/video.service";
 
 // Placeholder data for blog posts - replace with your actual data source
 const blogPosts = [
@@ -100,6 +103,7 @@ const featuredVideos = [
     title:
       "Báo giá chi phí sửa nhà diện tích 36m2 - Đơn giá sửa nhà 2025 | Trọng Hoài 0936267359",
     videoId: "3Im7cso2ZZM",
+    thumbnail: "https://i.ytimg.com/vi/3Im7cso2ZZM/maxresdefault.jpg",
     duration: "24:15",
   },
   {
@@ -107,17 +111,39 @@ const featuredVideos = [
     title:
       "Hướng dẫn thi công văn phòng | Báo giá thi công văn phòng | Trọng Hoài 0936267359",
     videoId: "kFIN0Wd9lik",
+    thumbnail: "https://i.ytimg.com/vi/3Im7cso2ZZM/maxresdefault.jpg",
     duration: "08:53",
   },
 ];
 
-function ServiceSection() {
+const handleGetFeaturedPosts = async () => {
+  const featuredPosts = await blogService.getBlogFeatured();
+  return featuredPosts;
+};
+
+const handleGetFeaturedVideos = async () => {
+  const featuredVideos = await videoService.getTrongHoaiXayDungVideos(2);
+  return featuredVideos;
+};
+
+async function ServiceSection() {
+  const [featuredPosts, featuredVideos] = await Promise.all([
+    handleGetFeaturedPosts(),
+    handleGetFeaturedVideos(),
+  ]);
+
+  if (!featuredPosts || !featuredPosts.data) return null;
+
+  const featuredPostsData = featuredPosts.data as BlogPost;
+
+  console.log("featuredPostsData", featuredPostsData);
+
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-primary uppercase mb-2">
-            Hạng mục dịch vụ kiến trúc và xây dựng
+            Bài viết nổi bật
           </h2>
           <div className="flex items-center justify-center">
             <div className="h-0.5 bg-primary w-16"></div>
@@ -135,23 +161,26 @@ function ServiceSection() {
           <div className="md:col-span-3 mb-12 md:mb-0 space-y-6">
             {/* Featured Blog Card with Overlay Text */}
             <div className="relative overflow-hidden rounded-lg h-[400px] group">
-              <Link href={blogPosts[0].slug} className="block absolute inset-0">
+              <Link
+                href={`/bai-viet/${featuredPostsData?.slug || ""}`}
+                className="block absolute inset-0"
+              >
                 <Image
-                  src={blogPosts[0].image}
-                  alt={blogPosts[0].title}
+                  src={featuredPostsData?.featuredImage?.url || ""}
+                  alt={featuredPostsData?.title || ""}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
                 <div className="absolute bottom-0 left-0 p-6 w-full">
                   <span className="inline-block px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full mb-3">
-                    {blogPosts[0].category}
+                    {featuredPostsData?.categories?.[0]?.name || ""}
                   </span>
                   <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
-                    {blogPosts[0].title}
+                    {featuredPostsData?.title || ""}
                   </h3>
                   <p className="text-white/80 text-sm md:text-base line-clamp-2 mb-4">
-                    {blogPosts[0].excerpt}
+                    {featuredPostsData?.excerpt || ""}
                   </p>
                   <span className="inline-flex items-center text-white font-medium text-sm group-hover:underline">
                     Đọc thêm
@@ -203,24 +232,41 @@ function ServiceSection() {
 
             {/* Featured Videos Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {featuredVideos.map((video) => (
-                <div
+              {featuredVideos.data.videos.map((video) => (
+                <Link
                   key={video.id}
+                  href={`/videos/${video.id}`}
                   className="relative group rounded-lg overflow-hidden shadow-md border border-border/40 bg-card hover:shadow-lg transition-all duration-300 flex flex-col"
                 >
                   <div className="relative aspect-video w-full overflow-hidden">
-                    <div className="absolute inset-0 bg-black/10 z-10 pointer-events-none"></div>
-                    <iframe
-                      src={`https://www.youtube.com/embed/${video.videoId}?rel=0&showinfo=0&modestbranding=1`}
-                      title={video.title}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full"
-                      loading="lazy"
-                    ></iframe>
+                    <Image
+                      src={video.thumbnails.high.url}
+                      alt={video.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-300"></div>
+
+                    {/* Play button overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <svg
+                          className="w-7 h-7 text-white ml-1"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* Duration badge */}
+                    <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs font-medium rounded">
+                      {video.duration}
+                    </div>
                   </div>
                   <div className="p-3 sm:p-4 flex-grow bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
-                    <h4 className="font-medium text-foreground line-clamp-2 mb-2 hover:text-primary transition-colors">
+                    <h4 className="font-medium text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
                       {video.title}
                     </h4>
                     <div className="flex items-center justify-between">
@@ -232,59 +278,72 @@ function ServiceSection() {
                         >
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
                         </svg>
-                        {video.duration}
+                        Thời lượng: {video.duration}
                       </span>
-                      <Link
-                        href={`https://www.youtube.com/watch?v=${video.videoId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs font-medium text-primary hover:underline flex items-center"
-                      >
-                        Xem trên YouTube
+                      <span className="text-xs font-medium text-primary flex items-center">
+                        Xem video
                         <svg
-                          className="w-3 h-3 ml-1"
-                          fill="currentColor"
+                          className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform duration-200"
+                          fill="none"
                           viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
                         >
-                          <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                          />
                         </svg>
-                      </Link>
+                      </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
 
           {/* Project List Section (Right) */}
           <div className="md:col-span-2">
-            <div className="space-y-4">
-              {" "}
-              {/* Using space-y for vertical list items */}
+            <div className="space-y-5">
               {projectArticles.map((project) => (
                 <Link
                   href={project.slug}
                   key={project.id}
-                  className="block group p-3 sm:p-4 bg-card rounded-lg border border-border transition-all duration-300 max-h-[148px] min-h-[148px]"
+                  className="block h-full group p-4 bg-card hover:bg-accent/5 rounded-lg border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-md hover:shadow-primary/5"
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden flex-shrink-0">
+                  <div className="flex items-start space-x-4">
+                    <div className="relative w-24 h-24 rounded-md overflow-hidden flex-shrink-0">
                       <Image
                         src={project.image}
                         alt={project.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
                       />
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                     <div className="flex-grow min-w-0">
-                      <h4 className="text-sm sm:text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight mb-0.5 sm:mb-1">
+                      <h4 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight mb-1.5">
                         {project.title}
                       </h4>
-                      <p className="text-xs text-muted-foreground line-clamp-1 sm:line-clamp-2 mb-1 sm:mb-1.5">
+                      <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
                         {project.excerpt}
                       </p>
-                      <span className="text-xs text-primary font-semibold group-hover:underline">
+                      <span className="text-xs text-primary font-medium flex items-center group-hover:font-semibold">
                         Xem chi tiết
+                        <svg
+                          className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform duration-200"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                          />
+                        </svg>
                       </span>
                     </div>
                   </div>
