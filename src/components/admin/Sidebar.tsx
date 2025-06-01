@@ -80,8 +80,8 @@ const Sidebar: FC = () => {
     <TooltipProvider delayDuration={0}>
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-20 flex h-full flex-col border-r bg-background transition-all duration-300 ease-in-out",
-          isSidebarCollapsed ? "w-20" : "w-64"
+          "fixed inset-y-0 left-0 z-20 flex h-full flex-col border-r bg-background shadow-sm transition-all duration-300 ease-in-out",
+          isSidebarCollapsed ? "w-16" : "w-64"
         )}
         onMouseEnter={() => setIsSidebarCollapsed(false)}
         onMouseLeave={() => setIsSidebarCollapsed(true)}
@@ -103,7 +103,7 @@ const Sidebar: FC = () => {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="h-6 w-6"
+              className="h-6 w-6 text-primary"
             >
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
             </svg>
@@ -115,7 +115,7 @@ const Sidebar: FC = () => {
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-auto px-2 py-4">
+        <nav className="flex-1 space-y-0.5 overflow-auto p-3">
           {menuItems.map((item) => {
             if (item.isCollapsible && item.children) {
               return (
@@ -124,12 +124,12 @@ const Sidebar: FC = () => {
                     <div
                       role="button"
                       className={cn(
-                        "w-full h-10 flex items-center",
+                        "w-full flex items-center rounded-md transition-all duration-200",
                         isSidebarCollapsed
-                          ? "justify-center px-0"
-                          : "justify-between px-3",
-                        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-                        "hover:bg-accent hover:text-accent-foreground"
+                          ? "justify-center p-2"
+                          : "justify-between px-3 py-2",
+                        "text-sm font-medium text-foreground/80 hover:text-foreground",
+                        "hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       )}
                       aria-label={item.label}
                     >
@@ -146,13 +146,11 @@ const Sidebar: FC = () => {
                           )}
                         />
                         {!isSidebarCollapsed && (
-                          <span className="truncate text-sm font-medium">
-                            {item.label}
-                          </span>
+                          <span className="truncate">{item.label}</span>
                         )}
                       </div>
                       {!isSidebarCollapsed && (
-                        <ChevronRight className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-90" />
+                        <ChevronRight className="h-4 w-4 opacity-70 transition-transform duration-200 group-data-[state=open]:rotate-90" />
                       )}
                     </div>
                   </CollapsibleTrigger>
@@ -161,25 +159,27 @@ const Sidebar: FC = () => {
                       <TooltipTrigger asChild>
                         <div className="sr-only">{item.label}</div>
                       </TooltipTrigger>
-                      <TooltipContent side="right">{item.label}</TooltipContent>
+                      <TooltipContent side="right" className="font-medium">
+                        {item.label}
+                      </TooltipContent>
                     </Tooltip>
                   )}
                   {!isSidebarCollapsed && (
-                    <CollapsibleContent className="space-y-1 pl-7 pr-2 pt-1">
+                    <CollapsibleContent className="space-y-1 pt-1 pl-9 pr-2">
                       {item.children.map((subItem) => (
                         <div key={subItem.href}>
                           <Link href={subItem.href}>
                             <div
                               role="button"
                               className={cn(
-                                "w-full h-9 px-2 flex items-center justify-start",
-                                "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-                                "text-muted-foreground hover:text-foreground hover:bg-accent hover:text-accent-foreground"
+                                "w-full py-1.5 px-2 flex items-center justify-start rounded-md",
+                                "text-sm font-medium text-muted-foreground transition-colors",
+                                "hover:text-foreground hover:bg-accent/40"
                               )}
                             >
-                              <div className="flex items-center gap-3">
-                                <subItem.icon className="h-4 w-4" />
-                                <span className="truncate text-sm font-medium">
+                              <div className="flex items-center gap-2.5">
+                                <subItem.icon className="h-4 w-4 opacity-70" />
+                                <span className="truncate">
                                   {subItem.label}
                                 </span>
                               </div>
@@ -190,7 +190,10 @@ const Sidebar: FC = () => {
                               <TooltipTrigger asChild>
                                 <div className="sr-only">{subItem.label}</div>
                               </TooltipTrigger>
-                              <TooltipContent side="right">
+                              <TooltipContent
+                                side="right"
+                                className="font-medium"
+                              >
                                 {subItem.label}
                               </TooltipContent>
                             </Tooltip>
@@ -208,12 +211,12 @@ const Sidebar: FC = () => {
                     <div
                       role="button"
                       className={cn(
-                        "w-full h-10 flex items-center",
+                        "w-full flex items-center rounded-md transition-all duration-200",
                         isSidebarCollapsed
-                          ? "justify-center px-0"
-                          : "justify-start px-3",
-                        "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-                        "hover:bg-accent hover:text-accent-foreground"
+                          ? "justify-center p-2"
+                          : "justify-start px-3 py-2",
+                        "text-sm font-medium text-foreground/80 hover:text-foreground",
+                        "hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       )}
                     >
                       <div
@@ -229,9 +232,7 @@ const Sidebar: FC = () => {
                           )}
                         />
                         {!isSidebarCollapsed && (
-                          <span className="truncate text-sm font-medium">
-                            {item.label}
-                          </span>
+                          <span className="truncate">{item.label}</span>
                         )}
                       </div>
                     </div>
@@ -241,24 +242,28 @@ const Sidebar: FC = () => {
                       <TooltipTrigger asChild>
                         <div className="sr-only">{item.label}</div>
                       </TooltipTrigger>
-                      <TooltipContent side="right">{item.label}</TooltipContent>
+                      <TooltipContent side="right" className="font-medium">
+                        {item.label}
+                      </TooltipContent>
                     </Tooltip>
                   )}
                 </div>
               );
             } else if (item.onClick) {
               return (
-                <div key={item.label}>
+                <div key={item.label} className="mt-auto">
                   <div
                     role="button"
                     onClick={item.onClick}
                     className={cn(
-                      "w-full h-10 flex items-center",
+                      "w-full flex items-center rounded-md transition-all duration-200",
                       isSidebarCollapsed
-                        ? "justify-center px-0"
-                        : "justify-start px-3",
-                      "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-                      "hover:bg-accent hover:text-accent-foreground"
+                        ? "justify-center p-2"
+                        : "justify-start px-3 py-2",
+                      "text-sm font-medium text-foreground/80 hover:text-foreground",
+                      "hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                      item.label === "Đăng xuất" &&
+                        "text-rose-500 hover:text-rose-600 hover:bg-rose-50/50 mt-2"
                     )}
                     aria-label={item.label}
                   >
@@ -275,9 +280,7 @@ const Sidebar: FC = () => {
                         )}
                       />
                       {!isSidebarCollapsed && (
-                        <span className="truncate text-sm font-medium">
-                          {item.label}
-                        </span>
+                        <span className="truncate">{item.label}</span>
                       )}
                     </div>
                   </div>
@@ -286,7 +289,9 @@ const Sidebar: FC = () => {
                       <TooltipTrigger asChild>
                         <div className="sr-only">{item.label}</div>
                       </TooltipTrigger>
-                      <TooltipContent side="right">{item.label}</TooltipContent>
+                      <TooltipContent side="right" className="font-medium">
+                        {item.label}
+                      </TooltipContent>
                     </Tooltip>
                   )}
                 </div>

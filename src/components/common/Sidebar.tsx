@@ -97,21 +97,24 @@ function Sidebar() {
               icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
               label: "Dự toán",
               color: "from-blue-500 to-cyan-500",
+              path: "/bao-gia",
             },
             {
               icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
               label: "Mẫu nhà",
               color: "from-purple-500 to-indigo-500",
+              path: "/mau-nha-dep",
             },
             {
               icon: "M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z",
               label: "Liên hệ",
               color: "from-amber-500 to-orange-500",
+              path: "/lien-he",
             },
           ].map((item, i) => (
             <Link
               key={i}
-              href="#"
+              href={item.path}
               className="relative p-4 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 group"
             >
               <div

@@ -17,9 +17,9 @@ const ProjectListServiceSection: React.FC<ProjectListServiceSectionProps> = ({
       key={project._id}
       className="block h-full group hover:scale-[1.01] transition-all duration-300"
     >
-      <div className="flex items-start space-x-4 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-gray-100 transition-all duration-300">
+      <div className="flex h-full items-start space-x-4 bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-gray-100 transition-all duration-300">
         {/* Ảnh thumbnail với hiệu ứng */}
-        <div className="relative w-32 h-28 sm:w-36 sm:h-32 flex-shrink-0">
+        <div className="relative w-32 h-28 sm:w-36 sm:h-full flex-shrink-0">
           <Image
             src={project.featuredImage?.url || ""}
             alt={project.title}

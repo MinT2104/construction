@@ -178,7 +178,7 @@ const Header = () => {
                       className={`
                         uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-sm inline-flex items-center relative
                         after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
-                        hover:after:w-full
+                        hover:after:w-full whitespace-nowrap text-nowrap
                       `}
                     >
                       {item.label}
@@ -453,13 +453,13 @@ const MobileMenuItem = ({ item }: { item: MenuItemType }) => {
         {item.path ? (
           <Link
             href={item.path}
-            className="py-3 block text-gray-700 font-semibold text-base w-full hover:text-primary transition-colors duration-300"
+            className="py-3 block text-nowrap text-gray-700 font-semibold text-base w-full hover:text-primary transition-colors duration-300"
           >
             {item.label}
           </Link>
         ) : (
           <div
-            className="py-3 block text-gray-700 font-semibold text-base w-full hover:text-primary transition-colors duration-300 cursor-pointer"
+            className="py-3 block text-nowrap text-gray-700 font-semibold text-base w-full hover:text-primary transition-colors duration-300 cursor-pointer"
             onClick={() => item.submenu && setIsOpen(!isOpen)}
           >
             {item.label}

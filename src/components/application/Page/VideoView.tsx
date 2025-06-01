@@ -9,18 +9,23 @@ import {
   EyeIcon,
   HeartIcon,
   MessageSquareIcon,
+  SearchIcon,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { formatDuration } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { debounce } from "@/lib/utils";
+import VideoListRenderWithSearch from "./components/VideoListRenderWithSearch";
 
 interface VideoViewProps {
   isList: boolean;
   videoResponse: getAllVideosResponse | VideoResponse;
 }
-// ...imports giữ nguyên
 
 export default function VideoView({ isList, videoResponse }: VideoViewProps) {
   if (!videoResponse || !videoResponse.success) {
@@ -31,68 +36,12 @@ export default function VideoView({ isList, videoResponse }: VideoViewProps) {
     );
   }
 
-  const formatDuration = (duration: string) => {
-    const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-    if (!match) return "00:00";
-
-    const hours = match[1] ? parseInt(match[1]) : 0;
-    const minutes = match[2] ? parseInt(match[2]) : 0;
-    const seconds = match[3] ? parseInt(match[3]) : 0;
-
-    return hours > 0
-      ? `${hours}:${minutes.toString().padStart(2, "0")}:${seconds
-          .toString()
-          .padStart(2, "0")}`
-      : `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
-
   // === LIST MODE ===
   if (isList && "data" in videoResponse && "videos" in videoResponse.data) {
-    const { videos, channelName } = videoResponse.data;
-
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-foreground">
-          📺 Danh sách video từ kênh{" "}
-          <span className="text-primary">{channelName}</span>
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {videos.map((video) => {
-            const publishedDate = new Date(video.publishedAt);
-            return (
-              <div
-                key={video.id}
-                className="bg-card rounded-xl shadow-lg overflow-hidden transition-all hover:scale-[1.01] hover:shadow-xl"
-              >
-                <Link href={`/videos/${video.id}`} className="block group">
-                  <div className="relative aspect-video">
-                    <Image
-                      src={video.thumbnails.high.url}
-                      alt={video.title}
-                      fill
-                      className="object-cover transition-transform group-hover:scale-105"
-                    />
-                    <span className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded-md font-medium tracking-tight">
-                      {formatDuration(video.duration)}
-                    </span>
-                  </div>
-                  <div className="p-4 space-y-2">
-                    <h3 className="font-semibold text-sm text-foreground line-clamp-2">
-                      {video.title}
-                    </h3>
-                    <div className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(publishedDate, {
-                        addSuffix: true,
-                        locale: vi,
-                      })}
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <VideoListRenderWithSearch
+        videoResponse={videoResponse as getAllVideosResponse}
+      />
     );
   }
 

@@ -14,7 +14,7 @@ const FeaturedBlogCard: React.FC<FeaturedBlogCardProps> = ({
   featuredPostsData,
 }) => {
   return (
-    <div className="relative overflow-hidden rounded-lg h-[400px] group">
+    <div className="relative overflow-hidden rounded-lg h-[400px] flex-1 group">
       <Link
         href={`/bai-viet/${featuredPostsData?.slug || ""}`}
         className="block absolute inset-0"

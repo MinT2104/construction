@@ -7,6 +7,7 @@ import { BlogPost } from "@/lib/types/modules/blog.interface";
 import { videoService } from "@/lib/services/video.service";
 import ProjectListServiceSection from "./ProjectListServiceSection";
 import FeaturedBlogCard from "./FeaturedBlogCard";
+import { formatDuration } from "@/lib/utils";
 
 const handleGetFeaturedPosts = async () => {
   const featuredPosts = await blogService.getBlogFeatured();
@@ -17,14 +18,14 @@ const handleGetMostViewPosts = async () => {
   try {
     const query = {
       page: 1,
-      limit: 35,
+      limit: 5,
       query: { status: "published", sort: { viewCount: -1 } },
     };
     const mostViewPosts = await blogService.getAllBlog(query);
     return mostViewPosts;
   } catch (error) {
     console.error("Error fetching most viewed posts:", error);
-    return { rows: [], total: 0, page: 1, pageSize: 3, totalPages: 0 };
+    return { rows: [], total: 0, page: 1, pageSize: 5, totalPages: 0 };
   }
 };
 
@@ -73,7 +74,7 @@ async function ServiceSection() {
             {/* Featured Blog Card with Overlay Text */}
             <FeaturedBlogCard featuredPostsData={featuredPostsData} />
             {/* Featured Videos Header */}
-            <div className="flex items-center pt-4 mb-4">
+            <div className="flex items-center mb-4 pt-4">
               <h3 className="text-xl font-bold text-foreground flex items-center">
                 <svg
                   className="w-5 h-5 mr-2 text-primary"
@@ -132,7 +133,7 @@ async function ServiceSection() {
 
                     {/* Duration badge */}
                     <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-xs font-medium rounded">
-                      {video.duration}
+                      {formatDuration(video.duration)}
                     </div>
                   </div>
                   <div className="p-3 sm:p-4 flex-grow bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
@@ -148,7 +149,7 @@ async function ServiceSection() {
                         >
                           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
                         </svg>
-                        Thời lượng: {video.duration}
+                        Thời lượng: {formatDuration(video.duration)}
                       </span>
                       <span className="text-xs font-medium text-primary flex items-center">
                         Xem video
@@ -174,15 +175,10 @@ async function ServiceSection() {
           </div>
 
           {/* Project List Section (Right) */}
-          <div className="md:col-span-2">
-            <div className="space-y-4">
-              {listMostViewPosts.map((project) => (
-                <ProjectListServiceSection
-                  key={project._id}
-                  project={project}
-                />
-              ))}
-            </div>
+          <div className="md:col-span-2 h-full grid grid-rows-5 gap-4">
+            {listMostViewPosts.map((project) => (
+              <ProjectListServiceSection key={project._id} project={project} />
+            ))}
           </div>
         </div>
 
