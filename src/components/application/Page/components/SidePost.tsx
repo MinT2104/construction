@@ -12,14 +12,14 @@ const handleGetNewPosts = async () => {
   try {
     const query = {
       page: 1,
-      limit: 5,
+      limit: 20,
       query: { status: "published" },
     };
     const newPosts = await blogService.getAllBlog(query);
     return newPosts;
   } catch (error) {
     console.error("Error fetching new posts:", error);
-    return { rows: [], total: 0, page: 1, pageSize: 3, totalPages: 0 };
+    return { rows: [], total: 0, page: 1, pageSize: 10, totalPages: 0 };
   }
 };
 
@@ -27,14 +27,14 @@ const handleGetMostViewPosts = async () => {
   try {
     const query = {
       page: 1,
-      limit: 35,
+      limit: 20,
       query: { status: "published", sort: { viewCount: -1 } },
     };
     const mostViewPosts = await blogService.getAllBlog(query);
     return mostViewPosts;
   } catch (error) {
     console.error("Error fetching most viewed posts:", error);
-    return { rows: [], total: 0, page: 1, pageSize: 3, totalPages: 0 };
+    return { rows: [], total: 0, page: 1, pageSize: 10, totalPages: 0 };
   }
 };
 
@@ -47,9 +47,6 @@ const SidePost = async () => {
   const listNewPosts = (newPosts?.rows ?? []) as unknown as BlogPost[];
   const listMostViewPosts = (mostViewPosts?.rows ??
     []) as unknown as BlogPost[];
-
-  console.log(listNewPosts, "listNewPosts");
-  console.log(listMostViewPosts, "listMostViewPosts");
 
   return (
     <div className="bg-white rounded-2xl p-5 border border-border shadow-sm hover:shadow-lg transition-all duration-300">
@@ -101,7 +98,10 @@ const SidePost = async () => {
         </div>
 
         {/* Bài viết mới nhất */}
-        <TabsContent value="new-articles" className="space-y-4 m-0">
+        <TabsContent
+          value="new-articles"
+          className="space-y-4 m-0 max-h-[500px] overflow-y-auto"
+        >
           {listNewPosts.map((article) => (
             <Link
               key={article._id}
@@ -139,16 +139,13 @@ const SidePost = async () => {
               </div>
             </Link>
           ))}
-          <Link
-            href="#"
-            className="inline-block text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200 mt-2"
-          >
-            Xem tất cả bài viết →
-          </Link>
         </TabsContent>
 
         {/* Bài viết xem nhiều */}
-        <TabsContent value="popular-articles" className="space-y-4 m-0">
+        <TabsContent
+          value="popular-articles"
+          className="space-y-4 m-0 max-h-[500px] overflow-y-auto"
+        >
           {listMostViewPosts.map((article) => (
             <Link
               key={article._id}
@@ -186,12 +183,6 @@ const SidePost = async () => {
               </div>
             </Link>
           ))}
-          <Link
-            href="#"
-            className="inline-block text-sm text-amber-600 hover:text-amber-800 font-medium transition-colors duration-200 mt-2"
-          >
-            Xem tất cả bài viết phổ biến →
-          </Link>
         </TabsContent>
       </Tabs>
     </div>

@@ -29,6 +29,7 @@ import {
   getVideoThumbnail,
 } from "@/lib/utils/seo-utils";
 import { Metadata, ResolvingMetadata } from "next";
+import TAGS from "@/lib/constants/tags";
 
 // Sử dụng kiểu tham số chính xác cho Next.js 14
 type Props = {
@@ -168,7 +169,13 @@ async function cachedFetch(key: string, fetchFn: () => Promise<any>) {
   }
 }
 
-async function Page({ params }: Props) {
+async function Page({
+  params,
+  searchParams,
+}: {
+  params: { slug: string[] };
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const { slug: slugParams } = await params;
   const path = `/${slugParams.join("/")}`;
   const slug = slugParams[slugParams.length - 1];
@@ -188,8 +195,12 @@ async function Page({ params }: Props) {
     return await renderVideoPage(slugParams);
   }
 
+  if (slugParams.includes("tags")) {
+    return await renderTagPage(slugParams, searchParams);
+  }
+
   // Handle other pages
-  return await renderRegularPage(path, slug, slugParams);
+  return await renderRegularPage(path, slug, slugParams, searchParams);
 }
 
 async function renderBlogPost(slug: string, slugParams: string[]) {
@@ -213,10 +224,17 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
   const categoryInfo = { isUseSidebar: true };
 
   const menuItemData = [
-    { label: "Trang chủ", path: "/" },
+    {
+      label: post.categories?.[1]?.name || "",
+      path: `/${post.categories?.[1]?.slug}`,
+    },
     {
       label: post.categories?.[0]?.name || "",
       path: `/bai-viet/${post.categories?.[0]?.slug}`,
+    },
+    {
+      label: post.title || "",
+      path: `/bai-viet/${post.slug}`,
     },
   ];
 
@@ -281,10 +299,63 @@ async function renderVideoPage(slugParams: string[]) {
   );
 }
 
+async function renderTagPage(
+  slugParams: string[],
+  searchParams?: { [key: string]: string | string[] | undefined }
+) {
+  const tag = slugParams[1];
+  const page = searchParams?.page ? Number(searchParams.page) : 1;
+  const pageSize = 3; // Default page size
+
+  const cacheKey = `category-posts-${tag}-${page}-${pageSize}`;
+  const fetchedPosts = await cachedFetch(cacheKey, () =>
+    blogService.getBlogsByTag(tag, page, pageSize)
+  );
+  console.log("fetchedPosts", fetchedPosts);
+
+  if (!fetchedPosts) return notFound();
+
+  const posts = fetchedPosts.rows.map((post: any) => ({
+    ...post,
+  })) as BlogPost[];
+
+  const tagItem: BaseMenuItem = {
+    label: TAGS.find((t: any) => t.slug === tag)?.name || "",
+    path: `/tags/${tag}`,
+    type: "category",
+  };
+
+  return (
+    <PageLayout
+      slug={slugParams}
+      menuItems={[
+        {
+          label: TAGS.find((t: any) => t.slug === tag)?.name || "",
+          path: `/tags/${tag}`,
+        },
+      ]}
+      parentMenuItem={{ isUseSidebar: true }}
+    >
+      <CategoryView
+        posts={posts}
+        currentItem={tagItem}
+        pagination={{
+          currentPage: fetchedPosts.page,
+          totalPages: fetchedPosts.totalPages,
+          totalItems: fetchedPosts.total,
+          pageSize: fetchedPosts.pageSize,
+          path: `/tags/${tag}`,
+        }}
+      />
+    </PageLayout>
+  );
+}
+
 async function renderRegularPage(
   path: string,
   slug: string,
-  slugParams: string[]
+  slugParams: string[],
+  searchParams?: { [key: string]: string | string[] | undefined }
 ) {
   // Find menu items
   const parentMenuItem = menuItems.find(
@@ -321,15 +392,31 @@ async function renderRegularPage(
   ) {
     // start category
     // Sử dụng cache
-    const cacheKey = `category-posts-${slug}`;
+    const page = searchParams?.page ? Number(searchParams.page) : 1;
+    const pageSize = 10; // Default page size
+
+    const cacheKey = `category-posts-${slug}-${page}-${pageSize}`;
     const fetchedPosts = await cachedFetch(cacheKey, () =>
-      blogService.getBlogsByCategory(slug)
+      blogService.getBlogsByCategory(slug, page, pageSize)
     );
 
     const posts = fetchedPosts.rows.map((post: any) => ({
       ...post,
     })) as BlogPost[];
-    pageContent = <CategoryView posts={posts} currentItem={currentItem} />;
+
+    pageContent = (
+      <CategoryView
+        posts={posts}
+        currentItem={currentItem}
+        pagination={{
+          currentPage: fetchedPosts.page,
+          totalPages: fetchedPosts.totalPages,
+          totalItems: fetchedPosts.total,
+          pageSize: fetchedPosts.pageSize,
+          path: currentItem.path,
+        }}
+      />
+    );
     // end category
   } else if (
     currentItem.type === "house-design" ||

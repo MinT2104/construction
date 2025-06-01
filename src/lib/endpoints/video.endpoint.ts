@@ -6,4 +6,5 @@ export const videoEndpoints = {
   getStructuredDataForTrongHoaiXayDungVideos: () =>
     `/youtube/tronghoaixaydung/seo`,
   getVideos: () => `/youtube/video`,
+  getVideosByTag: (tag: string) => `/youtube/video/tag/${tag}`,
 };

@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import menuItems from "@/lib/constants/menu";
 import { motion } from "framer-motion";
+import TAGS from "@/lib/constants/tags";
 
 const Footer = () => {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
@@ -294,47 +295,14 @@ const Footer = () => {
             TỪ KHÓA TÌM KIẾM
           </h3>
           <div className="flex flex-wrap gap-3 justify-center">
-            {[
-              { href: "/xay-nha-tron-goi", text: "Xây nhà trọn gói" },
-              { href: "/xay-nha-phan-tho", text: "Xây nhà phần thô" },
-              { href: "/gia-hoan-thien-nha-o", text: "Giá hoàn thiện nhà ở" },
-              { href: "/gia-sua-chua-nha", text: "Giá sửa chữa nhà" },
-              { href: "/gia-thiet-ke-nha", text: "Giá thiết kế nhà" },
-              { href: "/gia-xay-dung-nha-2024", text: "Giá xây dựng nhà 2024" },
-              { href: "/don-gia-sua-nha-2024", text: "Đơn giá sửa nhà 2024" },
-              {
-                href: "/sua-chua-nha-tai-tp-hcm",
-                text: "Sửa chữa nhà tại Tp HCM",
-              },
-              { href: "/mau-nha-biet-thu-dep", text: "Mẫu nhà biệt thự đẹp" },
-              { href: "/mau-nha-pho-dep", text: "Mẫu nhà phố đẹp" },
-              { href: "/xay-nha-cap-4", text: "Xây nhà cấp 4" },
-              {
-                href: "/sua-nha-cap-4-co-gac-lung",
-                text: "Sửa nhà cấp 4 có gác lửng",
-              },
-              { href: "/sua-nha-nang-tang", text: "Sửa nhà nâng tầng" },
-              { href: "/hop-dong-xay-nha", text: "Hợp đồng xây nhà" },
-              {
-                href: "/quy-trinh-xay-dung-nha-pho",
-                text: "Quy trình xây dựng nhà phố từ A - Z",
-              },
-              {
-                href: "/cach-tinh-chi-phi-xay-nha",
-                text: "Cách tính chi phí xây nhà",
-              },
-              {
-                href: "/chon-nha-thau-xay-dung",
-                text: "Chọn nhà thầu xây dựng",
-              },
-            ].map((link) => (
+            {TAGS.map((link) => (
               <Link
-                key={link.href}
-                href={link.href}
+                key={link.id}
+                href={`/tags/${link.slug}`}
                 className="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-colors duration-200 shadow-sm"
               >
                 <span className="bg-yellow-400 w-1.5 h-1.5 rounded-full"></span>
-                {link.text}
+                {link.name}
               </Link>
             ))}
           </div>

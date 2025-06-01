@@ -12,4 +12,5 @@ export const blogEndpoints = {
 
   getBlogFeatured: "/blog/featured",
   incrementView: "/blog/view/:slug",
+  getBlogByTag: "/blog/tag/:slug",
 };
