@@ -7,13 +7,15 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MenuItemType, BaseMenuItem } from "@/lib/types/common/menu.interface";
 import menuItems from "@/lib/constants/menu";
+import SearchPopup from "./SearchPopup";
 
 const Header = () => {
   const router = useRouter();
-  const [mobileMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hoveredItemPath, setHoveredItemPath] = useState<string | null>(null);
   const [stickyNav, setStickyNav] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const mainHeaderRef = useRef<HTMLDivElement>(null);
   const stickyNavRef = useRef<HTMLDivElement>(null);
@@ -52,6 +54,20 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Add keyboard shortcut for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Open search on Ctrl+K or CMD+K
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Animation variants for the desktop submenu
   const submenuVariants = {
     hidden: {
@@ -72,6 +88,9 @@ const Header = () => {
 
   return (
     <header className="relative z-50">
+      {/* Search Popup */}
+      <SearchPopup isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+
       {/* Main Header - Modern design with glass effect */}
       <div
         ref={mainHeaderRef}
@@ -338,8 +357,16 @@ const Header = () => {
                   type="text"
                   placeholder="Tìm kiếm..."
                   className="w-full pl-8 pr-3 py-1.5 rounded-full border border-green-200 focus:border-green-500 focus:ring-1 focus:ring-green-200 outline-none transition-all duration-300 text-xs"
+                  onClick={(e) => { 
+                    e.preventDefault(); 
+                    setSearchOpen(true); 
+                  }}
+                  readOnly
                 />
-                <div className="absolute left-2.5 top-1/2 -translate-y-1/2 text-green-600">
+                <div 
+                   className="absolute left-2.5 top-1/2 -translate-y-1/2 text-green-600 cursor-pointer"
+                   onClick={() => setSearchOpen(true)}
+                 >
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -446,6 +473,11 @@ const Header = () => {
 // Mobile Menu Item Component with enhanced design
 const MobileMenuItem = ({ item }: { item: MenuItemType }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const handleNavigate = (path: string) => {
+    router.push(path);
+  };
 
   return (
     <div className="border-b border-gray-100/50 last:border-0">
