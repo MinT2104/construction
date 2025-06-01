@@ -1,10 +1,41 @@
-import CalculatorSection from "@/components/application/Home/components/CalculatorSection";
-import ServiceSection from "@/components/application/Home/components/ServiceSection";
 import HeroBannerSection from "@/components/application/Home/components/HeroBannerSection";
-import ProjectShowCaseSection from "@/components/application/Home/components/ProjectShowCaseSection";
-import HouseDesignSection from "@/components/application/Home/components/HouseDesignSection";
 import PriceInfoSection from "@/components/application/Home/components/PriceInfoSection";
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
+
+// Sử dụng dynamic import cho các component không cần thiết ngay lập tức
+const CalculatorSection = dynamic(
+  () => import("@/components/application/Home/components/CalculatorSection"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse"></div>,
+    ssr: true,
+  }
+);
+
+const ServiceSection = dynamic(
+  () => import("@/components/application/Home/components/ServiceSection"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse"></div>,
+    ssr: true,
+  }
+);
+
+const ProjectShowCaseSection = dynamic(
+  () =>
+    import("@/components/application/Home/components/ProjectShowCaseSection"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse"></div>,
+    ssr: true,
+  }
+);
+
+const HouseDesignSection = dynamic(
+  () => import("@/components/application/Home/components/HouseDesignSection"),
+  {
+    loading: () => <div className="h-96 bg-gray-50 animate-pulse"></div>,
+    ssr: true,
+  }
+);
 
 export default function Home() {
   return (

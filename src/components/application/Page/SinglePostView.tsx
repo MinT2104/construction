@@ -5,12 +5,13 @@ import { Post } from "@/lib/types/modules/post.interface";
 import { PostHeader, SectionHeader } from "./components";
 import { Tag, FileX } from "lucide-react";
 import { BlogPost } from "@/lib/types/modules/blog.interface";
-import { blogService } from "@/lib/services/blog.service";
+import { blogService, PaginatedResponse } from "@/lib/services/blog.service";
 import { BaseMenuItem } from "@/lib/types/common/menu.interface";
 import { SITE_URL, SITE_NAME } from "@/lib/utils/seo-utils";
 
 interface SinglePostViewProps {
   post: BlogPost;
+  relatedPosts?: PaginatedResponse<BlogPost>;
 }
 
 const EmptyState = () => {
@@ -73,7 +74,67 @@ const BlogPostSchema = ({ post }: { post: BlogPost }) => {
   );
 };
 
-const SinglePostView: React.FC<SinglePostViewProps> = ({ post }) => {
+interface RelatedPostsProps {
+  post: BlogPost;
+  relatedPosts: PaginatedResponse<BlogPost>;
+}
+
+const RelatedPosts: React.FC<RelatedPostsProps> = ({ post, relatedPosts }) => {
+  const filteredPosts =
+    relatedPosts?.rows?.filter((relatedPost) => relatedPost._id !== post._id) ||
+    [];
+
+  if (filteredPosts.length === 0) return null;
+
+  return (
+    <div className="mt-16 pt-8 border-t border-gray-200">
+      <SectionHeader
+        title="Bài viết liên quan"
+        variant="left"
+        withDecoration={false}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {filteredPosts.map((relatedPost) => (
+          <Link
+            href={`/bai-viet/${relatedPost.slug}`}
+            key={relatedPost._id}
+            className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+          >
+            <div className="relative h-48">
+              <Image
+                src={relatedPost.featuredImage?.url || ""}
+                alt={relatedPost.title}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="p-4">
+              <h4 className="font-bold text-lg mb-2 line-clamp-2">
+                {relatedPost.title}
+              </h4>
+              <p className="text-gray-600 text-sm">
+                {new Date(relatedPost.createdAt).toLocaleDateString("vi-VN")} •
+                6 phút đọc
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SinglePostView: React.FC<SinglePostViewProps> = ({
+  post,
+  relatedPosts = {
+    rows: [],
+    total: 0,
+    page: 1,
+    pageSize: 3,
+    totalPages: 0,
+  },
+}) => {
   // Giả lập màu sắc ngẫu nhiên cho tags
   const tagColors = [
     { bg: "bg-blue-50", text: "text-blue-700", hover: "hover:bg-blue-100" },
@@ -147,66 +208,11 @@ const SinglePostView: React.FC<SinglePostViewProps> = ({ post }) => {
             )}
 
             {/* Related posts section */}
-            <RelatedPosts slug={post.categories?.[0]?.slug || ""} post={post} />
+            <RelatedPosts post={post} relatedPosts={relatedPosts} />
           </div>
         </div>
       </div>
     </article>
-  );
-};
-
-const handleGetRelatedPosts = async (categorySlug: string) => {
-  const relatedPosts = await blogService.getBlogsByCategory(categorySlug, 1, 3);
-  return relatedPosts;
-};
-
-const RelatedPosts: React.FC<{ slug: string; post: BlogPost }> = async ({
-  slug,
-  post,
-}) => {
-  const relatedPosts = await handleGetRelatedPosts(slug);
-  const filteredPosts = relatedPosts.rows.filter(
-    (post) => post._id !== post._id
-  );
-
-  if (filteredPosts.length === 0) return null;
-
-  return (
-    <div className="mt-16 pt-8 border-t border-gray-200">
-      <SectionHeader
-        title="Bài viết liên quan"
-        variant="left"
-        withDecoration={false}
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {filteredPosts.map((relatedPost) => (
-          <Link
-            href={`/bai-viet/${relatedPost.slug}`}
-            key={relatedPost._id}
-            className="block bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-          >
-            <div className="relative h-48">
-              <Image
-                src={relatedPost.featuredImage?.url || ""}
-                alt={relatedPost.title}
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="p-4">
-              <h4 className="font-bold text-lg mb-2 line-clamp-2">
-                {relatedPost.title}
-              </h4>
-              <p className="text-gray-600 text-sm">
-                {new Date(relatedPost.createdAt).toLocaleDateString("vi-VN")} •
-                6 phút đọc
-              </p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>
   );
 };
 

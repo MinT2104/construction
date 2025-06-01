@@ -1,3 +1,9 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
+const withBundleAnalyzerConfig = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig = {
   /* config options here */
   images: {
@@ -14,6 +20,11 @@ const nextConfig = {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  // Tối ưu hóa production build
+  swcMinify: true,
+  // Sử dụng compilation cache để tăng tốc độ build
+  reactStrictMode: true,
 };
 
-export default nextConfig;
+// Áp dụng bundle analyzer configuration
+export default withBundleAnalyzerConfig(nextConfig);

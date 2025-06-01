@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { Suspense } from "react";
 
-// Configure NProgress
+// Configure NProgress chỉ một lần ngoài component
 NProgress.configure({
   minimum: 0.3,
   easing: "ease",
@@ -15,12 +15,13 @@ NProgress.configure({
   trickleSpeed: 100,
 });
 
-function NavigationProgressContent() {
+// Sử dụng memo để tránh render lại không cần thiết
+const NavigationProgressContent = memo(() => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const searchParamsString = searchParams.toString();
 
-  // Custom styles for the progress bar
+  // Thêm styles cho progress bar trong useEffect chỉ chạy một lần
   useEffect(() => {
     const style = document.createElement("style");
     style.textContent = `
@@ -41,15 +42,33 @@ function NavigationProgressContent() {
     };
   }, []);
 
-  // Handle route changes
+  // Tối ưu xử lý route changes
   useEffect(() => {
-    if (!pathname) return;
+    let timer: NodeJS.Timeout;
 
-    NProgress.start();
+    // Sử dụng tham chiếu cho chuỗi searchParams để tránh so sánh
+    const currentRoute = `${pathname}?${searchParamsString}`;
+    const routeChangeStart = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        NProgress.start();
+      }, 100); // Thêm timeout nhỏ để tránh flash progress bar cho navigation nhanh
+    };
 
-    const timer = setTimeout(() => {
+    const routeChangeComplete = () => {
+      clearTimeout(timer);
       NProgress.done();
-    }, 300);
+    };
+
+    // Kiểm tra nếu pathname đã được xác định
+    if (pathname) {
+      routeChangeStart();
+
+      // Tạo timeout để kết thúc progress bar trong mọi trường hợp
+      timer = setTimeout(() => {
+        NProgress.done();
+      }, 500); // Đảm bảo progress bar hoàn thành sau tối đa 500ms
+    }
 
     return () => {
       clearTimeout(timer);
@@ -58,12 +77,19 @@ function NavigationProgressContent() {
   }, [pathname, searchParamsString]);
 
   return null;
-}
+});
 
-export default function NavigationProgress() {
+NavigationProgressContent.displayName = "NavigationProgressContent";
+
+// Sử dụng memo cho component chính
+const NavigationProgress = memo(() => {
   return (
     <Suspense fallback={null}>
       <NavigationProgressContent />
     </Suspense>
   );
-}
+});
+
+NavigationProgress.displayName = "NavigationProgress";
+
+export default NavigationProgress;

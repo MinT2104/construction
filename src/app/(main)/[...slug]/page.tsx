@@ -35,6 +35,22 @@ type Props = {
   params: Promise<{ slug: string[] }>;
 };
 
+// Cấu hình ISR (Incremental Static Regeneration)
+export const revalidate = 3600; // Revalidate mỗi giờ
+
+// Tối ưu hiệu suất với generateStaticParams
+export async function generateStaticParams() {
+  // Lấy các slug phổ biến để pre-render
+  const popularPaths = [
+    { slug: ["xay-nha", "cong-trinh-tieu-bieu"] },
+    { slug: ["mau-nha-dep"] },
+    { slug: ["videos"] },
+  ];
+
+  // Trả về các tham số cho các trang phổ biến
+  return popularPaths;
+}
+
 // Hàm sinh metadata động
 export async function generateMetadata(
   { params }: { params: { slug: string[] } },
@@ -126,6 +142,32 @@ export async function generateMetadata(
   };
 }
 
+// Giữ kết quả data fetching vào memory cache
+const memoryCache = new Map();
+const CACHE_TTL = 10 * 60 * 1000; // 10 phút
+
+async function cachedFetch(key: string, fetchFn: () => Promise<any>) {
+  const now = Date.now();
+  const cached = memoryCache.get(key);
+
+  if (cached && now - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  try {
+    const data = await fetchFn();
+    memoryCache.set(key, { data, timestamp: now });
+    return data;
+  } catch (error) {
+    console.error(`Error fetching data for key ${key}:`, error);
+    // Nếu có dữ liệu cache cũ, vẫn có thể sử dụng
+    if (cached) {
+      return cached.data;
+    }
+    throw error;
+  }
+}
+
 async function Page({ params }: Props) {
   const { slug: slugParams } = await params;
   const path = `/${slugParams.join("/")}`;
@@ -151,7 +193,20 @@ async function Page({ params }: Props) {
 }
 
 async function renderBlogPost(slug: string, slugParams: string[]) {
-  const fetchedPost = await blogService.getPostBySlug(slug);
+  // Sử dụng cache
+  const cacheKey = `blog-post-${slug}`;
+  const fetchedPost = await cachedFetch(cacheKey, () =>
+    blogService.getPostBySlug(slug)
+  );
+
+  // Tăng lượt xem cho bài viết
+  try {
+    await blogService.incrementView(slug);
+    console.log(`Incremented view count for post: ${slug}`);
+  } catch (error) {
+    console.error(`Failed to increment view for post ${slug}:`, error);
+  }
+
   if (!fetchedPost) return notFound();
 
   const post = { ...fetchedPost } as BlogPost;
@@ -179,8 +234,12 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
 async function renderVideoPage(slugParams: string[]) {
   // List of videos
   if (slugParams.length === 1) {
-    const videoResponse: getAllVideosResponse =
-      await videoService.getTrongHoaiXayDungVideos();
+    // Sử dụng cache
+    const cacheKey = "videos-list";
+    const videoResponse: getAllVideosResponse = await cachedFetch(
+      cacheKey,
+      () => videoService.getTrongHoaiXayDungVideos()
+    );
 
     const menuItemData = [{ label: "Videos", path: "/videos" }];
 
@@ -199,8 +258,11 @@ async function renderVideoPage(slugParams: string[]) {
   const videoId = slugParams[1];
   const url = `https://www.youtube.com/watch?v=${videoId}`;
   const encodedUrl = encodeURIComponent(url);
-  const videoResponse: VideoResponse = await videoService.getVideoByUrl(
-    encodedUrl
+
+  // Sử dụng cache
+  const cacheKey = `video-${videoId}`;
+  const videoResponse: VideoResponse = await cachedFetch(cacheKey, () =>
+    videoService.getVideoByUrl(encodedUrl)
   );
 
   const menuItemData = [
@@ -242,7 +304,11 @@ async function renderRegularPage(
 
   if (currentItem.type === "single") {
     // start single
-    const fetchedPost = await blogService.getBlogsByCategory(slug);
+    // Sử dụng cache
+    const cacheKey = `single-category-${slug}`;
+    const fetchedPost = await cachedFetch(cacheKey, () =>
+      blogService.getBlogsByCategory(slug)
+    );
 
     if (!fetchedPost) return notFound();
 
@@ -254,10 +320,15 @@ async function renderRegularPage(
     !currentItem.path.includes("/mau-nha-dep")
   ) {
     // start category
-    console.log("currentItem", currentItem);
-    const fetchedPosts = await blogService.getBlogsByCategory(slug);
-    const posts = fetchedPosts.rows.map((post) => ({ ...post })) as BlogPost[];
+    // Sử dụng cache
+    const cacheKey = `category-posts-${slug}`;
+    const fetchedPosts = await cachedFetch(cacheKey, () =>
+      blogService.getBlogsByCategory(slug)
+    );
 
+    const posts = fetchedPosts.rows.map((post: any) => ({
+      ...post,
+    })) as BlogPost[];
     pageContent = <CategoryView posts={posts} currentItem={currentItem} />;
     // end category
   } else if (
@@ -265,10 +336,17 @@ async function renderRegularPage(
     currentItem.path.includes("/mau-nha-dep")
   ) {
     // start house design
-    const fetchedPost = await blogService.getBlogsByCategory(slug);
+    // Sử dụng cache
+    const cacheKey = `house-design-${slug}`;
+    const fetchedPost = await cachedFetch(cacheKey, () =>
+      blogService.getBlogsByCategory(slug)
+    );
+
     if (!fetchedPost) return notFound();
 
-    const posts = fetchedPost.rows.map((post) => ({ ...post })) as BlogPost[];
+    const posts = fetchedPost.rows.map((post: any) => ({
+      ...post,
+    })) as BlogPost[];
     pageContent = <HouseDesignView currentItem={posts} />;
     // end house design
   } else {

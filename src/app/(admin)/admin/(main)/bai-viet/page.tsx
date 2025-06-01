@@ -820,6 +820,12 @@ const AdminBlogPage = () => {
                     >
                       Nổi bật
                     </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
+                    >
+                      Lượt xem
+                    </th>
                     {/* // ngày tạo */}
                     <th
                       scope="col"
@@ -965,6 +971,9 @@ const AdminBlogPage = () => {
                             )}
                           </div>
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                          {post.viewCount || 0}
+                        </td>
                         {/* // ngày tạo */}
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                           {new Date(post.createdAt).toLocaleDateString(
@@ -994,11 +1003,7 @@ const AdminBlogPage = () => {
                           <div className="flex space-x-2">
                             {post.status === "published" ? (
                               <a
-                                href={`/${
-                                  post.categories && post.categories.length > 0
-                                    ? post.categories[0]?.slug
-                                    : "blog"
-                                }/${post.slug}`}
+                                href={`/bai-viet/${post.slug}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center px-3 py-2 bg-teal-50 border border-teal-300 rounded-md text-xs font-medium text-teal-700 hover:bg-teal-100 hover:border-teal-400 transition-colors shadow-sm"

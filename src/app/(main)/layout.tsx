@@ -7,10 +7,14 @@ import Footer from "@/components/common/Footer";
 import PageTransitionProvider from "@/components/common/PageTransition";
 import NavigationProgress from "@/components/common/NProgress";
 
+// Tối ưu font loading
 const robotoCondensed = Roboto_Condensed({
-  subsets: ["latin"], // hoặc ['latin-ext'] nếu cần ký tự tiếng Việt
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], // thêm các weight bạn cần
-  variable: "--font-roboto-condensed", // tùy chọn nếu bạn dùng Tailwind CSS
+  subsets: ["latin", "vietnamese"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--font-roboto-condensed",
+  display: "swap",
+  preload: true,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -25,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="vi">
       <body className={`${robotoCondensed.variable} antialiased`}>
         <NavigationProgress />
         <PageTransitionProvider>

@@ -5,120 +5,27 @@ import Image from "next/image";
 import { blogService } from "@/lib/services/blog.service";
 import { BlogPost } from "@/lib/types/modules/blog.interface";
 import { videoService } from "@/lib/services/video.service";
-
-// Placeholder data for blog posts - replace with your actual data source
-const blogPosts = [
-  {
-    id: "1",
-    title: "10 Xu Hướng Thiết Kế Chiếu Sáng Nội Thất Năm 2025",
-    excerpt:
-      "Ánh sáng đóng một vai trò quan trọng trong việc định hình không gian sống. Khám phá những xu hướng chiếu sáng mới nhất để làm mới ngôi nhà của bạn.",
-    image: "/images/mock_blogs/blog_1.avif", // Replace with actual image path
-    slug: "/lighting-trends-2025",
-    category: "Thiết kế nội thất",
-    date: "2024-07-28",
-  },
-  {
-    id: "2",
-    title: "Quy Trình Xây Dựng Nhà Phố Từ A-Z Cho Người Mới",
-    excerpt:
-      "Hướng dẫn chi tiết các bước cần thiết để xây dựng một ngôi nhà phố hoàn chỉnh, từ khâu chuẩn bị hồ sơ, thiết kế, thi công đến hoàn thiện.",
-    image: "/images/mock_blogs/blog_2.avif", // Replace with actual image path
-    slug: "/townhouse-construction-process",
-    category: "Thi công xây dựng",
-    date: "2024-07-25",
-  },
-  {
-    id: "3",
-    title: "Giải Pháp Thiết Kế Nhà Ống Thông Minh Tối Ưu Diện Tích",
-    excerpt:
-      "Khám phá những ý tưởng thiết kế sáng tạo và giải pháp thông minh giúp không gian nhà ống trở nên rộng rãi, thoáng đãng và tiện nghi hơn.",
-    image: "/images/mock_blogs/blog_3.avif", // Replace with actual image path
-    slug: "/smart-tube-house-design",
-    category: "Thiết kế kiến trúc",
-    date: "2024-07-22",
-  },
-  {
-    id: "4",
-    title: "Cải Tạo Trạm Điện Cảng Sài Gòn Hiệp Phước Công Ty M-Pacific",
-    excerpt:
-      "Cảng Sài Gòn Hiệp Phước, một trong những cửa ngõ giao thương hàng hải huyết mạch của khu vực phía Nam, đóng vai trò then chốt trong sự...",
-    image: "/images/mock_blogs/blog_4.avif", // Replace with actual image path
-    slug: "/tram-dien-hiep-phuoc",
-    category: "Thiết kế kiến trúc",
-    date: "2024-07-22",
-  },
-];
-
-// New placeholder data for project articles
-const projectArticles = [
-  // For 2x2 grid (first 4)
-  {
-    id: "p1",
-    title: "Cải Tạo Trạm Điện Cảng Sài Gòn Hiệp Phước Công Ty M-Pacific",
-    excerpt:
-      "Cảng Sài Gòn Hiệp Phước, một trong những cửa ngõ giao thương hàng hải huyết mạch của khu vực phía Nam, đóng vai trò then chốt trong sự...",
-    image: "/images/mock_blogs/blog_1.avif", // Replace with actual image path
-    slug: "/tram-dien-hiep-phuoc",
-  },
-  {
-    id: "p2",
-    title: "Hồi sinh tổ ấm: Quá trình sửa chữa nhà trọn gói Anh Hoàn ở Thủ Đức",
-    excerpt:
-      "Nằm yên bình trong con phố nhỏ tại TP. Thủ Đức, căn nhà 2 tầng kích thước 5x15m của gia đình anh Hoàn đã chứng kiến bao thăng...",
-    image: "/images/mock_blogs/blog_2.avif", // Replace with actual image path
-    slug: "/sua-nha-anh-hoan",
-  },
-  {
-    id: "p3",
-    title: "Từ cũ kỹ đến hiện đại: Hành trình cải tạo nhà Chị Thư ở Tân Bình",
-    excerpt:
-      "Trong con hẻm nhỏ yên bình của quận Tân Bình, ẩn mình một căn nhà phố hai tầng quen thuộc, nơi đã lưu giữ bao dấu ấn thời...",
-    image: "/images/mock_blogs/blog_3.avif", // Replace with actual image path
-    slug: "/cai-tao-nha-chi-thu",
-  },
-  {
-    id: "p4",
-    title: "Công trình sửa nhà Cô Nguyên trọn gói 3 tầng ở Quận 2",
-    excerpt:
-      "Chi phí sửa nhà 3 tầng trọn gói là bao nhiêu? Từ các hạng mục sửa chữa, Chuyên gia xây dựng hàng đầu Việt Quang Group lập kế...",
-    image: "/images/mock_blogs/blog_4.avif", // Replace with actual image path
-    slug: "/sua-nha-co-nguyen",
-  },
-  // For right list (next 5 or more)
-  {
-    id: "p5",
-    title: "Cải tạo nâng tầng nhà 3 tầng 4x12m Anh Nghĩa ở quận Gò Vấp",
-    excerpt:
-      "Cải tạo nâng tầng có cần xin phép xây dựng không? Hồ sơ cần có để bắt đầu kế hoạch...",
-    image: "/images/mock_blogs/blog_5.avif", // Replace with actual image path
-    slug: "/nang-tang-anh-nghia",
-  },
-];
-
-// Featured video data
-const featuredVideos = [
-  {
-    id: "v1",
-    title:
-      "Báo giá chi phí sửa nhà diện tích 36m2 - Đơn giá sửa nhà 2025 | Trọng Hoài 0936267359",
-    videoId: "3Im7cso2ZZM",
-    thumbnail: "https://i.ytimg.com/vi/3Im7cso2ZZM/maxresdefault.jpg",
-    duration: "24:15",
-  },
-  {
-    id: "v2",
-    title:
-      "Hướng dẫn thi công văn phòng | Báo giá thi công văn phòng | Trọng Hoài 0936267359",
-    videoId: "kFIN0Wd9lik",
-    thumbnail: "https://i.ytimg.com/vi/3Im7cso2ZZM/maxresdefault.jpg",
-    duration: "08:53",
-  },
-];
+import ProjectListServiceSection from "./ProjectListServiceSection";
+import FeaturedBlogCard from "./FeaturedBlogCard";
 
 const handleGetFeaturedPosts = async () => {
   const featuredPosts = await blogService.getBlogFeatured();
   return featuredPosts;
+};
+
+const handleGetMostViewPosts = async () => {
+  try {
+    const query = {
+      page: 1,
+      limit: 35,
+      query: { status: "published", sort: { viewCount: -1 } },
+    };
+    const mostViewPosts = await blogService.getAllBlog(query);
+    return mostViewPosts;
+  } catch (error) {
+    console.error("Error fetching most viewed posts:", error);
+    return { rows: [], total: 0, page: 1, pageSize: 3, totalPages: 0 };
+  }
 };
 
 const handleGetFeaturedVideos = async () => {
@@ -127,12 +34,16 @@ const handleGetFeaturedVideos = async () => {
 };
 
 async function ServiceSection() {
-  const [featuredPosts, featuredVideos] = await Promise.all([
+  const [featuredPosts, featuredVideos, mostViewPosts] = await Promise.all([
     handleGetFeaturedPosts(),
     handleGetFeaturedVideos(),
+    handleGetMostViewPosts(),
   ]);
 
-  if (!featuredPosts || !featuredPosts.data) return null;
+  const listMostViewPosts = (mostViewPosts?.rows ??
+    []) as unknown as BlogPost[];
+
+  if (!featuredPosts || !featuredPosts.data || !mostViewPosts) return null;
 
   const featuredPostsData = featuredPosts.data as BlogPost;
 
@@ -160,48 +71,7 @@ async function ServiceSection() {
           {/* Left Section with Featured Blog and Videos */}
           <div className="md:col-span-3 mb-12 md:mb-0 space-y-6">
             {/* Featured Blog Card with Overlay Text */}
-            <div className="relative overflow-hidden rounded-lg h-[400px] group">
-              <Link
-                href={`/bai-viet/${featuredPostsData?.slug || ""}`}
-                className="block absolute inset-0"
-              >
-                <Image
-                  src={featuredPostsData?.featuredImage?.url || ""}
-                  alt={featuredPostsData?.title || ""}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
-                <div className="absolute bottom-0 left-0 p-6 w-full">
-                  <span className="inline-block px-3 py-1 bg-primary text-white text-xs font-semibold rounded-full mb-3">
-                    {featuredPostsData?.categories?.[0]?.name || ""}
-                  </span>
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
-                    {featuredPostsData?.title || ""}
-                  </h3>
-                  <p className="text-white/80 text-sm md:text-base line-clamp-2 mb-4">
-                    {featuredPostsData?.excerpt || ""}
-                  </p>
-                  <span className="inline-flex items-center text-white font-medium text-sm group-hover:underline">
-                    Đọc thêm
-                    <svg
-                      className="w-4 h-4 ml-1.5 group-hover:translate-x-0.5 transition-transform duration-200"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M13 7l5 5-5 5"
-                      />
-                    </svg>
-                  </span>
-                </div>
-              </Link>
-            </div>
-
+            <FeaturedBlogCard featuredPostsData={featuredPostsData} />
             {/* Featured Videos Header */}
             <div className="flex items-center pt-4 mb-4">
               <h3 className="text-xl font-bold text-foreground flex items-center">
@@ -305,49 +175,12 @@ async function ServiceSection() {
 
           {/* Project List Section (Right) */}
           <div className="md:col-span-2">
-            <div className="space-y-5">
-              {projectArticles.map((project) => (
-                <Link
-                  href={project.slug}
-                  key={project.id}
-                  className="block h-full group p-4 bg-card hover:bg-accent/5 rounded-lg border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-md hover:shadow-primary/5"
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="relative w-24 h-24 rounded-md overflow-hidden flex-shrink-0">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                    <div className="flex-grow min-w-0">
-                      <h4 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight mb-1.5">
-                        {project.title}
-                      </h4>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-2">
-                        {project.excerpt}
-                      </p>
-                      <span className="text-xs text-primary font-medium flex items-center group-hover:font-semibold">
-                        Xem chi tiết
-                        <svg
-                          className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform duration-200"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+            <div className="space-y-4">
+              {listMostViewPosts.map((project) => (
+                <ProjectListServiceSection
+                  key={project._id}
+                  project={project}
+                />
               ))}
             </div>
           </div>
@@ -359,7 +192,7 @@ async function ServiceSection() {
             variant="default"
             className="bg-primary text-white hover:bg-primary/90 px-6 py-4 h-auto text-base font-medium"
           >
-            <Link href="/services">Xem tất cả dịch vụ</Link>
+            <Link href="/videos">Xem tất cả dịch vụ</Link>
           </Button>
         </div>
       </div>

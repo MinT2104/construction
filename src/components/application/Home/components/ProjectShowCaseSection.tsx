@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { memo } from "react";
 
 // Mở rộng dữ liệu dự án với thêm thông tin chi tiết
 const projects = [
@@ -86,6 +87,84 @@ const slugify = (str: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\s+/g, "-");
 
+// Tối ưu với memo để tránh render lại không cần thiết
+const ProjectCard = memo(
+  ({ project, index }: { project: (typeof projects)[0]; index: number }) => {
+    const slug = slugify(project.title);
+    const isFirstRow = index < 4; // Các project ở hàng đầu tiên
+
+    return (
+      <Card
+        key={project.title}
+        className="overflow-hidden bg-white rounded-md border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300"
+      >
+        {/* Logo overlay */}
+        <div className="relative">
+          <div className="absolute top-2 left-2 z-10">
+            <div className="bg-white/80 p-1 rounded">
+              <Image
+                src="/images/logo.png"
+                alt="Việt Quang Logo"
+                width={40}
+                height={40}
+              />
+            </div>
+          </div>
+
+          {/* Hình ảnh dự án */}
+          <Link
+            href={`/projects/${slug}`}
+            className="block"
+            prefetch={isFirstRow}
+          >
+            <div className="relative w-full h-64 overflow-hidden">
+              <Image
+                src={project.image}
+                alt={project.title}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className="object-cover hover:scale-105 transition-transform duration-500"
+                priority={isFirstRow}
+                loading={isFirstRow ? "eager" : "lazy"}
+              />
+            </div>
+          </Link>
+        </div>
+
+        {/* Thông tin dự án */}
+        <CardContent className="p-4">
+          <Link href={`/projects/${slug}`} prefetch={isFirstRow}>
+            <CardTitle className="text-primary font-bold text-lg mb-2 hover:text-primary/80 transition-colors">
+              {project.title}
+            </CardTitle>
+          </Link>
+
+          <div className="space-y-2 text-sm text-gray-700">
+            <p>
+              <span className="font-semibold">Chủ đầu tư:</span> {project.owner}
+            </p>
+            <p>
+              <span className="font-semibold">Địa điểm:</span>{" "}
+              {project.location}
+            </p>
+            <p>
+              <span className="font-semibold">Quy mô:</span> {project.size}
+            </p>
+            {project.dimensions && (
+              <p>
+                <span className="font-semibold">Kích thước:</span>{" "}
+                {project.dimensions}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+);
+
+ProjectCard.displayName = "ProjectCard";
+
 const ProjectShowCaseSection = () => {
   return (
     <section className="py-20 bg-background">
@@ -106,71 +185,9 @@ const ProjectShowCaseSection = () => {
 
         {/* Grid dự án */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {projects.map((project) => {
-            const slug = slugify(project.title);
-            return (
-              <Card
-                key={project.title}
-                className="overflow-hidden bg-white rounded-md border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300"
-              >
-                {/* Logo overlay */}
-                <div className="relative">
-                  <div className="absolute top-2 left-2 z-10">
-                    <div className="bg-white/80 p-1 rounded">
-                      <Image
-                        src="/images/logo.png"
-                        alt="Việt Quang Logo"
-                        width={40}
-                        height={40}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Hình ảnh dự án */}
-                  <Link href={`/projects/${slug}`} className="block">
-                    <div className="relative w-full h-64 overflow-hidden">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                  </Link>
-                </div>
-
-                {/* Thông tin dự án */}
-                <CardContent className="p-4">
-                  <Link href={`/projects/${slug}`}>
-                    <CardTitle className="text-primary font-bold text-lg mb-2 hover:text-primary/80 transition-colors">
-                      {project.title}
-                    </CardTitle>
-                  </Link>
-
-                  <div className="space-y-2 text-sm text-gray-700">
-                    <p>
-                      <span className="font-semibold">Chủ đầu tư:</span>{" "}
-                      {project.owner}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Địa điểm:</span>{" "}
-                      {project.location}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Quy mô:</span>{" "}
-                      {project.size}
-                    </p>
-                    {project.dimensions && (
-                      <p>
-                        <span className="font-semibold">Kích thước:</span>{" "}
-                        {project.dimensions}
-                      </p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+          {projects.map((project, index) => (
+            <ProjectCard key={project.title} project={project} index={index} />
+          ))}
         </div>
 
         {/* Nút xem tất cả */}
@@ -180,7 +197,7 @@ const ProjectShowCaseSection = () => {
             variant="default"
             className="bg-primary text-white hover:bg-primary/90 px-6 py-4 h-auto text-base font-medium"
           >
-            <Link href="/xay-nha/cong-trinh-tieu-bieu">
+            <Link href="/xay-nha/cong-trinh-tieu-bieu" prefetch={true}>
               Xem tất cả công trình
             </Link>
           </Button>
@@ -190,4 +207,4 @@ const ProjectShowCaseSection = () => {
   );
 };
 
-export default ProjectShowCaseSection;
+export default memo(ProjectShowCaseSection);

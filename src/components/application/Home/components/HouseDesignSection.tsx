@@ -2,7 +2,33 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
+import { blogService } from "@/lib/services/blog.service";
+import { BlogPost } from "@/lib/types/modules/blog.interface";
 
+const memoryCache = new Map();
+const CACHE_TTL = 10 * 60 * 1000; // 10 phút
+
+async function cachedFetch(key: string, fetchFn: () => Promise<any>) {
+  const now = Date.now();
+  const cached = memoryCache.get(key);
+
+  if (cached && now - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  try {
+    const data = await fetchFn();
+    memoryCache.set(key, { data, timestamp: now });
+    return data;
+  } catch (error) {
+    console.error(`Error fetching data for key ${key}:`, error);
+    // Nếu có dữ liệu cache cũ, vẫn có thể sử dụng
+    if (cached) {
+      return cached.data;
+    }
+    throw error;
+  }
+}
 // Helper function to shuffle an array (Fisher-Yates algorithm)
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array]; // Create a copy to avoid mutating the original
@@ -13,9 +39,22 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   return newArray;
 };
 
-const HouseDesignSection = () => {
+const handleGetHouseDesigns = async () => {
+  const cacheKey = `house-design-mau-nha-dep`;
+  const fetchedPost = await cachedFetch(cacheKey, () =>
+    blogService.getBlogsByCategory("mau-nha-dep", 1, 10)
+  );
+
+  if (!fetchedPost) return [];
+
+  return fetchedPost.rows.map((post: any) => ({
+    ...post,
+  })) as BlogPost[];
+};
+
+const HouseDesignSection = async () => {
   // Shuffle the houseDesigns array once on component mount
-  const shuffledHouseDesigns = useMemo(() => shuffleArray(houseDesigns), []);
+  const houseDesigns = await handleGetHouseDesigns();
 
   return (
     <section className="py-24 bg-gradient-to-b from-background to-muted">
@@ -35,13 +74,13 @@ const HouseDesignSection = () => {
 
         {/* Pinterest-style masonry layout */}
         <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
-          {shuffledHouseDesigns.map((design, index) => (
+          {houseDesigns.map((design, index) => (
             <div
               key={`${design.title}-${index}`}
               className="break-inside-avoid mb-4"
             >
               <Link
-                href={design.link}
+                href={`/bai-viet/${design.slug}`}
                 className={`group relative block overflow-hidden rounded-xl border border-border/40 hover:border-primary/60 transition-all duration-300 shadow-sm hover:shadow-md ${
                   // Alternate heights for visual interest
                   index % 3 === 0
@@ -52,8 +91,8 @@ const HouseDesignSection = () => {
                 }`}
               >
                 <Image
-                  src={design.image}
-                  alt={design.title}
+                  src={design.featuredImage?.url || ""}
+                  alt={design.featuredImage?.alt || ""}
                   width={400}
                   height={500}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -66,9 +105,11 @@ const HouseDesignSection = () => {
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Badge */}
-                <span className="absolute top-3 right-3 bg-primary/90 text-primary-foreground px-2 py-0.5 rounded-full text-xs backdrop-blur-sm">
-                  {design.type}
-                </span>
+                {design?.categories && design?.categories[0]?.name && (
+                  <span className="absolute top-3 right-3 bg-primary/90 text-primary-foreground px-2 py-0.5 rounded-full text-xs backdrop-blur-sm">
+                    {design?.categories[0]?.name}
+                  </span>
+                )}
 
                 {/* Content - Always visible */}
                 <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -76,7 +117,7 @@ const HouseDesignSection = () => {
                     {design.title}
                   </h3>
                   <p className="text-white/90 text-sm line-clamp-2 drop-shadow-md">
-                    {design.description}
+                    {design?.excerpt ? design?.excerpt.slice(0, 100) : ""}
                   </p>
                 </div>
               </Link>

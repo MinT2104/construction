@@ -11,4 +11,5 @@ export const blogEndpoints = {
   updateFeatured: "/blog/featured/:id",
 
   getBlogFeatured: "/blog/featured",
+  incrementView: "/blog/view/:slug",
 };
