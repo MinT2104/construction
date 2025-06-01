@@ -9,6 +9,7 @@ import {
   useCallback,
 } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+// @ts-ignore
 import { motion, AnimatePresence } from "framer-motion";
 
 interface PageTransitionProviderProps {

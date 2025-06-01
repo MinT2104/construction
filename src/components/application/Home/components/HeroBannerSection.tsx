@@ -1,6 +1,6 @@
 "use client";
-
-import { motion, AnimatePresence } from "framer-motion";
+// @ts-ignore
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
