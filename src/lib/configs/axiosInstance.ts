@@ -35,6 +35,20 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     console.log("error from ", originalRequest.url);
+    console.log("error", error);
+
+    // Check if error is due to expired token (401 Unauthorized)
+    if (error.response && error.response.status === 401) {
+      // Check if the route is an admin route
+      // Remove the expired token
+      Cookies.remove("token");
+
+      // Redirect to admin login page if in browser environment
+      if (typeof window !== "undefined") {
+        window.location.href = "/admin";
+      }
+    }
+
     return Promise.reject(error);
   }
 );

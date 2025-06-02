@@ -3,6 +3,7 @@ import PriceInfoSection from "@/components/application/Home/components/PriceInfo
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import FloatingContact from "@/components/common/FloatingContact";
+import { bannerService } from "@/lib/services/banner.service";
 // Sử dụng dynamic import cho các component không cần thiết ngay lập tức
 const CalculatorSection = dynamic(
   () => import("@/components/application/Home/components/CalculatorSection"),
@@ -37,14 +38,22 @@ const HouseDesignSection = dynamic(
   }
 );
 
-export default function Home() {
+const handleGetBanner = async () => {
+  const res = await bannerService.getAllBanner();
+  return res;
+};
+
+export default async function Home() {
+  const banner = await handleGetBanner();
+  const heroBanner = banner?.heroBanner || [];
+
   return (
     <Suspense fallback={<div></div>}>
       <div>
         {/* Top Banner - Thương hiệu 13 năm */}
 
         {/* Hero Section - Banner giới thiệu with animation */}
-        <HeroBannerSection />
+        <HeroBannerSection heroBanner={heroBanner} />
         <PriceInfoSection />
         {/* Cost Calculator Section - Standalone section with eye-catching design */}
         <CalculatorSection />

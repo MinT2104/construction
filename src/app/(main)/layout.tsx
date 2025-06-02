@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto_Condensed } from "next/font/google";
+import { Roboto } from "next/font/google";
 
 import "./globals.css";
 import Header from "@/components/common/Header";
@@ -9,10 +9,10 @@ import NavigationProgress from "@/components/common/NProgress";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import HomeNavigation from "@/components/common/HomeNavigation";
 // Tối ưu font loading
-const robotoCondensed = Roboto_Condensed({
+const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "700"],
-  variable: "--font-roboto-condensed",
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-roboto",
   display: "swap",
   preload: true,
   fallback: ["system-ui", "sans-serif"],
@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className={`${robotoCondensed.variable} antialiased`}>
+      <body className={`${roboto.variable} antialiased`}>
         <NavigationProgress />
         <PageTransitionProvider>
           <Header />

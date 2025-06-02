@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @import "../../styles/quill.css";
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -48,6 +47,7 @@
     --chart-5: 27 87% 67%;
 
     --radius: 0.5rem;
+    --font-roboto: "Roboto", sans-serif;
   }
 
   .dark {
@@ -91,6 +91,7 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --font-roboto: "Roboto", sans-serif;
   }
 }
 
@@ -101,6 +102,11 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+* {
+  font-family: var(--font-roboto);
+  letter-spacing: 0.05em;
 }
 
 /* Custom Leaflet marker icons */

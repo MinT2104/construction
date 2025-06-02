@@ -3,14 +3,18 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-
-const bannerImages = [
-  { src: "/images/banner.avif", alt: "Thi công xây dựng chuyên nghiệp" },
-  { src: "/images/banner_1.avif", alt: "Kiến trúc nhà ở hiện đại" },
-  { src: "/images/banner_2.avif", alt: "Thiết kế nhà ở đẹp" },
-];
-
-const HeroBannerSection = () => {
+import { Banner, HeroItem } from "@/lib/types/modules/banner.interface";
+const HeroBannerSection = ({
+  heroBanner,
+}: {
+  heroBanner: Banner["heroBanner"];
+}) => {
+  const bannerImages = heroBanner
+    .filter((item: HeroItem) => item.isShow)
+    .map((item: HeroItem) => ({
+      src: item.url,
+      alt: item.name,
+    }));
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Auto-sliding functionality

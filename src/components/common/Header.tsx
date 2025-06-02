@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { MenuItemType, BaseMenuItem } from "@/lib/types/common/menu.interface";
 import menuItems from "@/lib/constants/menu";
 import SearchPopup from "./SearchPopup";
+import { bannerService } from "@/lib/services/banner.service";
 
 const Header = () => {
   const router = useRouter();
@@ -16,6 +17,7 @@ const Header = () => {
   const [hoveredItemPath, setHoveredItemPath] = useState<string | null>(null);
   const [stickyNav, setStickyNav] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [headerBanner, setHeaderBanner] = useState<string | null>(null);
 
   const mainHeaderRef = useRef<HTMLDivElement>(null);
   const stickyNavRef = useRef<HTMLDivElement>(null);
@@ -58,14 +60,14 @@ const Header = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Open search on Ctrl+K or CMD+K
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         setSearchOpen(true);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // Animation variants for the desktop submenu
@@ -86,6 +88,14 @@ const Header = () => {
     },
   };
 
+  const handleGetBanner = async () => {
+    const res = await bannerService.getAllBanner();
+    setHeaderBanner(res?.headerBanner || null);
+  };
+
+  useEffect(() => {
+    handleGetBanner();
+  }, []);
   return (
     <header className="relative z-50">
       {/* Search Popup */}
@@ -127,12 +137,12 @@ const Header = () => {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 className="hidden md:block border-l border-gray-200/50 pl-4 w-full"
               >
-                <p className="font-black text-xl tracking-wide bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                <p className="font-black text-2xl tracking-wide bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   KIẾN TẠO NHÀ ĐẸP
                 </p>
                 <div className="mt-0.5">
-                  <p className="font-bold text-secondary/90 leading-tight text-base">
-                    XÂY NIỀM TIN - DỰNG TƯƠNG LAI
+                  <p className="font-black uppercase text-secondary/90 leading-tight text-xl">
+                    Kiến tạo không gian sống
                   </p>
                 </div>
               </motion.div>
@@ -140,19 +150,16 @@ const Header = () => {
 
             {/* Contact button with modern design */}
             <div className="select-none flex items-center space-x-4 max-w-[750px] w-full h-full relative">
-              <div className="w-40 h-8 bg-[#07693F] absolute bottom-0 right-0 flex items-center justify-center">
-                <span className="text-white font-bold text-xl select-none">
-                  093 6267 359
-                </span>
-              </div>
-              <Image
-                src="https://kientrucvietquang.net/wp-content/uploads/2018/10/bg-header-viet-quang-group.png"
-                alt="Hotline"
-                width={0}
-                height={0}
-                sizes="100%"
-                className="w-full h-full object-cover"
-              />
+              {headerBanner && (
+                <Image
+                  src={headerBanner || ""}
+                  alt="Hotline"
+                  width={0}
+                  height={0}
+                  sizes="100%"
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -357,16 +364,16 @@ const Header = () => {
                   type="text"
                   placeholder="Tìm kiếm..."
                   className="w-full pl-8 pr-3 py-1.5 rounded-full border border-green-200 focus:border-green-500 focus:ring-1 focus:ring-green-200 outline-none transition-all duration-300 text-xs"
-                  onClick={(e) => { 
-                    e.preventDefault(); 
-                    setSearchOpen(true); 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSearchOpen(true);
                   }}
                   readOnly
                 />
-                <div 
-                   className="absolute left-2.5 top-1/2 -translate-y-1/2 text-green-600 cursor-pointer"
-                   onClick={() => setSearchOpen(true)}
-                 >
+                <div
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-green-600 cursor-pointer"
+                  onClick={() => setSearchOpen(true)}
+                >
                   <svg
                     className="w-4 h-4"
                     fill="none"

@@ -63,7 +63,7 @@ export default {
         hover: "0 8px 30px rgba(0, 0, 0, 0.12)",
       },
       fontFamily: {
-        sans: ["Roboto", "sans-serif"],
+        roboto: ["var(--font-roboto)"],
       },
       borderRadius: {
         lg: "var(--radius)",
