@@ -1,86 +1,41 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { Toaster, toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { Loader2, Save, ArrowLeft } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 
 // Import custom components
 import MainContentForm from "./components/MainContentForm";
-import CategoryTagSelector from "./components/CategoryTagSelector";
-import MetadataSettings from "./components/MetadataSettings";
 import ImageSettings from "./components/ImageSettings";
 import SeoSettings from "./components/SeoSettings";
-import { BlogStatus } from "@/lib/enums";
-import { BlogValidation } from "@/lib/enums";
+import { BlogValidation as PromotionValidation } from "@/lib/enums";
 import React from "react";
 import {
   formSchema,
   FormValues,
-  BlogPost,
-  BlogPostUpdate,
-} from "@/lib/types/modules/blog.interface";
-import { blogService } from "@/lib/services/blog.service";
-import menuItems from "@/lib/constants/menu";
+  Promotion,
+  PromotionUpdate,
+} from "@/lib/types/modules/promotion.interface";
+import { promotionService } from "@/lib/services/promotion.service";
+import { slugify } from "@/lib/utils/slugify";
 
-// Định nghĩa interface cho Category
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  isParent: boolean;
-  parentId: string | null;
-  type: "single" | "category" | "house-design" | undefined;
-}
-
-// Generate categories from menu items
-const CATEGORIES: Category[] = menuItems
-  .filter((item) => item.path)
-  .flatMap((item) => {
-    const mainCategory: Category = {
-      id: item.path?.split("/").pop() || "",
-      name: item.label,
-      slug: item.path?.split("/").pop() || "",
-      isParent: true,
-      parentId: null,
-      type: item.type,
-    };
-
-    const subCategories: Category[] = [];
-    // Nếu có submenu và không rỗng, thì thêm cả submenu items
-    if (item.submenu && item.submenu.length > 0) {
-      subCategories.push(
-        ...item.submenu.map((subItem) => ({
-          id: subItem.path?.split("/").pop() || "",
-          name: subItem.label,
-          slug: subItem.path?.split("/").pop() || "",
-          isParent: false,
-          parentId: item.path?.split("/").pop() || "",
-          type: subItem.type,
-        }))
-      );
-    }
-
-    // Nếu không có submenu hoặc submenu rỗng, thêm mainCategory vào list hiển thị
-    return [mainCategory, ...subCategories];
-  });
-
-export default function EditPostView() {
+export default function EditPromotion() {
   const router = useRouter();
-  const params = useParams();
-  const postId = params.id as string;
-
-  const [isLoading, setIsLoading] = useState(true);
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  const [post, setPost] = useState<BlogPost | null>(null);
+  const [promotion, setPromotion] = useState<Promotion | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const promotionId = useParams().id;
 
   // Initialize form with default values
   const form = useForm<FormValues>({
@@ -88,8 +43,6 @@ export default function EditPostView() {
     defaultValues: {
       title: "",
       content: "",
-      status: BlogStatus.DRAFT,
-      publishDate: new Date(),
       isFeatured: false,
       meta: {
         canonicalUrl: "",
@@ -101,8 +54,6 @@ export default function EditPostView() {
       },
       excerpt: "",
       shortDescription: "",
-      categories: [],
-      tags: [],
     },
     mode: "onChange",
   });
@@ -110,109 +61,85 @@ export default function EditPostView() {
   // Watch for values that need special handling
   const { watch, setValue, getValues, reset } = form;
 
+  const title = watch("title");
+
   // Fetch post data when component mounts
   useEffect(() => {
     const fetchPost = async () => {
-      if (!postId) return;
+      if (!promotionId) return;
 
       try {
         setIsLoading(true);
         // Sử dụng API lấy bài viết theo ID thay vì slug
-        const data = await blogService.getPostById(postId);
-        const postData = data.data;
+        const data = await promotionService.getPromotionById(
+          promotionId as string
+        );
+        const promotionData = data.data;
 
-        if (!postData) {
-          toast.error("Không tìm thấy bài viết");
-          router.push("/admin/bai-viet");
+        if (!promotionData) {
+          toast.error("Không tìm thấy khuyến mãi");
+          router.push("/admin/cau-hinh/khuyen-mai");
           return;
         }
 
-        setPost(postData);
+        setPromotion(promotionData);
 
         // Map post data to form values
         const formValues: FormValues = {
-          title: postData.title,
-          content: postData.content,
-          status: postData.status,
-          publishDate: new Date(postData.createdAt),
-          isFeatured: postData.isFeatured,
+          title: promotionData.title,
+          content: promotionData.content,
+          isFeatured: promotionData.isFeatured,
           meta: {
-            canonicalUrl: postData.meta?.canonicalUrl || "",
-            socialPreviewImage: postData.meta?.socialPreviewImage || "",
-            seoTitle: postData.meta?.seoTitle || "",
-            seoDescription: postData.meta?.seoDescription || "",
+            canonicalUrl: promotionData.meta?.canonicalUrl || "",
+            socialPreviewImage: promotionData.meta?.socialPreviewImage || "",
+            seoTitle: promotionData.meta?.seoTitle || "",
+            seoDescription: promotionData.meta?.seoDescription || "",
           },
           featuredImage: {
-            url: postData.featuredImage?.url || "",
-            alt: postData.featuredImage?.alt || "",
+            url: promotionData.featuredImage?.url || "",
+            alt: promotionData.featuredImage?.alt || "",
           },
-          excerpt: postData.excerpt || "",
-          shortDescription: postData.excerpt || "",
-          // Map categories from API response to categories in form
-          categories: postData.categories
-            ? mapCategoriesToFormCategories(postData.categories.slice(0, 1))
-            : [],
-          // Map tags from API response to tags in form
-          tags: postData.tags ? mapTagsToFormTags(postData.tags) : [],
+          excerpt: promotionData.excerpt || "",
+          shortDescription: promotionData.excerpt || "",
         };
 
         // Set content for the rich text editor
-        setContent(postData.content);
+        setContent(promotionData.content);
 
         // Reset form with fetched values
         reset(formValues);
       } catch (error) {
-        console.error("Error fetching post:", error);
-        toast.error("Lỗi khi tải bài viết");
+        console.error("Error fetching promotion:", error);
+        toast.error("Lỗi khi tải khuyến mãi");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchPost();
-  }, [postId, reset, router]);
+  }, [promotionId, reset, router]);
 
-  // Map categories from API response to form format
-  const mapCategoriesToFormCategories = (apiCategories: any[]) => {
-    // Find the corresponding categories in CATEGORIES
-    const formattedCategories = apiCategories.map((apiCategory) => {
-      const matchedCategory = CATEGORIES.find(
-        (cat) => cat.slug === apiCategory.slug
+  useEffect(() => {
+    if (title) {
+      setValue(
+        "meta.canonicalUrl",
+        "https://www.kientaonhadep.vn/khuyen-mai/" + slugify(title)
       );
-      if (matchedCategory) {
-        return {
-          ...matchedCategory,
-          _id: apiCategory._id, // Keep the _id from API for reference
-        };
-      }
-      return {
-        id: apiCategory.slug,
-        name: apiCategory.name,
-        slug: apiCategory.slug,
-        isParent: true, // Assume it's a parent if not found
-        parentId: null,
-        type: "category", // Default type if not found
-        _id: apiCategory._id,
-      };
-    });
-
-    return formattedCategories;
-  };
-
-  // Map tags from API response to form format
-  const mapTagsToFormTags = (apiTags: any[]) => {
-    return apiTags.map((tag) => ({
-      id: tag.slug,
-      name: tag.name,
-      slug: tag.slug,
-      _id: tag._id,
-    }));
-  };
+    }
+  }, [title, setValue]);
 
   // Handle content changes
   const handleContentChange = useCallback((newContent: string) => {
+    console.log("CreatePostView handleContentChange:", {
+      length: newContent.length,
+      textLength: newContent.replace(/<[^>]*>/g, "").length,
+    });
+
     // Update local state
     setContent(newContent);
+
+    // This was previously causing an infinite loop because MainContentForm also calls setValue
+    // Now MainContentForm handles the form update
   }, []);
 
   // Log form errors for debugging
@@ -234,13 +161,19 @@ export default function EditPostView() {
     return () => subscription.unsubscribe();
   }, [form, content, getValues]);
 
+  // Log content changes
+  useEffect(() => {
+    if (content) {
+      console.log("Content updated:", {
+        length: content.length,
+        textLength: content.replace(/<[^>]*>/g, "").length,
+        excerpt: content.replace(/<[^>]*>/g, "").substring(0, 50) + "...",
+      });
+    }
+  }, [content]);
+
   // Handle form submission
   const onSubmit = async (values: FormValues) => {
-    if (!post || !post._id) {
-      toast.error("Không tìm thấy thông tin bài viết để cập nhật");
-      return;
-    }
-
     console.log("Submitting form with values:", values);
 
     // Ensure content is properly set in form values
@@ -253,62 +186,20 @@ export default function EditPostView() {
     console.log("Content text length:", contentTextLength);
 
     // Double check if content is valid
-    if (contentTextLength < BlogValidation.CONTENT.MIN_LENGTH) {
+    if (contentTextLength < PromotionValidation.CONTENT.MIN_LENGTH) {
       toast.error(
-        `Nội dung cần tối thiểu ${BlogValidation.CONTENT.MIN_LENGTH} ký tự (hiện tại: ${contentTextLength})`
+        `Nội dung cần tối thiểu ${PromotionValidation.CONTENT.MIN_LENGTH} ký tự (hiện tại: ${contentTextLength})`
       );
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // Lấy danh mục đã chọn
-      const selectedCategory = values.categories[0] as unknown as any; // Lấy danh mục đầu tiên (và duy nhất)
-
-      if (!selectedCategory) {
-        toast.error("Vui lòng chọn ít nhất một danh mục");
-        setIsSubmitting(false);
-        return;
-      }
-
-      console.log("Danh mục đã chọn từ form:", selectedCategory);
-
-      // Chuẩn bị thông tin thẻ tags
-      const tagsData = values.tags;
-
-      // Chuẩn bị danh sách categories để gửi đi
-      const categoriesToSubmit = [];
-
-      // Thêm danh mục đã chọn
-      categoriesToSubmit.push({
-        name: selectedCategory.name,
-        slug: selectedCategory.slug,
-      });
-
-      // Tìm thông tin parent category nếu có
-      const filteredCategories = CATEGORIES.find(
-        (cat) => cat.slug === selectedCategory.slug
-      );
-
-      const parentCategory = CATEGORIES.find(
-        (cat) => cat.slug === filteredCategories?.parentId
-      );
-
-      if (parentCategory) {
-        categoriesToSubmit.push({
-          name: parentCategory.name,
-          slug: parentCategory.slug,
-        });
-      }
-
       // Chuẩn bị dữ liệu cho API
-      const blogData: BlogPostUpdate = {
-        _id: post._id,
+      const promotionData: PromotionUpdate = {
+        _id: promotionId as string,
         title: values.title,
         content: values.content,
-        categories: categoriesToSubmit,
-        tags: tagsData,
-        status: values.status as "draft" | "published",
         excerpt: values.shortDescription || values.excerpt || "",
         featuredImage: {
           url: values.featuredImage?.url || "",
@@ -324,23 +215,19 @@ export default function EditPostView() {
         isFeatured: values.isFeatured || false,
       };
 
-      console.log("Sending blog data to API:", blogData);
+      console.log("Sending promotion data to API:", promotionData);
 
-      // Gọi API cập nhật bài viết
-      const response = await blogService.updatePost(blogData);
+      // Gọi API tạo bài viết
+      await promotionService.updatePromotion(promotionData);
 
-      if (response) {
-        toast.success("Bài viết đã được cập nhật thành công!");
-        router.push("/admin/bai-viet");
-      } else {
-        throw new Error("Cập nhật bài viết thất bại");
-      }
+      toast.success("Khuyến mãi đã được cập nhật thành công!");
+      router.push("/admin/cau-hinh/khuyen-mai");
     } catch (error: any) {
-      console.error("Error updating blog post:", error);
+      console.error("Error creating promotion:", error);
 
       // Hiển thị thông báo lỗi chi tiết từ API hoặc thông báo mặc định
       const errorMessage =
-        error.message || "Cập nhật bài viết thất bại. Vui lòng thử lại.";
+        error.message || "Tạo khuyến mãi thất bại. Vui lòng thử lại.";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -355,30 +242,11 @@ export default function EditPostView() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-16 flex flex-col items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
-        <p className="text-lg text-gray-600">Đang tải bài viết...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="container mx-auto py-8">
       <FormProvider {...form}>
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center">
-            <Button
-              variant="ghost"
-              className="mr-4"
-              onClick={() => router.back()}
-            >
-              <ArrowLeft className="h-5 w-5 mr-1" />
-              Quay lại
-            </Button>
-            <h1 className="text-3xl font-bold">Chỉnh sửa bài viết</h1>
-          </div>
+          <h1 className="text-3xl font-bold">Tạo bài viết mới</h1>
           <div className="flex items-center gap-2">
             <Button
               size="sm"
@@ -397,11 +265,8 @@ export default function EditPostView() {
               <div className="lg:col-span-2 space-y-6">
                 {!previewMode ? (
                   <Tabs defaultValue="content" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3 mb-6">
+                    <TabsList className="grid w-full grid-cols-2 mb-6">
                       <TabsTrigger value="content">Nội dung</TabsTrigger>
-                      <TabsTrigger value="categories">
-                        Danh mục & Thẻ
-                      </TabsTrigger>
                       <TabsTrigger value="seo">SEO & Meta</TabsTrigger>
                     </TabsList>
 
@@ -411,10 +276,6 @@ export default function EditPostView() {
                         richTextValue={content}
                         onRichTextChange={handleContentChange}
                       />
-                    </TabsContent>
-
-                    <TabsContent value="categories" className="space-y-6">
-                      <CategoryTagSelector form={form} />
                     </TabsContent>
 
                     <TabsContent value="seo" className="space-y-6">
@@ -466,8 +327,6 @@ export default function EditPostView() {
               {/* Sidebar Column */}
               <div className="lg:col-span-1 space-y-6">
                 <div className="lg:sticky lg:top-20">
-                  <MetadataSettings form={form} />
-
                   <div className="mt-6">
                     <ImageSettings form={form} />
                   </div>
@@ -495,7 +354,7 @@ export default function EditPostView() {
                       ) : (
                         <React.Fragment>
                           <Save className="h-4 w-4 mr-1" />
-                          Cập nhật bài viết
+                          Cập nhật
                         </React.Fragment>
                       )}
                     </Button>

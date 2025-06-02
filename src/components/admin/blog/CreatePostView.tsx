@@ -74,8 +74,6 @@ export default function CreateBlogPost() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
 
-  console.log("CATEGORIES", CATEGORIES);
-
   // Initialize form with default values
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -106,11 +104,6 @@ export default function CreateBlogPost() {
 
   // Handle content changes
   const handleContentChange = useCallback((newContent: string) => {
-    console.log("CreatePostView handleContentChange:", {
-      length: newContent.length,
-      textLength: newContent.replace(/<[^>]*>/g, "").length,
-    });
-
     // Update local state
     setContent(newContent);
 
@@ -137,6 +130,17 @@ export default function CreateBlogPost() {
     return () => subscription.unsubscribe();
   }, [form, content, getValues]);
 
+  const title = watch("title");
+
+  useEffect(() => {
+    if (title) {
+      setValue(
+        "meta.canonicalUrl",
+        "https://www.kientaonhadep.vn/bai-viet/" + slugify(title)
+      );
+    }
+  }, [title, setValue]);
+
   // Log content changes
   useEffect(() => {
     if (content) {
@@ -159,7 +163,6 @@ export default function CreateBlogPost() {
     }
 
     const contentTextLength = values.content.replace(/<[^>]*>/g, "").length;
-    console.log("Content text length:", contentTextLength);
 
     // Double check if content is valid
     if (contentTextLength < BlogValidation.CONTENT.MIN_LENGTH) {
@@ -179,8 +182,6 @@ export default function CreateBlogPost() {
         setIsSubmitting(false);
         return;
       }
-
-      console.log("Danh mục đã chọn từ form:", selectedCategory);
 
       // Chuẩn bị thông tin thẻ tags
       const tagsData = values.tags;
@@ -231,8 +232,6 @@ export default function CreateBlogPost() {
         isFeatured: values.isFeatured || false,
         publishDate: values.publishDate || new Date(),
       };
-
-      console.log("Sending blog data to API:", blogData);
 
       // Gọi API tạo bài viết
       await blogService.createPost(blogData);

@@ -19,7 +19,6 @@ export async function fetchPostBySlug(slug: string) {
 }
 
 export async function fetchPostsByCategory(categorySlug: string) {
-  console.log("categorySlug", categorySlug);
   return [
     {
       id: "post-001",

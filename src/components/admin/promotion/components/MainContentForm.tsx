@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { slugify } from "@/lib/utils/slugify";
 import EnhancedRichTextEditor from "./EnhancedRichTextEditor";
-import { BlogValidation } from "@/lib/enums";
+import { BlogValidation as PromotionValidation } from "@/lib/enums";
 
 interface MainContentFormProps {
   form: UseFormReturn<any>; // Adjust 'any' to your specific Zod schema type if possible
@@ -93,14 +93,14 @@ export default function MainContentForm({
                 <span>Số ký tự: {titleCharCount}</span>
                 <span
                   className={
-                    titleCharCount < BlogValidation.TITLE.MIN_LENGTH ||
-                    titleCharCount > BlogValidation.TITLE.MAX_LENGTH
+                    titleCharCount < PromotionValidation.TITLE.MIN_LENGTH ||
+                    titleCharCount > PromotionValidation.TITLE.MAX_LENGTH
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Yêu cầu: {BlogValidation.TITLE.MIN_LENGTH} -{" "}
-                  {BlogValidation.TITLE.MAX_LENGTH} ký tự
+                  Yêu cầu: {PromotionValidation.TITLE.MIN_LENGTH} -{" "}
+                  {PromotionValidation.TITLE.MAX_LENGTH} ký tự
                 </span>
               </div>
               <FormMessage />
@@ -128,14 +128,15 @@ export default function MainContentForm({
                 <span>Số ký tự: {shortDescCharCount}</span>
                 <span
                   className={
-                    shortDescCharCount < BlogValidation.EXCERPT.MIN_LENGTH ||
-                    shortDescCharCount > BlogValidation.EXCERPT.MAX_LENGTH
+                    shortDescCharCount <
+                      PromotionValidation.EXCERPT.MIN_LENGTH ||
+                    shortDescCharCount > PromotionValidation.EXCERPT.MAX_LENGTH
                       ? "text-red-500"
                       : ""
                   }
                 >
-                  Yêu cầu: {BlogValidation.EXCERPT.MIN_LENGTH} -{" "}
-                  {BlogValidation.EXCERPT.MAX_LENGTH} ký tự
+                  Yêu cầu: {PromotionValidation.EXCERPT.MIN_LENGTH} -{" "}
+                  {PromotionValidation.EXCERPT.MAX_LENGTH} ký tự
                 </span>
               </div>
               <FormMessage />
@@ -157,7 +158,7 @@ export default function MainContentForm({
                     value={richTextValue}
                     onChange={handleRichTextChange}
                     height="500px"
-                    minLength={BlogValidation.CONTENT.MIN_LENGTH}
+                    minLength={PromotionValidation.CONTENT.MIN_LENGTH}
                   />
                 </div>
               </FormControl>

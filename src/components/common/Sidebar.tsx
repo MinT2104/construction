@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FeaturedVideo from "../application/Page/components/FeaturedVideo";
 import SidePost from "../application/Page/components/SidePost";
+import HotPromotion from "../application/Page/components/HotPromotion";
 // Server component for formatting numbers
 function formatViewCount(count: number): string {
   return new Intl.NumberFormat("vi-VN").format(count);
@@ -14,62 +15,7 @@ function Sidebar() {
   return (
     <div className="space-y-6">
       {/* Khuyến mãi */}
-      <div className="bg-white rounded-2xl p-5 border border-border shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 mr-2 text-red-500"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"
-            />
-          </svg>
-          <span className="bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
-            Khuyến mãi hot
-          </span>
-        </h3>
-        <Link href="#" className="block group">
-          <div className="relative rounded-xl overflow-hidden">
-            <img
-              src="https://placehold.co/600x300"
-              alt="Khuyến mãi"
-              className="w-full h-36 object-cover transform group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-4">
-              <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                <p className="text-white text-base font-medium">
-                  Giảm 20% chi phí thiết kế
-                </p>
-                <p className="text-white/80 text-sm mt-1 flex items-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 mr-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                  Đến hết 30/04/2024
-                </p>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </div>
-
+      <HotPromotion />
       {/* Tiện ích */}
       <div className="bg-white rounded-2xl p-5 border border-border shadow-sm hover:shadow-lg transition-all duration-300">
         <h3 className="text-base font-semibold mb-4 text-gray-800 flex items-center">

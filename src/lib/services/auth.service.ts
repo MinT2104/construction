@@ -25,7 +25,6 @@ class AuthService {
         username,
         password,
       });
-      console.log("response", response);
       return response.data;
     } catch (error: any) {
       console.error("Error logging in:", error);

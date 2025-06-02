@@ -43,7 +43,6 @@ const LoginPageView: FC = () => {
       const data = await login(formData.username, formData.password);
       if (data.success) {
         const from = searchParams.get("from") || "/admin/bai-viet";
-        console.log("from", from);
         router.push(from);
       } else {
         setError("Tên đăng nhập hoặc mật khẩu không đúng");

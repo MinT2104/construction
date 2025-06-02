@@ -14,72 +14,67 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
+import {
+  PaginatedResponse,
+  promotionService,
+} from "@/lib/services/promotion.service";
+import { Promotion } from "@/lib/types/modules/promotion.interface";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const AdminPromotionPage = () => {
   const router = useRouter();
 
-  // Mock data for promotions
-  const mockPromotions = [
-    {
-      _id: "1",
-      title: "Giảm giá 10% cho dịch vụ thiết kế",
-      description:
-        "Áp dụng cho tất cả các dịch vụ thiết kế từ nay đến cuối tháng",
-      code: "DESIGN10",
-      discountPercent: 10,
-      status: "published",
-      isFeatured: true,
-      startDate: new Date(2023, 5, 1),
-      endDate: new Date(2023, 6, 30),
-      createdAt: new Date(2023, 4, 15),
-      updatedAt: new Date(2023, 4, 15),
-    },
-    {
-      _id: "2",
-      title: "Giảm 5% phí thi công",
-      description: "Dành cho khách hàng đăng ký thi công trước ngày 15/8",
-      code: "BUILD5",
-      discountPercent: 5,
-      status: "published",
-      isFeatured: false,
-      startDate: new Date(2023, 7, 1),
-      endDate: new Date(2023, 7, 15),
-      createdAt: new Date(2023, 6, 20),
-      updatedAt: new Date(2023, 6, 25),
-    },
-    {
-      _id: "3",
-      title: "Tặng gói tư vấn miễn phí",
-      description: "Khi đăng ký dịch vụ xây dựng trọn gói",
-      code: "CONSULT",
-      discountPercent: 100,
-      status: "draft",
-      isFeatured: false,
-      startDate: new Date(2023, 8, 1),
-      endDate: new Date(2023, 9, 30),
-      createdAt: new Date(2023, 7, 10),
-      updatedAt: new Date(2023, 7, 10),
-    },
-  ];
-
   // State for data management
-  const [promotions, setPromotions] = useState(mockPromotions);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [updatingStatusId, setUpdatingStatusId] = useState<string | null>(null);
   const [updatingFeaturedId, setUpdatingFeaturedId] = useState<string | null>(
     null
   );
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [totalItems, setTotalItems] = useState(mockPromotions.length);
-  const [totalPages, setTotalPages] = useState(
-    Math.ceil(mockPromotions.length / pageSize)
-  );
+  const [pageSize] = useState(5);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const loadPromotions = async () => {
+    setIsLoading(true);
+    try {
+      const response: PaginatedResponse<Promotion> =
+        await promotionService.getPromotionsWithPagination(
+          currentPage,
+          pageSize
+        );
+      setPromotions(response.rows);
+      setTotalItems(response.total);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("Error loading promotions:", error);
+      toast.error("Lỗi khi tải danh sách khuyến mãi");
+      setPromotions([]);
+      setTotalItems(0);
+      setTotalPages(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages || page === currentPage) return;
+    setCurrentPage(page);
+  };
 
   // Handle delete promotion
   const handleDeletePromotion = (id: string) => {
@@ -90,17 +85,12 @@ const AdminPromotionPage = () => {
   const confirmDelete = async (deleteId: string) => {
     setIsDeleting(true);
     try {
-      // Mock delete operation
-      setTimeout(() => {
-        const filteredPromotions = promotions.filter(
-          (promo) => promo._id !== deleteId
-        );
-        setPromotions(filteredPromotions);
-        toast.success("Khuyến mãi đã được xóa thành công!");
-        setIsDeleting(false);
-        setShowDeleteDialog(false);
-        setDeleteId(null);
-      }, 500);
+      await promotionService.deletePromotion(deleteId);
+      toast.success("Khuyến mãi đã được xóa thành công!");
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      setDeleteId(null);
+      loadPromotions();
     } catch (error: any) {
       console.error("Error deleting promotion:", error);
       toast.error(
@@ -117,51 +107,107 @@ const AdminPromotionPage = () => {
     setDeleteId(null);
   };
 
-  // Toggle promotion status
-  const handleToggleStatus = (promotion: any) => {
-    setUpdatingStatusId(promotion._id);
-
-    // Mock API call
-    setTimeout(() => {
-      const updatedPromotions = promotions.map((p) => {
-        if (p._id === promotion._id) {
-          const newStatus = p.status === "published" ? "draft" : "published";
-          return { ...p, status: newStatus };
-        }
-        return p;
-      });
-
-      setPromotions(updatedPromotions);
-      toast.success(
-        `Khuyến mãi đã được ${
-          promotion.status === "published" ? "chuyển về bản nháp" : "xuất bản"
-        }`
-      );
-      setUpdatingStatusId(null);
-    }, 500);
-  };
-
   // Toggle featured status
-  const handleToggleFeatured = (promotion: any) => {
-    setUpdatingFeaturedId(promotion._id);
-
-    // Mock API call
-    setTimeout(() => {
-      const updatedPromotions = promotions.map((p) => {
-        if (p._id === promotion._id) {
-          return { ...p, isFeatured: !p.isFeatured };
-        }
-        return p;
-      });
-
-      setPromotions(updatedPromotions);
+  const handleToggleFeatured = async (promotion: Promotion) => {
+    try {
+      setUpdatingFeaturedId(promotion._id);
+      await promotionService.updateFeatured(
+        promotion._id,
+        !promotion.isFeatured
+      );
       toast.success(
         `Khuyến mãi đã được ${
           promotion.isFeatured ? "bỏ nổi bật" : "đặt làm nổi bật"
         }`
       );
+      loadPromotions();
+    } catch (error) {
+      console.error("Error updating featured promotion:", error);
+      toast.error("Lỗi khi cập nhật trạng thái nổi bật");
+    } finally {
       setUpdatingFeaturedId(null);
-    }, 500);
+    }
+  };
+
+  useEffect(() => {
+    loadPromotions();
+  }, [currentPage, pageSize]);
+
+  // Generate pagination items
+  const renderPaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+
+    // Always show first page
+    items.push(
+      <PaginationItem key="first">
+        <PaginationLink
+          onClick={() => handlePageChange(1)}
+          isActive={currentPage === 1}
+          style={{ cursor: "pointer" }}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    // Calculate range of pages to show
+    let startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 2);
+
+    if (endPage - startPage < maxVisiblePages - 2) {
+      startPage = Math.max(2, endPage - (maxVisiblePages - 2));
+    }
+
+    // Show ellipsis if needed before middle pages
+    if (startPage > 2) {
+      items.push(
+        <PaginationItem key="ellipsis-start">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Show middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            onClick={() => handlePageChange(i)}
+            isActive={currentPage === i}
+            style={{ cursor: "pointer" }}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    // Show ellipsis if needed after middle pages
+    if (endPage < totalPages - 1) {
+      items.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Always show last page if there is more than one page
+    if (totalPages > 1) {
+      items.push(
+        <PaginationItem key="last">
+          <PaginationLink
+            onClick={() => handlePageChange(totalPages)}
+            isActive={currentPage === totalPages}
+            style={{ cursor: "pointer" }}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return items;
   };
 
   return (
@@ -178,7 +224,9 @@ const AdminPromotionPage = () => {
             Danh sách khuyến mãi
           </h2>
           <button
-            onClick={() => router.push("/admin/cau-hinh/khuyen-mai/tao-moi")}
+            onClick={() =>
+              router.push("/admin/cau-hinh/khuyen-mai/tao-khuyen-mai")
+            }
             className="bg-indigo-600 text-white px-4 py-2.5 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transition duration-150 ease-in-out flex items-center shadow-sm border border-indigo-700"
           >
             <svg
@@ -299,18 +347,6 @@ const AdminPromotionPage = () => {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
                   >
-                    Ngày bắt đầu
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                  >
-                    Ngày kết thúc
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"
-                  >
                     Thao tác
                   </th>
                 </tr>
@@ -372,12 +408,6 @@ const AdminPromotionPage = () => {
                           </div>
                         )}
                       </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {promotion.startDate.toLocaleDateString("vi-VN")}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                      {promotion.endDate.toLocaleDateString("vi-VN")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
@@ -454,6 +484,44 @@ const AdminPromotionPage = () => {
             </table>
           )}
         </div>
+
+        {/* Pagination */}
+        {!isLoading && promotions.length > 0 && totalPages > 1 && (
+          <div className="py-4 border-t border-gray-200">
+            <Pagination className="py-2">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    style={{
+                      cursor: currentPage > 1 ? "pointer" : "not-allowed",
+                      opacity: currentPage > 1 ? 1 : 0.5,
+                    }}
+                  />
+                </PaginationItem>
+
+                {renderPaginationItems()}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    style={{
+                      cursor:
+                        currentPage < totalPages ? "pointer" : "not-allowed",
+                      opacity: currentPage < totalPages ? 1 : 0.5,
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+
+            <div className="text-center text-sm text-gray-600 mt-2">
+              Hiển thị {Math.min((currentPage - 1) * pageSize + 1, totalItems)}{" "}
+              - {Math.min(currentPage * pageSize, totalItems)} của {totalItems}{" "}
+              khuyến mãi
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Delete Confirmation Dialog */}

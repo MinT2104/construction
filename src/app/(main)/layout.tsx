@@ -6,7 +6,8 @@ import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
 import PageTransitionProvider from "@/components/common/PageTransition";
 import NavigationProgress from "@/components/common/NProgress";
-
+import ScrollToTop from "@/components/common/ScrollToTop";
+import HomeNavigation from "@/components/common/HomeNavigation";
 // Tối ưu font loading
 const robotoCondensed = Roboto_Condensed({
   subsets: ["latin", "vietnamese"],
@@ -37,6 +38,8 @@ export default function RootLayout({
           <main className="min-h-[60vh]">{children}</main>
           <Footer />
         </PageTransitionProvider>
+        <ScrollToTop />
+        <HomeNavigation />
       </body>
     </html>
   );

@@ -4,10 +4,6 @@ import { BlogPost } from "@/lib/types/modules/blog.interface";
 import Link from "next/link";
 import React from "react";
 
-function formatViewCount(count: number): string {
-  return new Intl.NumberFormat("vi-VN").format(count);
-}
-
 const handleGetNewPosts = async () => {
   try {
     const query = {

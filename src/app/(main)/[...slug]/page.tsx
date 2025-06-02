@@ -30,6 +30,7 @@ import {
 } from "@/lib/utils/seo-utils";
 import { Metadata, ResolvingMetadata } from "next";
 import TAGS from "@/lib/constants/tags";
+import { promotionService } from "@/lib/services/promotion.service";
 
 // Sử dụng kiểu tham số chính xác cho Next.js 14
 type Props = {
@@ -185,6 +186,11 @@ async function Page({
     notFound();
   }
 
+  // Handle promotion
+  if (slugParams.includes("khuyen-mai")) {
+    return await renderPromotionPage(slugParams);
+  }
+
   // Handle blog posts
   if (slugParams.includes("bai-viet")) {
     return await renderBlogPost(slug, slugParams);
@@ -213,7 +219,6 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
   // Tăng lượt xem cho bài viết
   try {
     await blogService.incrementView(slug);
-    console.log(`Incremented view count for post: ${slug}`);
   } catch (error) {
     console.error(`Failed to increment view for post ${slug}:`, error);
   }
@@ -225,16 +230,41 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
 
   const menuItemData = [
     {
-      label: post.categories?.[1]?.name || "",
-      path: `/${post.categories?.[1]?.slug}`,
-    },
-    {
       label: post.categories?.[0]?.name || "",
       path: `/bai-viet/${post.categories?.[0]?.slug}`,
     },
     {
       label: post.title || "",
       path: `/bai-viet/${post.slug}`,
+    },
+  ];
+
+  return (
+    <PageLayout
+      slug={slugParams}
+      menuItems={menuItemData}
+      parentMenuItem={categoryInfo}
+    >
+      <SinglePostView post={post} />
+    </PageLayout>
+  );
+}
+
+async function renderPromotionPage(slugParams: string[]) {
+  const cacheKey = `promotion-${slugParams[1]}`;
+  const fetchedPost = await cachedFetch(cacheKey, () =>
+    promotionService.getPromotionBySlug(slugParams[1])
+  );
+
+  if (!fetchedPost) return notFound();
+
+  const post = { ...fetchedPost } as BlogPost;
+  const categoryInfo = { isUseSidebar: true };
+
+  const menuItemData = [
+    {
+      label: post.title || "",
+      path: `/khuyen-mai/${post.slug}`,
     },
   ];
 
@@ -311,7 +341,6 @@ async function renderTagPage(
   const fetchedPosts = await cachedFetch(cacheKey, () =>
     blogService.getBlogsByTag(tag, page, pageSize)
   );
-  console.log("fetchedPosts", fetchedPosts);
 
   if (!fetchedPosts) return notFound();
 
@@ -383,6 +412,13 @@ async function renderRegularPage(
 
     if (!fetchedPost) return notFound();
 
+    menuItemData = [
+      {
+        label: currentItem.label,
+        path: currentItem.path,
+      },
+    ];
+
     const post = fetchedPost.rows[0] as BlogPost;
     pageContent = <SinglePostView post={post || null} />;
     // end single
@@ -403,6 +439,13 @@ async function renderRegularPage(
     const posts = fetchedPosts.rows.map((post: any) => ({
       ...post,
     })) as BlogPost[];
+
+    menuItemData = [
+      {
+        label: currentItem.label,
+        path: currentItem.path,
+      },
+    ];
 
     pageContent = (
       <CategoryView
@@ -434,6 +477,14 @@ async function renderRegularPage(
     const posts = fetchedPost.rows.map((post: any) => ({
       ...post,
     })) as BlogPost[];
+
+    menuItemData = [
+      {
+        label: currentItem.label,
+        path: currentItem.path,
+      },
+    ];
+
     pageContent = <HouseDesignView currentItem={posts} />;
     // end house design
   } else {

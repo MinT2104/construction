@@ -26,7 +26,6 @@ export const useAuthStore = create<AuthState>()(
         try {
           set({ loading: true });
           const response = await authService.login(username, password);
-          console.log("response ne", response);
           if (response.success) {
             // Set the token in the cookie
             Cookies.set("token", response.data.token, {

@@ -63,8 +63,6 @@ const CATEGORIES: Category[] = menuItems
     return [mainCategory];
   });
 
-console.log("Tất cả các danh mục:", CATEGORIES);
-
 interface CategoryTagSelectorProps {
   form: UseFormReturn<any>;
 }
@@ -107,10 +105,6 @@ export default function CategoryTagSelector({
       ? CATEGORIES.find((cat: Category) => cat.id === category.parentId)
       : null;
 
-    // In thông tin để debug
-    console.log("Đã chọn danh mục:", category);
-    console.log("Danh mục cha tương ứng:", parentCategory);
-
     // Cập nhật form - Lưu đầy đủ thông tin bao gồm danh mục và danh mục cha nếu có
     if (!category.isParent && parentCategory) {
       // Nếu là danh mục con và tìm thấy danh mục cha
@@ -119,11 +113,9 @@ export default function CategoryTagSelector({
         parent: parentCategory,
       };
 
-      console.log("Đã thêm danh mục với thông tin đầy đủ:", selectedCategory);
       form.setValue("categories", [selectedCategory]);
     } else {
       // Nếu là danh mục cha hoặc không tìm thấy danh mục cha
-      console.log("Đã thêm danh mục không có parent:", category);
       form.setValue("categories", [category]);
     }
   };

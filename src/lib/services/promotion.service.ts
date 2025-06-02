@@ -26,19 +26,19 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-class BlogService {
-  private static instance: BlogService;
+class PromotionService {
+  private static instance: PromotionService;
   private cache: Map<string, CacheItem<any>>;
 
   private constructor() {
     this.cache = new Map();
   }
 
-  public static getInstance(): BlogService {
-    if (!BlogService.instance) {
-      BlogService.instance = new BlogService();
+  public static getInstance(): PromotionService {
+    if (!PromotionService.instance) {
+      PromotionService.instance = new PromotionService();
     }
-    return BlogService.instance;
+    return PromotionService.instance;
   }
 
   // Kiểm tra cache và thực hiện fetch dữ liệu nếu cần
@@ -107,97 +107,34 @@ class BlogService {
     }
   }
 
-  async getAllBlog(query?: any): Promise<PaginatedResponse<Promotion[]>> {
-    const cacheKey = `all-promotions-${JSON.stringify(query || {})}`;
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const response: any = await axiosInstance.get(
-            promotionEndpoints.getAllPromotion,
-            {
-              params: query || {},
-            }
-          );
-          return response.data.data;
-        } catch (error) {
-          console.error("Error fetching all blog posts:", error);
-          return {
-            rows: [],
-            total: 0,
-            page: query?.page || 1,
-            pageSize: query?.limit || 10,
-            totalPages: 0,
-          };
-        }
-      },
-      { staleWhileRevalidate: true }
-    );
-  }
-
-  async getPosts(categoryPath?: string): Promise<Promotion[]> {
-    const cacheKey = `posts-${categoryPath || "all"}`;
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const response = await axiosInstance.get(
-            promotionEndpoints.getAllPromotion,
-            {
-              params: categoryPath ? { categoryPath } : undefined,
-            }
-          );
-          return response.data;
-        } catch (error) {
-          console.error("Error fetching promotion posts:", error);
-          throw error;
-        }
-      },
-      { staleWhileRevalidate: true }
-    );
-  }
-
   async getPromotionsWithPagination(
     page: number = 1,
-    limit: number = 10,
-    categoryPath?: string
+    limit: number = 10
   ): Promise<PaginatedResponse<Promotion>> {
-    const cacheKey = `paginated-promotions-${
-      categoryPath || "all"
-    }-${page}-${limit}`;
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const response = await axiosInstance.get(
-            promotionEndpoints.getAllPromotion,
-            {
-              params: {
-                page,
-                limit,
-                categoryPath,
-              },
-            }
-          );
-          return (
-            response.data.data || {
-              rows: [],
-              total: 0,
-              page,
-              pageSize: limit,
-              totalPages: 0,
-            }
-          );
-        } catch (error) {
-          console.error("Error fetching paginated blog posts:", error);
-          return { rows: [], total: 0, page, pageSize: limit, totalPages: 0 };
+    try {
+      const response = await axiosInstance.get(
+        promotionEndpoints.getAllPromotion,
+        {
+          params: {
+            page,
+            limit,
+          },
         }
-      },
-      { staleWhileRevalidate: true }
-    );
+      );
+      return (
+        response.data.data ||
+        ({
+          rows: [],
+          total: 0,
+          page,
+          pageSize: limit,
+          totalPages: 0,
+        } as PaginatedResponse<Promotion[]>)
+      );
+    } catch (error) {
+      console.error("Error fetching paginated blog posts:", error);
+      return { rows: [], total: 0, page, pageSize: limit, totalPages: 0 };
+    }
   }
 
   async getPromotionBySlug(slug: string): Promise<Promotion | null> {
@@ -220,9 +157,8 @@ class BlogService {
     );
   }
 
-  async createPost(post: FormValues): Promise<Promotion> {
+  async createPromotion(post: FormValues): Promise<Promotion> {
     try {
-      console.log("Sending to API:", post);
       const response = await axiosInstance.post(
         promotionEndpoints.createPromotion,
         post
@@ -233,13 +169,13 @@ class BlogService {
 
       return response.data;
     } catch (error: any) {
-      console.error("Error creating blog post:", error);
+      console.error("Error creating promotion:", error);
 
       // Thông báo lỗi chi tiết hơn
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        "Tạo bài viết thất bại";
+        "Tạo khuyến mãi thất bại";
       throw new Error(errorMessage);
     }
   }
@@ -291,35 +227,35 @@ class BlogService {
   async updateFeatured(id: string, featured: Boolean) {
     try {
       const response = await axiosInstance.patch(
-        blogEndpoints.updateFeatured.replace(":id", id),
+        promotionEndpoints.updateFeatured.replace(":id", id),
         { featured }
       );
 
       // Xóa cache khi cập nhật trạng thái featured
-      this.invalidateCache(`post-id-${id}`);
-      this.invalidateCache("blogs-category");
-      this.invalidateCache("all-blogs");
+      this.invalidateCache(`promotion-id-${id}`);
+      this.invalidateCache("promotions-category");
+      this.invalidateCache("all-promotions");
 
       return response.data;
     } catch (error) {
-      console.error(`Error updating featured blog post with id ${id}:`, error);
+      console.error(`Error updating featured promotion with id ${id}:`, error);
       return null;
     }
   }
 
-  async getBlogFeatured(): Promise<any> {
-    const cacheKey = "blog-featured";
+  async getPromotionFeatured(): Promise<any> {
+    const cacheKey = "promotion-featured";
 
     return this.getWithCache(
       cacheKey,
       async () => {
         try {
           const response = await axiosInstance.get(
-            blogEndpoints.getBlogFeatured
+            promotionEndpoints.getPromotionFeatured
           );
           return response.data;
         } catch (error) {
-          console.error("Error fetching featured blog posts:", error);
+          console.error("Error fetching featured promotion posts:", error);
           return null;
         }
       },
@@ -327,41 +263,27 @@ class BlogService {
     );
   }
 
-  async deletePost(id: string): Promise<boolean> {
+  async deletePromotion(id: string): Promise<boolean> {
     try {
-      console.log(`Sending delete request for blog post with id: ${id}`);
-      await axiosInstance.delete(blogEndpoints.deleteBlog.replace(":id", id));
+      await axiosInstance.delete(
+        promotionEndpoints.deletePromotion.replace(":id", id)
+      );
 
       // Xóa cache khi xóa bài viết
       this.invalidateCache();
 
       return true;
     } catch (error: any) {
-      console.error(`Error deleting blog post with id ${id}:`, error);
+      console.error(`Error deleting promotion with id ${id}:`, error);
 
       // Thông báo lỗi chi tiết hơn
       const errorMessage =
         error.response?.data?.message ||
         error.message ||
-        "Xóa bài viết thất bại";
+        "Xóa khuyến mãi thất bại";
       throw new Error(errorMessage);
-    }
-  }
-
-  async incrementView(slug: string) {
-    try {
-      const response = await axiosInstance.patch(
-        blogEndpoints.incrementView.replace(":slug", slug)
-      );
-      return response.data;
-    } catch (error) {
-      console.error(
-        `Error incrementing view for blog post with slug ${slug}:`,
-        error
-      );
-      return null;
     }
   }
 }
 
-export const blogService = BlogService.getInstance();
+export const promotionService = PromotionService.getInstance();

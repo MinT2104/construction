@@ -160,37 +160,27 @@ class BlogService {
     limit: number = 10,
     categoryPath?: string
   ): Promise<PaginatedResponse<BlogPost>> {
-    const cacheKey = `paginated-posts-${
-      categoryPath || "all"
-    }-${page}-${limit}`;
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const response = await axiosInstance.get(blogEndpoints.getAllBlog, {
-            params: {
-              page,
-              limit,
-              categoryPath,
-            },
-          });
-          return (
-            response.data.data || {
-              rows: [],
-              total: 0,
-              page,
-              pageSize: limit,
-              totalPages: 0,
-            }
-          );
-        } catch (error) {
-          console.error("Error fetching paginated blog posts:", error);
-          return { rows: [], total: 0, page, pageSize: limit, totalPages: 0 };
+    try {
+      const response = await axiosInstance.get(blogEndpoints.getAllBlog, {
+        params: {
+          page,
+          limit,
+          categoryPath,
+        },
+      });
+      return (
+        response.data.data || {
+          rows: [],
+          total: 0,
+          page,
+          pageSize: limit,
+          totalPages: 0,
         }
-      },
-      { staleWhileRevalidate: true }
-    );
+      );
+    } catch (error) {
+      console.error("Error fetching paginated blog posts:", error);
+      return { rows: [], total: 0, page, pageSize: limit, totalPages: 0 };
+    }
   }
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -282,7 +272,6 @@ class BlogService {
 
   async createPost(post: FormValues): Promise<BlogPost> {
     try {
-      console.log("Sending to API:", post);
       const response = await axiosInstance.post(blogEndpoints.createBlog, post);
 
       // Xóa cache khi tạo bài viết mới
@@ -386,7 +375,6 @@ class BlogService {
 
   async deletePost(id: string): Promise<boolean> {
     try {
-      console.log(`Sending delete request for blog post with id: ${id}`);
       await axiosInstance.delete(blogEndpoints.deleteBlog.replace(":id", id));
 
       // Xóa cache khi xóa bài viết

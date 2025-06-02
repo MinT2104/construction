@@ -48,8 +48,6 @@ async function ServiceSection() {
 
   const featuredPostsData = featuredPosts.data as BlogPost;
 
-  console.log("featuredPostsData", featuredPostsData);
-
   return (
     <section className="py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
@@ -107,7 +105,7 @@ async function ServiceSection() {
                 <Link
                   key={video.id}
                   href={`/videos/${video.id}`}
-                  className="relative group rounded-lg overflow-hidden shadow-md border border-border/40 bg-card hover:shadow-lg transition-all duration-300 flex flex-col"
+                  className="relative group rounded-lg overflow-hidden shadow-sm border border-border/40 bg-card hover:shadow-lg transition-all duration-300 flex flex-col"
                 >
                   <div className="relative aspect-video w-full overflow-hidden">
                     <Image

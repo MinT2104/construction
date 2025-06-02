@@ -67,7 +67,7 @@ const PostHeader: React.FC<PostHeaderProps> = ({ post }) => {
       </div>
 
       {/* Interaction buttons */}
-      <SharePost post={post} />
+      <SharePost />
 
       {/* Featured image */}
       <div className="relative w-full h-64 md:h-96 lg:h-[500px] mb-12 rounded-lg overflow-hidden">

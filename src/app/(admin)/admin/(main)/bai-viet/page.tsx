@@ -23,6 +23,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const AdminBlogPage = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -47,9 +56,86 @@ const AdminBlogPage = () => {
   );
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+
+  // Generate pagination items
+  const renderPaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+
+    // Always show first page
+    items.push(
+      <PaginationItem key="first">
+        <PaginationLink
+          onClick={() => handlePageChange(1)}
+          isActive={currentPage === 1}
+          style={{ cursor: "pointer" }}
+        >
+          1
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    // Calculate range of pages to show
+    let startPage = Math.max(2, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 2);
+
+    if (endPage - startPage < maxVisiblePages - 2) {
+      startPage = Math.max(2, endPage - (maxVisiblePages - 2));
+    }
+
+    // Show ellipsis if needed before middle pages
+    if (startPage > 2) {
+      items.push(
+        <PaginationItem key="ellipsis-start">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Show middle pages
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            onClick={() => handlePageChange(i)}
+            isActive={currentPage === i}
+            style={{ cursor: "pointer" }}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    // Show ellipsis if needed after middle pages
+    if (endPage < totalPages - 1) {
+      items.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Always show last page if there is more than one page
+    if (totalPages > 1) {
+      items.push(
+        <PaginationItem key="last">
+          <PaginationLink
+            onClick={() => handlePageChange(totalPages)}
+            isActive={currentPage === totalPages}
+            style={{ cursor: "pointer" }}
+          >
+            {totalPages}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+
+    return items;
+  };
 
   useEffect(() => {
     if (selectedCategory) {
@@ -122,35 +208,6 @@ const AdminBlogPage = () => {
     }
   };
 
-  const handleUpdatePost = async (postData: FormValues) => {
-    if (!selectedPost) return;
-
-    try {
-      // Chuẩn bị dữ liệu để cập nhật
-      const { status, featuredImage, ...restData } = postData;
-
-      // Đảm bảo alt luôn có giá trị
-      const processedFeaturedImage = featuredImage
-        ? {
-            url: featuredImage.url,
-            alt: featuredImage.alt || "",
-          }
-        : undefined;
-
-      const updateData: BlogPostUpdate = {
-        _id: selectedPost._id,
-        status: status === "archived" ? "draft" : status,
-        featuredImage: processedFeaturedImage,
-        ...restData,
-      };
-
-      await blogService.updatePost(updateData);
-      loadPosts();
-    } catch (error) {
-      console.error("Error updating post:", error);
-    }
-  };
-
   const handleDeletePost = async (id: string) => {
     setDeleteId(id);
     setShowDeleteDialog(true);
@@ -202,288 +259,6 @@ const AdminBlogPage = () => {
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setCurrentPage(1); // Reset to first page when changing page size
-  };
-
-  // Add this pagination component
-  const Pagination = () => {
-    const pageNumbers = [];
-    const maxVisiblePages = 5;
-
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageNumbers.push(i);
-    }
-
-    return (
-      <div className="px-4 py-5 sm:px-6 mt-4 bg-white border-t border-gray-200 rounded-b-xl">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          {/* Page size selector - moved to top on mobile, left on desktop */}
-          <div className="flex items-center order-2 sm:order-1">
-            <span className="text-sm text-gray-700 mr-2">Hiển thị:</span>
-            <select
-              id="pageSize"
-              value={pageSize}
-              onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-              className="rounded-md border-gray-300 py-1.5 px-3 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-white"
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-            <span className="ml-3 text-sm text-gray-700 hidden sm:inline">
-              mục / trang
-            </span>
-          </div>
-
-          {/* Results summary */}
-          <div className="order-1 sm:order-2 text-center">
-            <p className="text-sm text-gray-700">
-              Hiển thị{" "}
-              <span className="font-medium">
-                {posts.length > 0 ? (currentPage - 1) * pageSize + 1 : 0}
-              </span>{" "}
-              đến{" "}
-              <span className="font-medium">
-                {Math.min(currentPage * pageSize, totalItems)}
-              </span>{" "}
-              trong <span className="font-medium">{totalItems}</span> bài viết
-            </p>
-          </div>
-
-          {/* Mobile pagination */}
-          <div className="flex justify-center sm:hidden order-3 mt-2">
-            <nav
-              className="inline-flex rounded-md shadow-sm -space-x-px"
-              aria-label="Pagination"
-            >
-              <button
-                onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-2 py-2 rounded-l-md border text-sm font-medium ${
-                  currentPage === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                }`}
-              >
-                <span className="sr-only">Trang đầu</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                    clipRule="evenodd"
-                  />
-                  <path
-                    fillRule="evenodd"
-                    d="M6.79 5.23a.75.75 0 01-.02 1.06L2.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-3 py-2 border text-sm font-medium ${
-                  currentPage === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                }`}
-              >
-                Trước
-              </button>
-              <button className="relative inline-flex items-center px-3 py-2 border bg-white text-sm font-medium text-gray-700">
-                {currentPage} / {totalPages}
-              </button>
-              <button
-                onClick={() =>
-                  handlePageChange(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages || totalPages === 0}
-                className={`relative inline-flex items-center px-3 py-2 border text-sm font-medium ${
-                  currentPage === totalPages || totalPages === 0
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                }`}
-              >
-                Sau
-              </button>
-              <button
-                onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages || totalPages === 0}
-                className={`relative inline-flex items-center px-2 py-2 rounded-r-md border text-sm font-medium ${
-                  currentPage === totalPages || totalPages === 0
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
-                }`}
-              >
-                <span className="sr-only">Trang cuối</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clipRule="evenodd"
-                  />
-                  <path
-                    fillRule="evenodd"
-                    d="M13.21 14.77a.75.75 0 01.02-1.06L17.168 10l-3.938-3.71a.75.75 0 011.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </nav>
-          </div>
-
-          {/* Desktop pagination */}
-          <div className="hidden sm:flex justify-end order-3">
-            <nav
-              className="inline-flex items-center rounded-md shadow-sm"
-              aria-label="Pagination"
-            >
-              <button
-                onClick={() => handlePageChange(1)}
-                disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-2.5 py-2 rounded-l-md border text-sm transition-colors duration-150 ease-in-out ${
-                  currentPage === 1
-                    ? "bg-gray-50 text-gray-300 cursor-not-allowed border-gray-200"
-                    : "bg-white text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 border-gray-300 hover:border-indigo-300"
-                }`}
-                aria-label="First page"
-                title="Trang đầu"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                    clipRule="evenodd"
-                  />
-                  <path
-                    fillRule="evenodd"
-                    d="M6.79 5.23a.75.75 0 01-.02 1.06L2.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className={`relative inline-flex items-center px-2.5 py-2 border-t border-b border-l text-sm transition-colors duration-150 ease-in-out ${
-                  currentPage === 1
-                    ? "bg-gray-50 text-gray-300 cursor-not-allowed border-gray-200"
-                    : "bg-white text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 border-gray-300 hover:border-indigo-300"
-                }`}
-                aria-label="Previous page"
-                title="Trang trước"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-
-              {pageNumbers.map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`relative inline-flex items-center px-4 py-2 border-t border-b border-l text-sm font-medium focus:z-10 focus:outline-none transition-colors duration-150 ease-in-out ${
-                    page === currentPage
-                      ? "bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300"
-                  }`}
-                  aria-current={page === currentPage ? "page" : undefined}
-                >
-                  {page}
-                </button>
-              ))}
-
-              <button
-                onClick={() =>
-                  handlePageChange(Math.min(totalPages, currentPage + 1))
-                }
-                disabled={currentPage === totalPages || totalPages === 0}
-                className={`relative inline-flex items-center px-2.5 py-2 border-t border-b border-l text-sm transition-colors duration-150 ease-in-out ${
-                  currentPage === totalPages || totalPages === 0
-                    ? "bg-gray-50 text-gray-300 cursor-not-allowed border-gray-200"
-                    : "bg-white text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 border-gray-300 hover:border-indigo-300"
-                }`}
-                aria-label="Next page"
-                title="Trang sau"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-              <button
-                onClick={() => handlePageChange(totalPages)}
-                disabled={currentPage === totalPages || totalPages === 0}
-                className={`relative inline-flex items-center px-2.5 py-2 rounded-r-md border text-sm transition-colors duration-150 ease-in-out ${
-                  currentPage === totalPages || totalPages === 0
-                    ? "bg-gray-50 text-gray-300 cursor-not-allowed border-gray-200"
-                    : "bg-white text-gray-500 hover:bg-indigo-50 hover:text-indigo-600 border-gray-300 hover:border-indigo-300"
-                }`}
-                aria-label="Last page"
-                title="Trang cuối"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clipRule="evenodd"
-                  />
-                  <path
-                    fillRule="evenodd"
-                    d="M13.21 14.77a.75.75 0 01.02-1.06L17.168 10l-3.938-3.71a.75.75 0 011.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </nav>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   // Hàm để chuyển đổi trạng thái bài viết
@@ -1139,11 +914,47 @@ const AdminBlogPage = () => {
                   )}
                 </tbody>
               </table>
-              {/* Pagination */}
-              {totalPages > 0 && <Pagination />}
             </>
           )}
         </div>
+
+        {/* Pagination */}
+        {!isLoading && posts.length > 0 && totalPages > 1 && (
+          <div className="py-4 border-t border-gray-200">
+            <Pagination className="py-2">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    style={{
+                      cursor: currentPage > 1 ? "pointer" : "not-allowed",
+                      opacity: currentPage > 1 ? 1 : 0.5,
+                    }}
+                  />
+                </PaginationItem>
+
+                {renderPaginationItems()}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    style={{
+                      cursor:
+                        currentPage < totalPages ? "pointer" : "not-allowed",
+                      opacity: currentPage < totalPages ? 1 : 0.5,
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+
+            <div className="text-center text-sm text-gray-600 mt-2">
+              Hiển thị {Math.min((currentPage - 1) * pageSize + 1, totalItems)}{" "}
+              - {Math.min(currentPage * pageSize, totalItems)} của {totalItems}{" "}
+              bài viết
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Delete Confirmation Dialog */}

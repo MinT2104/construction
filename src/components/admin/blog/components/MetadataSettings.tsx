@@ -45,31 +45,9 @@ export default function MetadataSettings({ form }: MetadataSettingsProps) {
                 <SelectContent>
                   <SelectItem value={BlogStatus.DRAFT}>Bản nháp</SelectItem>
                   <SelectItem value={BlogStatus.PUBLISHED}>Xuất bản</SelectItem>
-                  <SelectItem value={BlogStatus.ARCHIVED}>Lưu trữ</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="isFeatured"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3 shadow-sm bg-background">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                  id="isFeatured"
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel htmlFor="isFeatured" className="cursor-pointer">
-                  Bài viết nổi bật
-                </FormLabel>
-              </div>
             </FormItem>
           )}
         />
