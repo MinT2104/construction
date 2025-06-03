@@ -11,8 +11,8 @@ import Quill from "quill";
 import "quill/dist/quill.snow.css";
 import "./rich-text-editor.css";
 import MediaService from "@/lib/services/media.service";
-import ResizeModule from "@botom/quill-resize-module";
-import IframeResizeModule from "@/lib/utils/iframe-resize.module";
+import QuillResizeImage from "quill-resize-image";
+
 import { toast } from "sonner";
 // Define the ref type for the RichTextEditor component
 export type RichTextEditorHandle = {
@@ -177,10 +177,21 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
               "98",
             ];
 
+            const Font = Quill.import("formats/font");
+            Font.whitelist = [
+              "Roboto",
+              "sans-serif",
+              "serif",
+              "monospace",
+              "custom-font",
+            ];
+            Quill.register(Font, true);
+
             Size.whitelist = fontSizeArr;
             Quill.register(Size, true);
-            Quill.register("modules/resize", ResizeModule);
-            Quill.register("modules/iframeResize", IframeResizeModule);
+            // Quill.register("modules/resize", ResizeModule);
+            // Quill.register("modules/iframeResize", IframeResizeModule);
+            Quill.register("modules/resize", QuillResizeImage);
 
             // Gán biểu tượng SVG cho các button
             icons["video-upload"] = `<svg viewBox="0 0 18 18">
@@ -212,22 +223,17 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
             readOnly,
             modules: {
               resize: {
-                modules: ["Resize", "DisplaySize", "Toolbar"],
-                locale: {
-                  // change them depending on your language
-                  altTip: "Hold down the alt key to zoom",
-                  floatLeft: "Left",
-                  floatRight: "Right",
-                  center: "Center",
-                  restore: "Restore",
-                },
+                locale: {},
               },
-              iframeResize: {},
-
               toolbar: readOnly
                 ? false
                 : {
                     container: [
+                      [
+                        {
+                          font: [],
+                        },
+                      ],
                       [{ header: [1, 2, 3, 4, 5, 6, false] }],
                       [
                         "bold",

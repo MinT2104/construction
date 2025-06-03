@@ -43,6 +43,7 @@ async function ServiceSection() {
 
   const listMostViewPosts = (mostViewPosts?.rows ??
     []) as unknown as BlogPost[];
+  console.log("listMostViewPosts", listMostViewPosts);
 
   if (!featuredPosts || !featuredPosts.data || !mostViewPosts) return null;
 

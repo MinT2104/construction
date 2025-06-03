@@ -7,12 +7,14 @@
   margin-bottom: 1rem;
 }
 
-.rich-text-editor .ql-container {
+.ql-container {
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
   background: white;
   font-family: "Inter", system-ui, sans-serif;
   outline: none;
+  position: relative !important;
+  overflow-y: hidden !important;
 }
 
 .rich-text-editor .ql-toolbar {
@@ -31,6 +33,7 @@
   line-height: 1.75;
   outline: none;
   user-select: auto;
+  position: relative;
 }
 
 .rich-text-editor .ql-editor p,
@@ -253,6 +256,7 @@
     color: #f9fafb;
     border-color: #374151;
     min-height: 500px !important;
+    overflow-y: hidden;
   }
 
   .rich-text-editor .ql-toolbar {
@@ -690,6 +694,8 @@
   box-sizing: border-box;
   pointer-events: none;
   z-index: 9;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.2);
+  transition: all 0.1s ease;
 }
 
 .ql-iframe-handle {
@@ -786,6 +792,20 @@
   margin-right: 0.25rem;
 }
 
+.ql-container {
+  position: relative; /* Đảm bảo overlay định vị đúng */
+}
+
+.ql-iframe-overlay {
+  z-index: 100;
+  pointer-events: none;
+}
+
+.ql-iframe-handle {
+  z-index: 110;
+  pointer-events: auto;
+}
+
 /* Dark mode support for fullscreen */
 @media (prefers-color-scheme: dark) {
   .editor-fullscreen {
@@ -805,4 +825,9 @@
   .editor-toolbar-button:hover {
     background-color: #374151;
   }
+}
+
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value]::before,
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value]::before {
+  content: attr(data-value) !important;
 }

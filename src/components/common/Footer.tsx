@@ -185,71 +185,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">
-              Liên kết nhanh
-            </h3>
-            <ul className="space-y-1">
-              <li>
-                <Link
-                  href="/gioi-thieu"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Về chúng tôi
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/dich-vu"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Dịch vụ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/mau-nha-dep"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Mẫu nhà đẹp
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/cong-trinh-xay-dung"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Công trình xây dựng thực tế
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/bao-gia"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Báo giá
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/kinh-nghiem-va-blog"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Kinh nghiệm và Blog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/lien-he"
-                  className="text-xs text-gray-300 hover:text-white transition-colors duration-300"
-                >
-                  Liên hệ
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           {/* Contact Info */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">
@@ -284,6 +219,24 @@ const Footer = () => {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">
+              Bản đồ
+            </h3>
+
+            {/* Youtube Video */}
+            <div className="mt-4 bg-white rounded-md overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.026384861831!2d106.62631797528763!3d10.809290989341513!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752be201baceb5%3A0x9d958c16ab4f674f!2zNTFiIFBo4bqhbSBOZ-G7jWMgVGjhuqNvLCBUw6J5IFRo4bqhbmgsIFTDom4gUGjDuiwgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1748938828820!5m2!1svi!2s"
+                width="100%"
+                height="180"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
               ></iframe>
             </div>
           </div>

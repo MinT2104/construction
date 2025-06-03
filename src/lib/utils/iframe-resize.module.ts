@@ -23,11 +23,28 @@ export default class IframeResizeModule {
   }
 
   initialize() {
+    window.addEventListener("scroll", () => {
+      if (this.iframe) this.positionElements();
+    });
+    window.addEventListener("resize", () => {
+      if (this.iframe) this.positionElements();
+    });
+
     // Add event listeners to detect iframe clicks
     this.quill.root.addEventListener("click", this.handleClick);
     document.addEventListener("mousedown", this.handleMouseDown);
     document.addEventListener("mousemove", this.handleMouseMove);
     document.addEventListener("mouseup", this.handleMouseUp);
+
+    // Add scroll event listener to update overlay position on scroll
+    this.quill.root.addEventListener("scroll", this.handleScroll);
+
+    // Make sure the parent container has position relative for proper overlay positioning
+    const parentNode = this.quill.root.parentNode;
+    const parentStyle = window.getComputedStyle(parentNode);
+    if (parentStyle.position === "static") {
+      parentNode.style.position = "relative";
+    }
 
     // Process existing iframes in the editor
     setTimeout(() => {
@@ -94,6 +111,11 @@ export default class IframeResizeModule {
 
     // Add the overlay and handles to the DOM
     this.positionElements();
+
+    // Additional positioning after a small delay to ensure accurate position
+    setTimeout(() => {
+      this.positionElements();
+    }, 10);
   }
 
   createOverlay() {
@@ -163,9 +185,15 @@ export default class IframeResizeModule {
     const iframeRect = this.iframe.getBoundingClientRect();
     const containerRect = this.quill.root.parentNode.getBoundingClientRect();
 
+    // Calculate offsets, accounting for scrolling
+    const editorScrollTop = this.quill.root.scrollTop;
+    const editorScrollLeft = this.quill.root.scrollLeft;
+
     // Calculate offsets
-    const offsetLeft = iframeRect.left - containerRect.left;
-    const offsetTop = iframeRect.top - containerRect.top;
+    const offsetLeft =
+      iframeRect.left + window.scrollX - containerRect.left - window.scrollX;
+    const offsetTop =
+      iframeRect.top + window.scrollY - containerRect.top - window.scrollY;
 
     // Position the overlay
     this.overlay.style.left = `${offsetLeft}px`;
@@ -261,6 +289,13 @@ export default class IframeResizeModule {
     this.dragHandle = null;
   };
 
+  handleScroll = () => {
+    // Update overlay position when editor is scrolled
+    if (this.iframe) {
+      this.positionElements();
+    }
+  };
+
   deselect() {
     // Remove overlay and handles
     if (this.overlay) {
@@ -284,6 +319,7 @@ export default class IframeResizeModule {
     document.removeEventListener("mousedown", this.handleMouseDown);
     document.removeEventListener("mousemove", this.handleMouseMove);
     document.removeEventListener("mouseup", this.handleMouseUp);
+    this.quill.root.removeEventListener("scroll", this.handleScroll);
 
     // Remove any elements
     this.deselect();

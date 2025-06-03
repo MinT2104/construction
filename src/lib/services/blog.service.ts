@@ -184,23 +184,15 @@ class BlogService {
   }
 
   async getPostBySlug(slug: string): Promise<BlogPost | null> {
-    const cacheKey = `post-slug-${slug}`;
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const response = await axiosInstance.get(
-            blogEndpoints.getBlogSlug.replace(":slug", slug)
-          );
-          return response.data.data;
-        } catch (error) {
-          console.error(`Error fetching blog post with slug ${slug}:`, error);
-          return null;
-        }
-      },
-      { staleWhileRevalidate: true, ttl: 10 * 60 * 1000 } // Cache longer for single posts
-    );
+    try {
+      const response = await axiosInstance.get(
+        blogEndpoints.getBlogSlug.replace(":slug", slug)
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error(`Error fetching blog post with slug ${slug}:`, error);
+      return null;
+    }
   }
 
   async getPublicPost(slug: string): Promise<BlogPost | null> {
@@ -330,6 +322,22 @@ class BlogService {
       return response.data;
     } catch (error) {
       console.error(`Error updating blog post with id ${post._id}:`, error);
+      return null;
+    }
+  }
+
+  async updateStatus(slug: string, status: string) {
+    try {
+      const response = await axiosInstance.patch(
+        blogEndpoints.updateStatus.replace(":slug", slug),
+        { status }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(
+        `Error updating status for blog post with slug ${slug}:`,
+        error
+      );
       return null;
     }
   }

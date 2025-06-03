@@ -194,7 +194,7 @@ const SinglePostView: React.FC<SinglePostViewProps> = ({
                     const colorStyle = getTagColor(index);
                     return (
                       <Link
-                        href={`/tag/${tag.slug}`}
+                        href={`/tags/${tag.slug}`}
                         key={tag.slug}
                         className={`px-4 py-2 rounded-lg ${colorStyle.bg} ${colorStyle.text} text-sm font-medium ${colorStyle.hover} transition-colors flex items-center shadow-sm border border-gray-100`}
                       >

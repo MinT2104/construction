@@ -46,7 +46,7 @@ const ProjectCard = memo(
 
           {/* Hình ảnh dự án */}
           <Link
-            href={`/projects/${slug}`}
+            href={`/bai-viet/${slug}`}
             className="block"
             prefetch={isFirstRow}
           >
@@ -66,7 +66,7 @@ const ProjectCard = memo(
 
         {/* Thông tin dự án */}
         <CardContent className="p-4">
-          <Link href={`/projects/${slug}`} prefetch={isFirstRow}>
+          <Link href={`/bai-viet/${slug}`} prefetch={isFirstRow}>
             <CardTitle className="text-primary font-bold text-lg mb-2 hover:text-primary/80 transition-colors">
               {blog.title}
             </CardTitle>

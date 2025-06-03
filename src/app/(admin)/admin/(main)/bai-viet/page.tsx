@@ -266,14 +266,11 @@ const AdminBlogPage = () => {
     try {
       setUpdatingStatusId(post._id);
 
-      // Tạo object cập nhật với trạng thái ngược lại
-      const updateData: BlogPostUpdate = {
-        _id: post._id,
-        status: post.status === "published" ? "draft" : "published",
-      };
-
       // Gọi API cập nhật trạng thái
-      const updatedPost = await blogService.updatePost(updateData);
+      const updatedPost = await blogService.updateStatus(
+        post.slug,
+        post.status === "published" ? "draft" : "published"
+      );
 
       if (updatedPost) {
         // Cập nhật danh sách bài viết với trạng thái mới
@@ -281,19 +278,17 @@ const AdminBlogPage = () => {
           if (p._id === post._id) {
             return {
               ...p,
-              status: updateData.status as "draft" | "published",
+              status: post.status === "published" ? "draft" : "published",
             };
           }
           return p;
         });
-        setPosts(updatedPosts);
+        loadPosts();
 
         // Hiển thị thông báo thành công
         toast.success(
           `Bài viết đã được ${
-            updateData.status === "published"
-              ? "xuất bản"
-              : "chuyển về bản nháp"
+            post.status === "published" ? "xuất bản" : "chuyển về bản nháp"
           }`
         );
       } else {

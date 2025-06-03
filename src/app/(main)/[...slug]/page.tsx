@@ -219,6 +219,7 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
   // Tăng lượt xem cho bài viết
   try {
     await blogService.incrementView(slug);
+    console.log(`Incremented view count for post: ${slug}`);
   } catch (error) {
     console.error(`Failed to increment view for post ${slug}:`, error);
   }
@@ -230,14 +231,14 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
 
   const menuItemData = [
     {
-      label: post.categories?.[0]?.name || "",
-      path: `/bai-viet/${post.categories?.[0]?.slug}`,
-    },
-    {
       label: post.title || "",
       path: `/bai-viet/${post.slug}`,
     },
   ];
+
+  const relatedPosts = await cachedFetch(`related-posts-${post.slug}`, () =>
+    blogService.getBlogsByCategory(post.categories?.[1]?.slug || "", 1, 3)
+  );
 
   return (
     <PageLayout
@@ -245,7 +246,7 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
       menuItems={menuItemData}
       parentMenuItem={categoryInfo}
     >
-      <SinglePostView post={post} />
+      <SinglePostView post={post} relatedPosts={relatedPosts} />
     </PageLayout>
   );
 }
@@ -341,6 +342,7 @@ async function renderTagPage(
   const fetchedPosts = await cachedFetch(cacheKey, () =>
     blogService.getBlogsByTag(tag, page, pageSize)
   );
+  console.log("fetchedPosts", fetchedPosts);
 
   if (!fetchedPosts) return notFound();
 
@@ -419,8 +421,14 @@ async function renderRegularPage(
       },
     ];
 
+    const relatedPosts = await cachedFetch(`related-posts-${slug}`, () =>
+      blogService.getBlogsByCategory(slug, 1, 3)
+    );
+
     const post = fetchedPost.rows[0] as BlogPost;
-    pageContent = <SinglePostView post={post || null} />;
+    pageContent = (
+      <SinglePostView post={post || null} relatedPosts={relatedPosts} />
+    );
     // end single
   } else if (
     currentItem.type === "category" &&
