@@ -23,6 +23,11 @@ import {
   Settings,
   ChevronRight,
   LogOut,
+  Home,
+  Package,
+  TrendingUp,
+  DollarSign,
+  Percent,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -71,6 +76,11 @@ const Sidebar: FC = () => {
         { href: "/admin/cau-hinh/banner", label: "Banner", icon: ImageIcon },
         { href: "/admin/cau-hinh/bao-gia", label: "Báo giá", icon: Calculator },
         { href: "/admin/cau-hinh/khuyen-mai", label: "Khuyến mãi", icon: Gift },
+        { href: "/admin/cau-hinh/he-so", label: "Hệ số quy đổi", icon: Percent },
+        { href: "/admin/cau-hinh/loai-cong-trinh", label: "Loại công trình", icon: Home },
+        { href: "/admin/cau-hinh/goi-xay-dung", label: "Gói xây dựng", icon: Package },
+        { href: "/admin/cau-hinh/muc-dau-tu", label: "Mức đầu tư", icon: TrendingUp },
+        { href: "/admin/cau-hinh/don-gia", label: "Đơn giá", icon: DollarSign },
       ],
     },
     { label: "Đăng xuất", icon: LogOut, onClick: handleLogout },

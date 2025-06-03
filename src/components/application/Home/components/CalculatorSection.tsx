@@ -406,120 +406,120 @@ const CalculatorSection = () => {
                 </div>
               ) : (
                 <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleCalculate(); }}>
-                  {/* Thông tin cơ bản */}
-                  <div>
-                    <div className="font-bold text-gray-700 mb-4">
-                      Thông tin cơ bản
-                    </div>
+                {/* Thông tin cơ bản */}
+                <div>
+                  <div className="font-bold text-gray-700 mb-4">
+                    Thông tin cơ bản
+                  </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Chọn loại nhà:
-                        </label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Chọn loại nhà:
+                      </label>
                         <Select 
                           value={constructionType} 
                           onValueChange={setConstructionType}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn loại nhà" />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn loại nhà" />
+                        </SelectTrigger>
+                        <SelectContent>
                             {constructionTypes.map(type => (
                               <SelectItem key={type._id} value={type._id}>
                                 {type.name}
                               </SelectItem>
                             ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Dịch vụ xây nhà:
-                        </label>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Dịch vụ xây nhà:
+                      </label>
                         <Select 
                           value={buildPackage} 
                           onValueChange={setBuildPackage}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn dịch vụ" />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn dịch vụ" />
+                        </SelectTrigger>
+                        <SelectContent>
                             {buildPackages.map(pkg => (
                               <SelectItem key={pkg._id} value={pkg._id}>
                                 {pkg.name}
-                              </SelectItem>
+                          </SelectItem>
                             ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Mức đầu tư:
-                        </label>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Mức đầu tư:
+                      </label>
                         <Select 
                           value={investmentLevel} 
                           onValueChange={setInvestmentLevel}
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn mức đầu tư" />
-                          </SelectTrigger>
-                          <SelectContent>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn mức đầu tư" />
+                        </SelectTrigger>
+                        <SelectContent>
                             {investmentLevels.map(level => (
                               <SelectItem key={level._id} value={level._id}>
                                 {level.name}
-                              </SelectItem>
+                          </SelectItem>
                             ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Mặt tiền:
-                        </label>
-                        <Select value={frontage} onValueChange={setFrontage}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn số mặt tiền" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1">1</SelectItem>
-                            <SelectItem value="2">2</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                        </SelectContent>
+                      </Select>
                     </div>
+                    <div>
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Mặt tiền:
+                      </label>
+                        <Select value={frontage} onValueChange={setFrontage}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn số mặt tiền" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1</SelectItem>
+                          <SelectItem value="2">2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4">
-                      <div className="lg:col-span-2">
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Chiều rộng (Vd: 2.5m):
-                        </label>
-                        <Input
-                          min={1}
-                          type="number"
-                          placeholder="Nhập chiều rộng"
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-4">
+                    <div className="lg:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Chiều rộng (Vd: 2.5m):
+                      </label>
+                      <Input
+                        min={1}
+                        type="number"
+                        placeholder="Nhập chiều rộng"
                           value={width}
                           onChange={(e) => setWidth(e.target.value ? Number(e.target.value) : "")}
                           required
-                        />
-                      </div>
-                      <div className="lg:col-span-2">
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Chiều dài (Vd: 10.5m):
-                        </label>
-                        <Input
-                          min={1}
-                          type="number"
-                          placeholder="Nhập chiều dài"
+                      />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Chiều dài (Vd: 10.5m):
+                      </label>
+                      <Input
+                        min={1}
+                        type="number"
+                        placeholder="Nhập chiều dài"
                           value={length}
                           onChange={(e) => setLength(e.target.value ? Number(e.target.value) : "")}
                           required
-                        />
-                      </div>
-                      <div className="lg:col-span-2">
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Số tầng (Trừ tum, lửng):
-                        </label>
+                      />
+                    </div>
+                    <div className="lg:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Số tầng (Trừ tum, lửng):
+                      </label>
                         <Input 
                           min={1} 
                           type="number" 
@@ -528,35 +528,35 @@ const CalculatorSection = () => {
                           onChange={(e) => setFloors(e.target.value ? Number(e.target.value) : "")}
                           required
                         />
-                      </div>
-                      <div className="lg:col-span-2">
-                        <label className="block text-gray-700 text-sm font-medium mb-1">
-                          Hẻm:
-                        </label>
+                    </div>
+                    <div className="lg:col-span-2">
+                      <label className="block text-gray-700 text-sm font-medium mb-1">
+                        Hẻm:
+                      </label>
                         <Select value={alley} onValueChange={setAlley}>
-                          <SelectTrigger>
+                        <SelectTrigger>
                             <SelectValue placeholder="Chọn loại hẻm" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="1">Rộng hơn 5m</SelectItem>
-                            <SelectItem value="2">Rộng 3m - 5m</SelectItem>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">Rộng hơn 5m</SelectItem>
+                          <SelectItem value="2">Rộng 3m - 5m</SelectItem>
                             <SelectItem value="3">Hẻm nhỏ: +5%</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
+                </div>
 
-                  {/* Thông tin công năng - Collapsible */}
-                  <div className="w-full bg-gray-100 hover:bg-gray-200 transition-colors p-3 text-left font-bold text-gray-700 flex justify-between items-center">
-                    Thông tin công năng
-                  </div>
+                {/* Thông tin công năng - Collapsible */}
+                <div className="w-full bg-gray-100 hover:bg-gray-200 transition-colors p-3 text-left font-bold text-gray-700 flex justify-between items-center">
+                  Thông tin công năng
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Lửng (Vd: 30m2):
-                      </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Lửng (Vd: 30m2):
+                    </label>
                       <Input 
                         min={0} 
                         type="number" 
@@ -564,11 +564,11 @@ const CalculatorSection = () => {
                         value={loftArea}
                         onChange={(e) => setLoftArea(e.target.value ? Number(e.target.value) : "")}
                       />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Tum (Vd: 30m2):
-                      </label>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Tum (Vd: 30m2):
+                    </label>
                       <Input 
                         min={0} 
                         type="number" 
@@ -576,112 +576,112 @@ const CalculatorSection = () => {
                         value={atticArea}
                         onChange={(e) => setAtticArea(e.target.value ? Number(e.target.value) : "")}
                       />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Sân thượng:
-                      </label>
-                      <Select value={terrace} onValueChange={setTerrace}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn loại sân thượng" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Sân thượng">Sân thượng</SelectItem>
-                          <SelectItem value="Không có">Không có</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Ban công:
-                      </label>
-                      <Select value={balcony} onValueChange={setBalcony}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn loại ban công" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Không có">Không có</SelectItem>
-                          <SelectItem value="Có">Có</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
                   </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Sân thượng:
+                    </label>
+                      <Select value={terrace} onValueChange={setTerrace}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại sân thượng" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Sân thượng">Sân thượng</SelectItem>
+                        <SelectItem value="Không có">Không có</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Ban công:
+                    </label>
+                      <Select value={balcony} onValueChange={setBalcony}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại ban công" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Không có">Không có</SelectItem>
+                        <SelectItem value="Có">Có</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Móng:
-                      </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Móng:
+                    </label>
                       <Select value={foundation} onValueChange={setFoundation}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn loại móng" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Móng băng">Móng băng</SelectItem>
-                          <SelectItem value="Móng đơn">Móng đơn</SelectItem>
-                          <SelectItem value="Móng cọc">
-                            Móng cọc (Móng đài)
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Mái:
-                      </label>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại móng" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Móng băng">Móng băng</SelectItem>
+                        <SelectItem value="Móng đơn">Móng đơn</SelectItem>
+                        <SelectItem value="Móng cọc">
+                          Móng cọc (Móng đài)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Mái:
+                    </label>
                       <Select value={roof} onValueChange={setRoof}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn loại mái" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Mái tôn">Mái tôn</SelectItem>
-                          <SelectItem value="Mái bê tông cốt thép">
-                            Mái BTCT
-                          </SelectItem>
-                          <SelectItem value="Mái xà gồ + ngói">
-                            Mái xà gồ + ngói
-                          </SelectItem>
-                          <SelectItem value="Mái BTCT + ngói">
-                            Mái BTCT + ngói
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Tầng hầm:
-                      </label>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại mái" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Mái tôn">Mái tôn</SelectItem>
+                        <SelectItem value="Mái bê tông cốt thép">
+                          Mái BTCT
+                        </SelectItem>
+                        <SelectItem value="Mái xà gồ + ngói">
+                          Mái xà gồ + ngói
+                        </SelectItem>
+                        <SelectItem value="Mái BTCT + ngói">
+                          Mái BTCT + ngói
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Tầng hầm:
+                    </label>
                       <Select value={basement} onValueChange={setBasement}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn loại tầng hầm" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Không hầm">Không hầm</SelectItem>
-                          <SelectItem value="Độ sâu 1.0 - 1.2">
-                            Độ sâu 1.0 - 1.2
-                          </SelectItem>
-                          <SelectItem value="Độ sâu 1.2 - 1.5">
-                            Độ sâu 1.2 - 1.5
-                          </SelectItem>
-                          <SelectItem value="Độ sâu 1.5 - 1.7">
-                            Độ sâu 1.5 - 1.7
-                          </SelectItem>
-                          <SelectItem value="Độ sâu 1.7 - 2.0">
-                            Độ sâu 1.7 - 2.0
-                          </SelectItem>
-                          <SelectItem value="Độ sâu 2.0 - 2.5">
-                            Độ sâu 2.0 - 2.5
-                          </SelectItem>
-                          <SelectItem value="Độ sâu 2.5 - 3.0">
-                            Độ sâu 2.5 - 3.0
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 text-sm font-medium mb-1">
-                        Sân vườn (Vd: 10m2):
-                      </label>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn loại tầng hầm" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Không hầm">Không hầm</SelectItem>
+                        <SelectItem value="Độ sâu 1.0 - 1.2">
+                          Độ sâu 1.0 - 1.2
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 1.2 - 1.5">
+                          Độ sâu 1.2 - 1.5
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 1.5 - 1.7">
+                          Độ sâu 1.5 - 1.7
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 1.7 - 2.0">
+                          Độ sâu 1.7 - 2.0
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 2.0 - 2.5">
+                          Độ sâu 2.0 - 2.5
+                        </SelectItem>
+                        <SelectItem value="Độ sâu 2.5 - 3.0">
+                          Độ sâu 2.5 - 3.0
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-1">
+                      Sân vườn (Vd: 10m2):
+                    </label>
                       <Input 
                         min={0} 
                         type="number" 
@@ -768,8 +768,8 @@ const CalculatorSection = () => {
                               </tr>
                             </tbody>
                           </table>
-                        </div>
-                      </div>
+                  </div>
+                </div>
                       
                       <div className="mt-4 text-sm text-gray-600">
                         <p className="font-medium mb-1">Ghi chú:</p>
@@ -782,11 +782,11 @@ const CalculatorSection = () => {
                     </div>
                   )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-                    <div>
-                      <Button
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                  <div>
+                    <Button
                         type="submit"
-                        className="w-full font-semibold"
+                      className="w-full font-semibold"
                         disabled={loading}
                       >
                         {loading ? (
@@ -797,10 +797,10 @@ const CalculatorSection = () => {
                         ) : (
                           "Tính Kết Quả"
                         )}
-                      </Button>
-                    </div>
+                    </Button>
                   </div>
-                </form>
+                </div>
+              </form>
               )}
             </div>
           </div>
