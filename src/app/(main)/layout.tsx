@@ -33,11 +33,11 @@ export default function RootLayout({
     <html lang="vi">
       <body className={`${roboto.variable} antialiased`}>
         <NavigationProgress />
-        <PageTransitionProvider>
-          <Header />
-          <main className="min-h-[60vh]">{children}</main>
-          <Footer />
-        </PageTransitionProvider>
+        {/* <PageTransitionProvider> */}
+        <Header />
+        <main className="min-h-[60vh]">{children}</main>
+        <Footer />
+        {/* </PageTransitionProvider> */}
         <ScrollToTop />
         <HomeNavigation />
       </body>

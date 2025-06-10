@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import FloatingContact from "@/components/common/FloatingContact";
 import { bannerService } from "@/lib/services/banner.service";
+import ActiveAspect from "@/components/application/Home/components/ActiveAspect";
 // Sử dụng dynamic import cho các component không cần thiết ngay lập tức
 const CalculatorSection = dynamic(
   () => import("@/components/application/Home/components/CalculatorSection"),
@@ -43,7 +44,11 @@ const handleGetBanner = async () => {
   return res;
 };
 
-export default async function Home() {
+interface HomeProps {
+  searchParams?: { category?: string };
+}
+
+export default async function Home({ searchParams }: HomeProps) {
   const banner = await handleGetBanner();
   const heroBanner = banner?.heroBanner || [];
 
@@ -54,17 +59,22 @@ export default async function Home() {
 
         {/* Hero Section - Banner giới thiệu with animation */}
         <HeroBannerSection heroBanner={heroBanner} />
+
+        {/* Price Info Section - Bảng giá dịch vụ */}
         <PriceInfoSection />
-        {/* Cost Calculator Section - Standalone section with eye-catching design */}
-        <CalculatorSection />
+
+        {/* Active Aspect - Các tiêu chí hoạt động */}
+        <ActiveAspect searchParams={searchParams} />
+        {/* Projects Showcase - Công trình xây dựng tiêu biểu */}
+        <ProjectShowCaseSection />
 
         {/* Services Section - Hạng mục dịch vụ kiến trúc và xây dựng */}
         <ServiceSection />
 
-        {/* Projects Showcase - Công trình xây dựng tiêu biểu */}
-        <ProjectShowCaseSection />
         {/* Latest House Designs - Mẫu nhà đẹp mới nhất */}
         <HouseDesignSection />
+        {/* Cost Calculator Section - Standalone section with eye-catching design */}
+        <CalculatorSection />
         {/* Contact Section - Liên hệ */}
         <FloatingContact />
       </div>

@@ -37,7 +37,7 @@ const HeroBannerSection = ({
   };
 
   return (
-    <section className="relative h-[80vh] min-h-[520px] max-h-[720px] overflow-hidden shadow-2xl">
+    <section className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] min-h-[300px] sm:min-h-[400px] md:min-h-[520px] max-h-[720px] overflow-hidden shadow-2xl">
       <div className="absolute inset-0">
         <AnimatePresence initial={false}>
           <motion.div
@@ -62,13 +62,14 @@ const HeroBannerSection = ({
       {/* Navigation buttons with improved styling */}
       <button
         onClick={prevImage}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+        className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
         aria-label="Previous slide"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="16"
+          height="16"
+          className="sm:w-5 sm:h-5 md:w-6 md:h-6"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -81,13 +82,14 @@ const HeroBannerSection = ({
       </button>
       <button
         onClick={nextImage}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+        className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
         aria-label="Next slide"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
+          width="16"
+          height="16"
+          className="sm:w-5 sm:h-5 md:w-6 md:h-6"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"

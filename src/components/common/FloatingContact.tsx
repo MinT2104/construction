@@ -2,13 +2,14 @@ import React from "react";
 import Image from "next/image";
 const FloatingContact: React.FC = () => {
   return (
-    <div className="fixed left-4 bottom-4 z-50 flex flex-col space-y-3">
+    <div className="fixed left-2 sm:left-4 bottom-16 sm:bottom-4 z-50 flex flex-col space-y-2 sm:space-y-3">
       <a
         href="tel:0936267359"
-        className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors"
+        className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors"
+        aria-label="Gọi điện thoại"
       >
         <svg
-          className="w-7 h-7 text-white"
+          className="w-5 h-5 sm:w-6 sm:h-6 text-white"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -24,14 +25,15 @@ const FloatingContact: React.FC = () => {
       </a>
       <a
         href="https://zalo.me/0936267359"
-        className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
+        className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition-colors"
+        aria-label="Chat qua Zalo"
       >
         <Image
           src="/images/chatzalo.png"
           alt="Zalo"
           width={24}
           height={24}
-          className="w-12 h-12"
+          className="w-10 h-10 sm:w-12 sm:h-12"
         />
       </a>
     </div>

@@ -41,8 +41,8 @@ const Footer = () => {
           scrolled ? "shadow-lg shadow-primary/20" : "shadow-md"
         }`}
       >
-        <div className="container mx-auto">
-          <nav className="hidden lg:flex justify-center">
+        <div className="container mx-auto overflow-x-auto">
+          <nav className="hidden lg:flex justify-center min-w-max">
             {menuItems.map((item, index) => (
               <motion.div
                 key={item.path || index}
@@ -65,7 +65,7 @@ const Footer = () => {
                       if (hoveredItemPath) setHoveredItemPath(null);
                     }}
                     className={`
-                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-sm inline-flex items-center relative
+                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-xs sm:text-sm inline-flex items-center relative
                         after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
                         hover:after:w-full
                       `}
@@ -94,7 +94,7 @@ const Footer = () => {
                 ) : (
                   <div
                     className={`
-                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-sm inline-flex items-center relative cursor-pointer
+                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-xs sm:text-sm inline-flex items-center relative cursor-pointer
                         after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
                         hover:after:w-full
                       `}
@@ -156,8 +156,8 @@ const Footer = () => {
           </nav>
         </div>
       </div>
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           {/* Company Info */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">
@@ -187,7 +187,7 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4 sm:mb-5">
               Thông tin liên hệ
             </h3>
             <ul className="space-y-3 text-xs text-gray-300">
@@ -205,7 +205,7 @@ const Footer = () => {
 
           {/* Social Media & Fanpage */}
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4 sm:mb-5 mt-4 sm:mt-0">
               Kết nối với chúng tôi
             </h3>
 
@@ -224,11 +224,11 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-5">
+            <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4 sm:mb-5 mt-4 sm:mt-0">
               Bản đồ
             </h3>
 
-            {/* Youtube Video */}
+            {/* Google Map */}
             <div className="mt-4 bg-white rounded-md overflow-hidden">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.026384861831!2d106.62631797528763!3d10.809290989341513!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752be201baceb5%3A0x9d958c16ab4f674f!2zNTFiIFBo4bqhbSBOZ-G7jWMgVGjhuqNvLCBUw6J5IFRo4bqhbmgsIFTDom4gUGjDuiwgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1748938828820!5m2!1svi!2s"
@@ -243,16 +243,16 @@ const Footer = () => {
         </div>
 
         {/* Từ khóa tìm kiếm */}
-        <div className="mt-12 pt-10 border-t border-green-700">
-          <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-6 text-center">
+        <div className="mt-8 sm:mt-12 pt-6 sm:pt-10 border-t border-green-700">
+          <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-4 sm:mb-6 text-center">
             TỪ KHÓA TÌM KIẾM
           </h3>
-          <div className="flex flex-wrap gap-3 justify-center">
+          <div className="flex flex-wrap gap-2 sm:gap-3 justify-center">
             {TAGS.map((link) => (
               <Link
                 key={link.id}
                 href={`/tags/${link.slug}`}
-                className="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-colors duration-200 shadow-sm"
+                className="bg-green-700 hover:bg-green-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs flex items-center gap-1.5 transition-colors duration-200 shadow-sm mb-2"
               >
                 <span className="bg-yellow-400 w-1.5 h-1.5 rounded-full"></span>
                 {link.name}
@@ -262,7 +262,7 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-green-700 mt-12 pt-10 text-center text-white">
+        <div className="border-t border-green-700 mt-8 sm:mt-12 pt-6 sm:pt-10 text-center text-white">
           <p className="text-xs">
             &copy; {currentYear ? currentYear : new Date().getFullYear()} Kiến
             Tạo Nhà Đẹp. Tất cả các quyền được bảo lưu.

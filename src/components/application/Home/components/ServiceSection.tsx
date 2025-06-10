@@ -43,40 +43,39 @@ async function ServiceSection() {
 
   const listMostViewPosts = (mostViewPosts?.rows ??
     []) as unknown as BlogPost[];
-  console.log("listMostViewPosts", listMostViewPosts);
 
   if (!featuredPosts || !featuredPosts.data || !mostViewPosts) return null;
 
   const featuredPostsData = featuredPosts.data as BlogPost;
 
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
+    <section className="py-12 sm:py-16 md:py-24 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary uppercase mb-2">
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary uppercase mb-2">
             Bài viết nổi bật
           </h2>
-          <div className="flex items-center justify-center">
-            <div className="h-0.5 bg-primary w-16"></div>
-            <p className="mx-4 text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center justify-center">
+            <div className="h-0.5 bg-primary w-16 hidden sm:block"></div>
+            <p className="mx-4 text-sm sm:text-base text-muted-foreground">
               Kinh nghiệm thực tế và các giải pháp tối ưu trong lĩnh vực kiến
               trúc và xây dựng.
             </p>
-            <div className="h-0.5 bg-primary w-16"></div>
+            <div className="h-0.5 bg-primary w-16 hidden sm:block"></div>
           </div>
         </div>
 
         {/* Blog Posts Grid & Project List */}
         <div className="grid grid-cols-1 md:grid-cols-5 items-start gap-4">
           {/* Left Section with Featured Blog and Videos */}
-          <div className="md:col-span-3 mb-12 md:mb-0 space-y-6">
+          <div className="md:col-span-3 mb-8 md:mb-0 space-y-6">
             {/* Featured Blog Card with Overlay Text */}
             <FeaturedBlogCard featuredPostsData={featuredPostsData} />
             {/* Featured Videos Header */}
             <div className="flex items-center mb-4 pt-4">
-              <h3 className="text-xl font-bold text-foreground flex items-center">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground flex items-center">
                 <svg
-                  className="w-5 h-5 mr-2 text-primary"
+                  className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -87,11 +86,11 @@ async function ServiceSection() {
               <div className="ml-4 h-0.5 bg-primary/60 flex-grow"></div>
               <Link
                 href="/videos"
-                className="text-primary text-sm font-medium hover:underline ml-4 flex items-center"
+                className="text-primary text-xs sm:text-sm font-medium hover:underline ml-4 flex items-center"
               >
                 Xem tất cả
                 <svg
-                  className="w-4 h-4 ml-1"
+                  className="w-3 h-3 sm:w-4 sm:h-4 ml-1"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -101,7 +100,7 @@ async function ServiceSection() {
             </div>
 
             {/* Featured Videos Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {featuredVideos.data.videos.map((video) => (
                 <Link
                   key={video.id}
@@ -119,9 +118,9 @@ async function ServiceSection() {
 
                     {/* Play button overlay */}
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-primary/90 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                         <svg
-                          className="w-7 h-7 text-white ml-1"
+                          className="w-5 h-5 sm:w-7 sm:h-7 text-white ml-1"
                           viewBox="0 0 24 24"
                           fill="currentColor"
                         >
@@ -136,13 +135,13 @@ async function ServiceSection() {
                     </div>
                   </div>
                   <div className="p-3 sm:p-4 flex-grow bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950">
-                    <h4 className="font-medium text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
+                    <h4 className="font-medium text-sm sm:text-base text-foreground line-clamp-2 mb-2 group-hover:text-primary transition-colors">
                       {video.title}
                     </h4>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground flex items-center">
+                      <span className="text-[10px] sm:text-xs text-muted-foreground flex items-center">
                         <svg
-                          className="w-4 h-4 mr-1 text-primary/70"
+                          className="w-3 h-3 sm:w-4 sm:h-4 mr-1 text-primary/70"
                           fill="currentColor"
                           viewBox="0 0 24 24"
                         >
@@ -150,10 +149,10 @@ async function ServiceSection() {
                         </svg>
                         Thời lượng: {formatDuration(video.duration)}
                       </span>
-                      <span className="text-xs font-medium text-primary flex items-center">
+                      <span className="text-[10px] sm:text-xs font-medium text-primary flex items-center">
                         Xem video
                         <svg
-                          className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform duration-200"
+                          className="w-3 h-3 sm:w-3.5 sm:h-3.5 ml-1 group-hover:translate-x-0.5 transition-transform duration-200"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -173,19 +172,31 @@ async function ServiceSection() {
             </div>
           </div>
 
-          {/* Project List Section (Right) */}
-          <div className="md:col-span-2 h-full grid grid-rows-5 gap-4">
+          {/* Project List Section (Right) - Hide on mobile, show in a different layout */}
+          <div className="md:col-span-2 h-full grid grid-rows-1 md:grid-rows-5 gap-4">
+            <div className="block md:hidden mb-4">
+              <h3 className="text-lg font-bold text-foreground flex items-center mb-4">
+                <svg
+                  className="w-4 h-4 mr-2 text-primary"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                Bài viết nổi bật khác
+              </h3>
+            </div>
             {listMostViewPosts.map((project) => (
               <ProjectListServiceSection key={project._id} project={project} />
             ))}
           </div>
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-8 sm:mt-12">
           <Button
             asChild
             variant="default"
-            className="bg-primary text-white hover:bg-primary/90 px-6 py-4 h-auto text-base font-medium"
+            className="bg-primary text-white hover:bg-primary/90 px-4 sm:px-6 py-2 sm:py-4 h-auto text-sm sm:text-base font-medium"
           >
             <Link href="/videos">Xem tất cả dịch vụ</Link>
           </Button>
