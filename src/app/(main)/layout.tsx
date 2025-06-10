@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
+import Script from "next/script";
 
 import "./globals.css";
 import Header from "@/components/common/Header";
@@ -76,9 +77,46 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Schema.org Organization data
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Kiến Tạo Nhà Đẹp",
+    url: "https://kientaonhadep.vn",
+    logo: "https://kientaonhadep.vn/logo.png",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+84-093-6267-359",
+      contactType: "customer service",
+      availableLanguage: "Vietnamese",
+    },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "51 Phạm Ngọc Thảo, Tây Thạnh, Tân Phú, TP HCM",
+      addressLocality: "Tân Phú",
+      addressRegion: "TP. Hồ Chí Minh",
+      postalCode: "70000",
+      addressCountry: "VN",
+    },
+    sameAs: [
+      "https://www.facebook.com/kientaonhadep",
+      "https://www.youtube.com/channel/tronghoaixaydung",
+    ],
+    description:
+      "Công ty thiết kế và xây dựng nhà ở uy tín tại TP HCM với hơn 13 năm kinh nghiệm. Chuyên thiết kế biệt thự, nhà phố, nội thất và xây dựng trọn gói với cam kết chất lượng cao.",
+  };
+
   return (
     <html lang="vi">
       <body className={`${roboto.variable} antialiased`}>
+        {/* Add Schema.org JSON-LD structured data */}
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
         <NavigationProgress />
         {/* <PageTransitionProvider> */}
         <Header />

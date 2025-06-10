@@ -36,7 +36,10 @@ const Header = () => {
             "top-0",
             "left-0",
             "right-0",
-            "shadow-lg"
+            "z-50",
+            "shadow-lg",
+            "border-b",
+            "border-gray-200"
           );
         } else {
           setStickyNav(false);
@@ -46,7 +49,10 @@ const Header = () => {
             "top-0",
             "left-0",
             "right-0",
-            "shadow-lg"
+            "z-50",
+            "shadow-lg",
+            "border-b",
+            "border-gray-200"
           );
         }
       }
@@ -96,17 +102,29 @@ const Header = () => {
   const submenuVariants = {
     hidden: {
       opacity: 0,
-      y: 10,
-      scale: 0.98,
-      transition: { duration: 0.2, ease: "easeOut" },
-      transitionEnd: { display: "none" },
+      y: -5,
+      scaleY: 0,
+      scaleX: 0.95,
+      originY: 0,
+      originX: 0.5,
+      transition: {
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1],
+      },
     },
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      display: "block",
-      transition: { duration: 0.25, ease: "easeOut" },
+      scaleY: 1,
+      scaleX: 1,
+      originY: 0,
+      originX: 0.5,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        mass: 0.5,
+      },
     },
   };
 
@@ -196,7 +214,7 @@ const Header = () => {
             {/* Contact button with modern design */}
             <div
               onClick={() => router.push("/")}
-              className="select-none flex items-center space-x-4 max-w-[500px] sm:max-w-[750px] w-full h-full relative cursor-pointer order-2 sm:order-3 my-2 sm:my-0"
+              className="select-none hidden sm:flex items-center space-x-4 max-w-[500px] sm:max-w-[750px] w-full h-full relative cursor-pointer order-2 sm:order-3 my-2 sm:my-0"
             >
               {headerBanner && (
                 <Image
@@ -216,7 +234,7 @@ const Header = () => {
       {/* Navigation Group - will be controlled by JS for sticky behavior */}
       <div
         ref={stickyNavRef}
-        className={`w-full z-40 transition-all duration-300 ${
+        className={`w-full z-50 bg-white transition-all duration-500 ${
           stickyNav ? "animate-slideDown" : ""
         }`}
       >
@@ -227,7 +245,7 @@ const Header = () => {
           }`}
         >
           <div className="container mx-auto">
-            <nav className="hidden lg:flex justify-center relative z-50 overflow-x-auto whitespace-nowrap">
+            <nav className="hidden lg:flex justify-center relative z-50  whitespace-nowrap">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.path || index}
@@ -237,14 +255,13 @@ const Header = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  onHoverStart={() => {
+                  onMouseEnter={() => {
                     if (item.submenu)
                       setHoveredItemPath(item.path || `menu-${index}`);
                   }}
                   onMouseLeave={() => {
                     if (item.submenu) setHoveredItemPath(null);
                   }}
-                  style={{ position: "relative" }}
                 >
                   {item.path ? (
                     <Link
@@ -291,30 +308,29 @@ const Header = () => {
                           ? "visible"
                           : "hidden"
                       }
-                      className="absolute bg-primary left-0 top-full w-fit shadow-lg z-[100] rounded-sm border-none truncate px-0 mt-1"
-                      style={{ position: "absolute" }}
-                      onHoverStart={() => {
-                        if (item.submenu)
-                          setHoveredItemPath(item.path || `menu-${index}`);
-                      }}
+                      className="absolute bg-primary left-0 top-full min-w-[200px] shadow-lg z-[100] rounded-sm border-none mt-1 overflow-hidden backdrop-blur-sm bg-opacity-95 ring-1 ring-green-700/50"
+                      onMouseEnter={() =>
+                        setHoveredItemPath(item.path || `menu-${index}`)
+                      }
+                      onMouseLeave={() => setHoveredItemPath(null)}
                     >
-                      <div>
-                        {item.submenu.map((subItem, subIdx) => (
-                          <Link
-                            key={subItem.path}
-                            href={subItem.path}
-                            onClick={() => setHoveredItemPath(null)}
-                            className={`block uppercase px-5 py-3 font-bold text-[15px] text-white hover:text-yellow-200 hover:bg-green-900 transition-all duration-200${
+                      {item.submenu.map((subItem, subIdx) => (
+                        <Link
+                          key={subItem.path}
+                          href={subItem.path}
+                          onClick={() => setHoveredItemPath(null)}
+                          className={`block uppercase px-5 py-3 font-bold text-[15px] text-white hover:text-yellow-200 hover:bg-green-900 transition-all duration-300 relative
+                            before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:bg-green-800 before:transition-all before:duration-300 before:opacity-0 hover:before:w-1 hover:before:opacity-100
+                            ${
                               Array.isArray(item.submenu) &&
                               subIdx !== item.submenu.length - 1
                                 ? " border-b border-white/20"
                                 : ""
                             }`}
-                          >
-                            {subItem.label}
-                          </Link>
-                        ))}
-                      </div>
+                        >
+                          {subItem.label}
+                        </Link>
+                      ))}
                     </motion.div>
                   )}
                 </motion.div>
@@ -428,13 +444,13 @@ const Header = () => {
       {/* Mobile Navigation Menu - Slide from left */}
       <div
         id="mobile-menu"
-        className={`lg:hidden fixed top-0 left-0 h-full w-[80%] max-w-[300px] bg-white shadow-xl z-[100] transition-transform duration-300 ease-in-out transform ${
+        className={`lg:hidden fixed top-0 left-0 h-full w-[80%] max-w-[300px] bg-gradient-to-b from-white to-green-50 shadow-xl z-[100] transition-transform duration-300 ease-in-out transform ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } overflow-y-auto`}
       >
         <div className="p-4 flex flex-col h-full">
           {/* Mobile Menu Header */}
-          <div className="border-b border-gray-200 pb-4 mb-4">
+          <div className="border-b border-green-100 pb-4 mb-4">
             <div className="flex items-center justify-between mb-4">
               <Image
                 src="/images/logo.png"
@@ -447,10 +463,10 @@ const Header = () => {
               />
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-1 rounded-full hover:bg-gray-100"
+                className="p-1.5 rounded-full hover:bg-green-100 transition-all duration-300 text-primary"
               >
                 <svg
-                  className="w-6 h-6 text-gray-500"
+                  className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -478,38 +494,6 @@ const Header = () => {
                 closeMenu={() => setMobileMenuOpen(false)}
               />
             ))}
-          </div>
-
-          {/* Mobile Hotline with enhanced design */}
-          <div className="mt-auto pt-4 border-t border-gray-200">
-            <div className="flex items-center space-x-3 p-4 rounded-lg bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 shadow-lg">
-              <div className="bg-gradient-to-r from-primary to-secondary rounded-full p-2.5 shadow-md">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <p className="text-primary font-semibold text-xs">
-                  Hotline 24/7
-                </p>
-                <a
-                  href="tel:0961993915"
-                  className="font-bold text-base bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent transition-all duration-300 hover:opacity-80"
-                >
-                  096 1993 915
-                </a>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -542,13 +526,15 @@ const Header = () => {
         @keyframes slideDown {
           from {
             transform: translateY(-100%);
+            opacity: 0;
           }
           to {
             transform: translateY(0);
+            opacity: 1;
           }
         }
         .animate-slideDown {
-          animation: slideDown 0.3s ease-in-out forwards;
+          animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
       `}</style>
     </header>
@@ -576,10 +562,10 @@ const MobileMenuItem = ({
   };
 
   return (
-    <div className="border-b border-gray-100/50 last:border-0">
+    <div className="border-b border-green-100 last:border-0">
       <div className="flex items-center justify-between">
         <div
-          className="py-3 block text-nowrap text-gray-700 font-semibold text-base w-full hover:text-primary transition-colors duration-300 cursor-pointer"
+          className="py-3 px-2 block text-nowrap text-primary font-semibold text-base w-full hover:text-green-600 transition-colors duration-300 cursor-pointer"
           onClick={handleItemClick}
         >
           {item.label}
@@ -587,7 +573,7 @@ const MobileMenuItem = ({
         {item.submenu && (
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="p-2 text-gray-500 hover:text-primary hover:bg-primary/5 rounded-full transition-all duration-300 focus:outline-none"
+            className="p-2 text-primary hover:text-green-600 hover:bg-green-100 rounded-full transition-all duration-300 focus:outline-none"
             aria-label="Toggle submenu"
           >
             <svg
@@ -614,12 +600,12 @@ const MobileMenuItem = ({
             isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className="pl-4 pb-2 bg-green-700">
+          <div className="pl-4 pb-2 bg-primary rounded-md">
             {item.submenu.map((subItem: BaseMenuItem) => (
               <Link
                 key={subItem.path}
                 href={subItem.path}
-                className="block py-2.5 pl-4 text-sm text-white hover:text-yellow-300 hover:bg-green-800 border-l-2 border-transparent hover:border-yellow-300 transition-all duration-200"
+                className="block py-2.5 pl-4 text-sm text-white hover:text-yellow-200 hover:bg-green-700 border-l-2 border-transparent hover:border-yellow-200 transition-all duration-200 rounded-r-md"
                 onClick={closeMenu}
               >
                 {subItem.label}

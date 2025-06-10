@@ -16,20 +16,33 @@ const Footer = () => {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
+  // Animation variants for the desktop submenu
   const submenuVariants = {
     hidden: {
       opacity: 0,
-      y: 10,
-      scale: 0.98,
-      transition: { duration: 0.2, ease: "easeOut" },
-      transitionEnd: { display: "none" },
+      y: -5,
+      scaleY: 0,
+      scaleX: 0.95,
+      originY: 0,
+      originX: 0.5,
+      transition: {
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1],
+      },
     },
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      display: "block",
-      transition: { duration: 0.25, ease: "easeOut" },
+      scaleY: 1,
+      scaleX: 1,
+      originY: 0,
+      originX: 0.5,
+      transition: {
+        type: "spring",
+        stiffness: 400,
+        damping: 25,
+        mass: 0.5,
+      },
     },
   };
 
@@ -41,16 +54,18 @@ const Footer = () => {
           scrolled ? "shadow-lg shadow-primary/20" : "shadow-md"
         }`}
       >
-        <div className="container mx-auto overflow-x-auto">
-          <nav className="hidden lg:flex justify-center min-w-max">
+        <div className="container mx-auto">
+          <nav className="hidden lg:flex justify-center relative z-50  whitespace-nowrap">
             {menuItems.map((item, index) => (
               <motion.div
                 key={item.path || index}
-                className="relative"
+                className={`relative flex items-center font-bold text-white uppercase text-xs border-r border-white ${
+                  index === menuItems.length - 1 ? "border-r-0" : ""
+                } hover:brightness-110 transition-all duration-300`}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
-                onHoverStart={() => {
+                onMouseEnter={() => {
                   if (item.submenu)
                     setHoveredItemPath(item.path || `menu-${index}`);
                 }}
@@ -65,59 +80,31 @@ const Footer = () => {
                       if (hoveredItemPath) setHoveredItemPath(null);
                     }}
                     className={`
-                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-xs sm:text-sm inline-flex items-center relative
-                        after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
-                        hover:after:w-full
-                      `}
+                      uppercase px-3 sm:px-6 py-3 h-full text-white font-bold transition-all duration-300 text-[13px] sm:text-[15px] inline-flex items-center relative
+                      after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-yellow-200 after:transition-all after:duration-300
+                      hover:after:w-full whitespace-nowrap text-nowrap
+                    `}
                   >
                     {item.label}
                     {item.submenu && (
-                      <svg
-                        className={`w-3.5 h-3.5 ml-1 transition-transform duration-300 ${
-                          hoveredItemPath === (item.path || `menu-${index}`)
-                            ? "rotate-180"
-                            : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
+                      <span className="ml-1 text-[15px] align-middle ">
+                        &raquo;
+                      </span>
                     )}
                   </Link>
                 ) : (
                   <div
                     className={`
-                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-xs sm:text-sm inline-flex items-center relative cursor-pointer
-                        after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
-                        hover:after:w-full
-                      `}
+                      uppercase px-3 sm:px-6 py-3 text-white font-bold hover:bg-white/10 transition-all duration-300 text-[13px] sm:text-base inline-flex items-center relative
+                      after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-yellow-200 after:transition-all after:duration-300
+                      hover:after:w-full whitespace-nowrap text-nowrap
+                    `}
                   >
                     {item.label}
                     {item.submenu && (
-                      <svg
-                        className={`w-3.5 h-3.5 ml-1 transition-transform duration-300 ${
-                          hoveredItemPath === `menu-${index}`
-                            ? "rotate-180"
-                            : ""
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
+                      <span className="ml-1 text-base align-middle">
+                        &raquo;
+                      </span>
                     )}
                   </div>
                 )}
@@ -131,24 +118,29 @@ const Footer = () => {
                         ? "visible"
                         : "hidden"
                     }
-                    className="absolute bg-white left-0 mt-0.5 w-72 shadow-xl z-50 rounded-lg overflow-hidden border border-gray-100"
-                    onHoverStart={() => {
-                      if (item.submenu)
-                        setHoveredItemPath(item.path || `menu-${index}`);
-                    }}
+                    className="absolute bg-primary left-0 top-full min-w-[200px] shadow-lg z-[100] rounded-sm border-none mt-1 overflow-hidden backdrop-blur-sm bg-opacity-95 ring-1 ring-green-700/50"
+                    onMouseEnter={() =>
+                      setHoveredItemPath(item.path || `menu-${index}`)
+                    }
+                    onMouseLeave={() => setHoveredItemPath(null)}
                   >
-                    <div className="py-2">
-                      {item.submenu.map((subItem) => (
-                        <Link
-                          key={subItem.path}
-                          href={subItem.path}
-                          onClick={() => setHoveredItemPath(null)}
-                          className="block uppercase px-4 py-2.5 font-bold text-[13px] text-gray-700 hover:text-primary hover:bg-primary/5 border-l-2 border-transparent hover:border-primary transition-all duration-200"
-                        >
-                          {subItem.label}
-                        </Link>
-                      ))}
-                    </div>
+                    {item.submenu.map((subItem, subIdx) => (
+                      <Link
+                        key={subItem.path}
+                        href={subItem.path}
+                        onClick={() => setHoveredItemPath(null)}
+                        className={`block uppercase px-5 py-3 font-bold text-[15px] text-white hover:text-yellow-200 hover:bg-green-900 transition-all duration-300 relative
+                          before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:bg-green-800 before:transition-all before:duration-300 before:opacity-0 hover:before:w-1 hover:before:opacity-100
+                          ${
+                            Array.isArray(item.submenu) &&
+                            subIdx !== item.submenu.length - 1
+                              ? " border-b border-white/20"
+                              : ""
+                          }`}
+                      >
+                        {subItem.label}
+                      </Link>
+                    ))}
                   </motion.div>
                 )}
               </motion.div>
