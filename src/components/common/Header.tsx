@@ -67,7 +67,7 @@ const Header = () => {
     };
 
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // Animation variants for the desktop submenu
@@ -96,70 +96,65 @@ const Header = () => {
   useEffect(() => {
     handleGetBanner();
   }, []);
+  
   return (
     <header className="relative z-50">
       {/* Search Popup */}
       <SearchPopup isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
-      {/* Main Header - Modern design with glass effect */}
-      <div
-        ref={mainHeaderRef}
-        className={`w-full backdrop-blur-md bg-white/95 border-b border-gray-100/50 transition-all duration-500 ${
-          scrolled ? "shadow-lg shadow-primary/5" : "shadow-sm"
-        }`}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            {/* Logo and slogan section with enhanced animations */}
-            <div className="flex items-center space-x-4 flex-1 w-full">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+      {/* Top Banner - Full Width */}
+      <div className="w-full bg-white">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-between py-1 px-2">
+            {/* Logo and Company Name */}
+            <div className="flex items-center gap-2">
+              <Image
                 onClick={() => router.push("/")}
-                className="cursor-pointer flex items-center group relative"
-              >
-                <Image
-                  src="/images/logo.png"
-                  alt="Kiến Tạo Nhà Đẹp Logo"
-                  width={0}
-                  height={0}
-                  sizes="100%"
-                  className="h-[60px] w-auto transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
-                  priority
-                />
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="hidden md:block border-l border-gray-200/50 pl-4 w-full"
-              >
-                <p className="font-black text-2xl tracking-wide bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  KIẾN TẠO NHÀ ĐẸP
-                </p>
-                <div className="mt-0.5">
-                  <p className="font-black uppercase text-secondary/90 leading-tight text-xl">
-                    Kiến tạo không gian sống
-                  </p>
-                </div>
-              </motion.div>
+                src="/images/logo.png"
+                alt="Logo"
+                width={0}
+                height={0}
+                sizes="100%"
+                className="h-12 w-auto cursor-pointer"
+              />
+              <div className="flex flex-col">
+                <span className="font-bold text-primary text-base leading-tight">KIẾN TẠO NHÀ ĐẸP</span>
+                <span className="text-orange-400 text-xs leading-tight">KIẾN TẠO KHÔNG GIAN SỐNG</span>
+              </div>
             </div>
-
-            {/* Contact button with modern design */}
-            <div className="select-none flex items-center space-x-4 max-w-[750px] w-full h-full relative">
-              {headerBanner && (
-                <Image
-                  src={headerBanner || ""}
-                  alt="Hotline"
-                  width={0}
-                  height={0}
-                  sizes="100%"
-                  className="w-full h-full object-cover"
-                />
-              )}
+            
+            {/* Hamburger button for mobile */}
+            <button
+              className="block lg:hidden ml-auto p-1 rounded focus:outline-none border border-gray-200"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            
+            {/* Banner Area */}
+            <div className="flex-1 px-2 hidden md:block">
+              <div className="w-full text-center">
+                <div className="text-red-600 font-bold text-base mb-0.5 leading-tight">CHẤT LƯỢNG LÀ DANH DỰ - UY TÍN LÀ CAM KẾT</div>
+                <div className="text-green-700 font-bold text-sm leading-tight">KHÔNG BÁN THẦU - PHẠT 300 TRIỆU NẾU VẬT LIỆU KÉM CHẤT LƯỢNG</div>
+              </div>
+            </div>
+            
+            {/* Hotline */}
+            <div className="bg-primary rounded-lg overflow-hidden flex flex-col items-center ml-2">
+              <div className="bg-white py-0.5 px-2 w-full text-center">
+                <span className="text-primary font-bold text-base leading-tight">Hotline</span>
+                <span className="ml-1 inline-block">
+                  <svg className="w-4 h-4 inline-block" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                </span>
+              </div>
+              <div className="bg-primary py-1 px-3 w-full text-center">
+                <a href="tel:0961993915" className="text-white text-base font-bold leading-tight">096 1993 915</a>
+              </div>
             </div>
           </div>
         </div>
@@ -179,11 +174,11 @@ const Header = () => {
           }`}
         >
           <div className="container mx-auto">
-            <nav className="hidden lg:flex justify-center">
+            <nav className="hidden lg:flex justify-center relative z-50">
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.path || index}
-                  className="relative"
+                  className={`relative bg-gradient-to-r from-primary via-primary/95 to-primary-dark px-3 py-1 flex items-center font-bold text-white uppercase text-xs border-r border-white ${index === menuItems.length - 1 ? 'border-r-0' : ''} hover:brightness-110 transition-all duration-300`}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
@@ -194,6 +189,7 @@ const Header = () => {
                   onMouseLeave={() => {
                     if (item.submenu) setHoveredItemPath(null);
                   }}
+                  style={{ position: "relative" }}
                 >
                   {item.path ? (
                     <Link
@@ -202,59 +198,27 @@ const Header = () => {
                         if (hoveredItemPath) setHoveredItemPath(null);
                       }}
                       className={`
-                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-sm inline-flex items-center relative
+                        uppercase px-3 py-1 text-white font-bold hover:bg-white/10 transition-all duration-300 text-xs inline-flex items-center relative
                         after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
                         hover:after:w-full whitespace-nowrap text-nowrap
                       `}
                     >
                       {item.label}
                       {item.submenu && (
-                        <svg
-                          className={`w-3.5 h-3.5 ml-1 transition-transform duration-300 ${
-                            hoveredItemPath === (item.path || `menu-${index}`)
-                              ? "rotate-180"
-                              : ""
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+                        <span className="ml-1 text-base align-middle">&raquo;</span>
                       )}
                     </Link>
                   ) : (
                     <div
                       className={`
-                        uppercase px-3 py-2.5 text-white font-bold hover:bg-white/10 transition-all duration-300 text-sm inline-flex items-center relative cursor-pointer
+                        uppercase px-3 py-1 text-white font-bold hover:bg-white/10 transition-all duration-300 text-xs inline-flex items-center relative cursor-pointer
                         after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-white after:transition-all after:duration-300
                         hover:after:w-full
                       `}
                     >
                       {item.label}
                       {item.submenu && (
-                        <svg
-                          className={`w-3.5 h-3.5 ml-1 transition-transform duration-300 ${
-                            hoveredItemPath === `menu-${index}`
-                              ? "rotate-180"
-                              : ""
-                          }`}
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+                        <span className="ml-1 text-base align-middle">&raquo;</span>
                       )}
                     </div>
                   )}
@@ -268,19 +232,20 @@ const Header = () => {
                           ? "visible"
                           : "hidden"
                       }
-                      className="absolute bg-white left-0 mt-0.5 w-72 shadow-xl z-50 rounded-lg overflow-hidden border border-gray-100"
+                      className="absolute bg-green-800 left-0 top-full w-72 shadow-lg z-[100] rounded-lg border-none py-2 px-0"
+                      style={{ position: "absolute" }}
                       onHoverStart={() => {
                         if (item.submenu)
                           setHoveredItemPath(item.path || `menu-${index}`);
                       }}
                     >
-                      <div className="py-2">
-                        {item.submenu.map((subItem) => (
+                      <div>
+                        {item.submenu.map((subItem, subIdx) => (
                           <Link
                             key={subItem.path}
                             href={subItem.path}
                             onClick={() => setHoveredItemPath(null)}
-                            className="block uppercase px-4 py-2.5 font-bold text-[13px] text-gray-700 hover:text-primary hover:bg-primary/5 border-l-2 border-transparent hover:border-primary transition-all duration-200"
+                            className={`block uppercase px-5 py-2 font-bold text-[15px] text-white hover:text-yellow-300 hover:bg-green-900 transition-all duration-200${Array.isArray(item.submenu) && subIdx !== item.submenu.length - 1 ? ' border-b border-white/20' : ''}`}
                           >
                             {subItem.label}
                           </Link>
@@ -294,20 +259,11 @@ const Header = () => {
           </div>
         </div>
 
-        {/* HeaderValueBar */}
-        <div className="w-full bg-gradient-to-r from-green-50 via-white to-green-50 border-b border-green-200 shadow-sm overflow-hidden">
+        {/* Scrolling Text Bar */}
+        <div className="relative z-0 w-full bg-gradient-to-r from-green-50 via-white to-green-50 border-b border-green-200 shadow-sm overflow-visible">
           <div className="container mx-auto flex items-center justify-between px-4 py-1.5">
             {/* Logo and Sliding Slogan */}
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <Image
-                onClick={() => router.push("/")}
-                src="/images/logo.png"
-                alt="Logo"
-                width={0}
-                height={0}
-                sizes="100%"
-                className="h-8 w-auto flex-shrink-0 cursor-pointer"
-              />
               <div className="relative overflow-hidden flex-1">
                 <div className="animate-slide-left-infinite whitespace-nowrap flex items-center">
                   <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
@@ -396,7 +352,7 @@ const Header = () => {
 
       {/* Mobile Navigation Menu with enhanced design */}
       <div
-        className={`lg:hidden bg-white/95 backdrop-blur-md shadow-lg absolute w-full transition-all duration-500 ease-in-out z-50 ${
+        className={`lg:hidden bg-white/95 backdrop-blur-md shadow-lg absolute w-full transition-all duration-500 ease-in-out z-[60] ${
           mobileMenuOpen
             ? "max-h-[80vh] overflow-y-auto opacity-100"
             : "max-h-0 overflow-hidden opacity-0"
@@ -477,14 +433,10 @@ const Header = () => {
   );
 };
 
-// Mobile Menu Item Component with enhanced design
+// Mobile Menu Item Component
 const MobileMenuItem = ({ item }: { item: MenuItemType }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-
-  const handleNavigate = (path: string) => {
-    router.push(path);
-  };
 
   return (
     <div className="border-b border-gray-100/50 last:border-0">
@@ -504,7 +456,6 @@ const MobileMenuItem = ({ item }: { item: MenuItemType }) => {
             {item.label}
           </div>
         )}
-
         {item.submenu && (
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -512,9 +463,7 @@ const MobileMenuItem = ({ item }: { item: MenuItemType }) => {
             aria-label="Toggle submenu"
           >
             <svg
-              className={`w-4 h-4 transition-transform duration-300 ${
-                isOpen ? "rotate-180" : ""
-              }`}
+              className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -529,19 +478,16 @@ const MobileMenuItem = ({ item }: { item: MenuItemType }) => {
           </button>
         )}
       </div>
-
       {item.submenu && (
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-          }`}
+          className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}
         >
-          <div className="pl-4 pb-2">
+          <div className="pl-4 pb-2 bg-green-700">
             {item.submenu.map((subItem: BaseMenuItem) => (
               <Link
                 key={subItem.path}
                 href={subItem.path}
-                className="block py-2.5 pl-4 text-sm text-gray-600 hover:text-primary hover:translate-x-1 border-l-2 border-transparent hover:border-primary transition-all duration-200"
+                className="block py-2.5 pl-4 text-sm text-white hover:text-yellow-300 hover:bg-green-800 border-l-2 border-transparent hover:border-yellow-300 transition-all duration-200"
               >
                 {subItem.label}
               </Link>

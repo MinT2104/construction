@@ -19,29 +19,23 @@ const InfoItem: React.FC<InfoItemProps> = ({
   return (
     <div
       onClick={() => router.push(path)}
-      className="cursor-pointer bg-gradient-to-br from-white to-gray-50 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 
-                 border-l-4 border-primary flex h-full group relative"
+      className="cursor-pointer bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 
+                 border-l-4 border-green-700 flex h-full group relative"
     >
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-16 h-16 bg-primary/5 rounded-bl-full"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-8 bg-primary/5 rounded-tr-full"></div>
-
       {/* Left section with number */}
-      <div className="flex items-center justify-center p-4 bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
-        <span className="text-3xl font-bold text-primary group-hover:scale-110 transition-transform duration-300">
-          {number}
-        </span>
+      <div className="flex items-center justify-center p-4 bg-green-700 text-white">
+        <span className="text-3xl font-bold">{number}</span>
       </div>
 
       {/* Content section */}
       <div className="flex flex-col p-5 flex-1 z-10">
-        <h3 className="text-lg font-bold text-gray-800 mb-3 group-hover:text-primary transition-colors duration-300">
+        <h3 className="text-lg font-bold text-gray-800 mb-3">
           {title}
         </h3>
         <p className="text-base text-gray-600 leading-relaxed mb-4 flex-grow">
           {subtitle}
         </p>
-        <div className="inline-flex items-center text-sm font-medium text-primary mt-auto bg-primary/10 px-4 py-2 rounded-full group-hover:bg-primary group-hover:text-white transition-all duration-300">
+        <div className="inline-flex items-center text-sm font-medium text-green-700 mt-auto bg-green-100 px-4 py-2 rounded-full group-hover:bg-green-700 group-hover:text-white transition-all duration-300">
           Xem chi tiết
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -96,26 +90,21 @@ const PriceInfoSection: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-r from-gray-100 to-white relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-0 w-32 h-32 bg-primary/5 rounded-br-full"></div>
-      <div className="absolute bottom-0 right-0 w-64 h-32 bg-primary/5 rounded-tl-full"></div>
-
-      <div className="container mx-auto px-4 relative z-10">
+    <section className="py-16 bg-gradient-to-r from-gray-50 to-white relative overflow-hidden">
+      <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-12">
-          <div className="inline-block px-6 py-2 bg-primary text-white text-base font-semibold rounded-full shadow-md mb-4">
+          <div className="inline-block px-8 py-3 bg-green-700 text-white text-lg font-semibold rounded-full shadow-lg mb-4 transition-transform transform hover:scale-105">
             BẢNG GIÁ DỊCH VỤ
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6">
             Dịch Vụ Xây Dựng Chuyên Nghiệp
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Chúng tôi cung cấp các giải pháp xây dựng và thiết kế toàn diện, đáp
-            ứng mọi nhu cầu của bạn với chi phí tối ưu và chất lượng hàng đầu.
+          <p className="text-lg text-gray-700 max-w-4xl mx-auto">
+            Chúng tôi cung cấp các giải pháp xây dựng và thiết kế toàn diện, đáp ứng mọi nhu cầu của bạn với chi phí tối ưu và chất lượng hàng đầu.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {items.map((item) => (
             <InfoItem
               key={item.number}
@@ -129,6 +118,6 @@ const PriceInfoSection: React.FC = () => {
       </div>
     </section>
   );
-};
+}
 
 export default PriceInfoSection;
