@@ -41,20 +41,22 @@ const HeroBannerSection = ({
       <div className="absolute inset-0">
         <AnimatePresence initial={false}>
           <motion.div
-            key={bannerImages[currentImageIndex].src}
+            key={bannerImages[currentImageIndex]?.src || ""}
             className="absolute inset-0"
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7, ease: "easeInOut" }}
           >
-            <Image
-              src={bannerImages[currentImageIndex].src}
-              alt={bannerImages[currentImageIndex].alt}
-              fill
-              className="object-cover"
-              priority
-            />
+            {bannerImages[currentImageIndex]?.src && (
+              <Image
+                src={bannerImages[currentImageIndex]?.src || ""}
+                alt={bannerImages[currentImageIndex]?.alt || ""}
+                fill
+                className="object-cover"
+                priority
+              />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

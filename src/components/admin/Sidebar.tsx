@@ -2,6 +2,7 @@
 
 import { FC, ElementType } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -76,10 +77,26 @@ const Sidebar: FC = () => {
         { href: "/admin/cau-hinh/banner", label: "Banner", icon: ImageIcon },
         { href: "/admin/cau-hinh/bao-gia", label: "Báo giá", icon: Calculator },
         { href: "/admin/cau-hinh/khuyen-mai", label: "Khuyến mãi", icon: Gift },
-        { href: "/admin/cau-hinh/he-so", label: "Hệ số quy đổi", icon: Percent },
-        { href: "/admin/cau-hinh/loai-cong-trinh", label: "Loại công trình", icon: Home },
-        { href: "/admin/cau-hinh/goi-xay-dung", label: "Gói xây dựng", icon: Package },
-        { href: "/admin/cau-hinh/muc-dau-tu", label: "Mức đầu tư", icon: TrendingUp },
+        {
+          href: "/admin/cau-hinh/he-so",
+          label: "Hệ số quy đổi",
+          icon: Percent,
+        },
+        {
+          href: "/admin/cau-hinh/loai-cong-trinh",
+          label: "Loại công trình",
+          icon: Home,
+        },
+        {
+          href: "/admin/cau-hinh/goi-xay-dung",
+          label: "Gói xây dựng",
+          icon: Package,
+        },
+        {
+          href: "/admin/cau-hinh/muc-dau-tu",
+          label: "Mức đầu tư",
+          icon: TrendingUp,
+        },
         { href: "/admin/cau-hinh/don-gia", label: "Đơn giá", icon: DollarSign },
       ],
     },
@@ -91,7 +108,7 @@ const Sidebar: FC = () => {
       <aside
         className={cn(
           "fixed inset-y-0 left-0 z-20 flex h-full flex-col border-r bg-background shadow-sm transition-all duration-300 ease-in-out",
-          isSidebarCollapsed ? "w-16" : "w-64"
+          isSidebarCollapsed ? "w-20" : "w-64"
         )}
         onMouseEnter={() => setIsSidebarCollapsed(false)}
         onMouseLeave={() => setIsSidebarCollapsed(true)}
@@ -109,14 +126,14 @@ const Sidebar: FC = () => {
               isSidebarCollapsed && "justify-center"
             )}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="h-6 w-6 text-primary"
-            >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-            </svg>
+            <Image
+              src="/images/logo.png"
+              alt="Kiến Tạo Nhà Đẹp Logo"
+              width={0}
+              height={0}
+              sizes="100%"
+              className="h-10 w-auto"
+            />
             {!isSidebarCollapsed && (
               <h1 className="text-lg font-semibold whitespace-nowrap">
                 Kiến Tạo Nhà Đẹp
