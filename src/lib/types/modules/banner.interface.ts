@@ -4,6 +4,7 @@ export interface HeroItem {
   name: string;
   url: string;
   isShow: boolean;
+  description?: string;
   createdAt: string; // ISO string (from JSON)
   updatedAt: string;
 }

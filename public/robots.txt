@@ -1,0 +1,32 @@
+# Robots.txt file for Kiến Tạo Nhà Đẹp
+# Website: https://kientaonhadep.vn
+# Last updated: 2023-08-18
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /*?source=*
+Disallow: /*&source=*
+
+# Specific rules for major bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# Crawler delay to prevent server overload
+Crawl-delay: 10
+
+# Sitemap location
+Sitemap: https://kientaonhadep.vn/sitemap.xml 

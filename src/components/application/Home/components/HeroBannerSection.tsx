@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Banner, HeroItem } from "@/lib/types/modules/banner.interface";
+import Link from "next/link";
+
 const HeroBannerSection = ({
   heroBanner,
 }: {
@@ -14,6 +16,10 @@ const HeroBannerSection = ({
     .map((item: HeroItem) => ({
       src: item.url,
       alt: item.name,
+      title: item.name || "Thiết kế và xây dựng nhà đẹp chất lượng cao",
+      description:
+        item.description ||
+        "Giải pháp thiết kế và xây dựng toàn diện cho ngôi nhà mơ ước của bạn với đội ngũ kiến trúc sư và kỹ sư giàu kinh nghiệm",
     }));
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -37,7 +43,10 @@ const HeroBannerSection = ({
   };
 
   return (
-    <section className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] min-h-[300px] sm:min-h-[400px] md:min-h-[520px] max-h-[720px] overflow-hidden shadow-2xl">
+    <section
+      className="relative h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] min-h-[300px] sm:min-h-[400px] md:min-h-[520px] max-h-[720px] overflow-hidden shadow-2xl"
+      aria-label="Hình ảnh các dự án thiết kế và xây dựng nổi bật"
+    >
       <div className="absolute inset-0">
         <AnimatePresence initial={false}>
           <motion.div
