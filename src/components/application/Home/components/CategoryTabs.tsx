@@ -38,19 +38,19 @@ const CategoryTabs = ({
   };
 
   return (
-    <div className="mb-12 overflow-x-auto no-scrollbar">
-      <div className="flex space-x-1 md:space-x-2 min-w-max">
+    <div className="container mt-12 mb-12 ">
+      <div className="grid lg:grid-cols-6 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-2 items-center">
         {tabs.map((tab, index) => (
           <button
             key={index}
             onClick={() => handleTabClick(tab.slug)}
-            className={`relative inline-block px-4 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-bold tracking-wide transition-colors duration-200 border-2 ${
+            className={`relative inline-block py-4 text-[15px] uppercase font-black tracking-wide transition-colors duration-200 text-nowrap ${
               localActiveTab === tab.slug
-                ? "bg-[#2B5A27] text-white border-[#2B5A27] shadow-md"
-                : "text-[#2B5A27] border-[#2B5A27] hover:bg-[#2B5A27] hover:text-white"
+                ? "text-primary border-[2px] border-primary rounded-sm"
+                : "text-gray-500 hover:text-primary"
             }`}
           >
-            {tab.label.toUpperCase()}
+            {tab.label}
           </button>
         ))}
       </div>
