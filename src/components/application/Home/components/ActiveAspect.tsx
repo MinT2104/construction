@@ -97,15 +97,15 @@ const ActiveAspect = ({ searchParams }: ActiveAspectProps) => {
       <div className="container mx-auto px-4">
         {/* Tiêu đề */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary uppercase mb-2">
-            Lĩnh vực hoạt động
+          <h2 className="text-4xl md:text-5xl font-bold text-[#2B5A27] uppercase mb-4">
+            LĨNH VỰC HOẠT ĐỘNG
           </h2>
           <div className="flex items-center justify-center">
-            <div className="h-0.5 bg-primary w-16"></div>
-            <p className="mx-4 text-muted-foreground">
-              Các lĩnh vực hoạt động của công ty
+            <div className="h-0.5 bg-[#2B5A27] w-16"></div>
+            <p className="mx-4 text-[#2B5A27] font-medium text-lg uppercase">
+              LĨNH VỰC HOẠT ĐỘNG THIẾT KẾ, THI CÔNG, SỬA CHỮA CẢI TẠO NHÀ
             </p>
-            <div className="h-0.5 bg-primary w-16"></div>
+            <div className="h-0.5 bg-[#2B5A27] w-16"></div>
           </div>
         </div>
 
