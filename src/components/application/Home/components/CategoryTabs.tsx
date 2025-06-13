@@ -46,8 +46,8 @@ const CategoryTabs = ({
             onClick={() => handleTabClick(tab.slug)}
             className={`relative inline-block py-4 text-[15px] uppercase font-black tracking-wide transition-colors duration-200 text-nowrap ${
               localActiveTab === tab.slug
-                ? "text-primary border-[2px] border-primary rounded-sm"
-                : "text-gray-500 hover:text-primary"
+                ? "text-white border-[2px] border-primary rounded-sm bg-primary"
+                : "text-primary hover:text-primary border-[2px] border-primary rounded-sm"
             }`}
           >
             {tab.label}
