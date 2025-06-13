@@ -11,6 +11,7 @@ import ScrollToTop from "@/components/common/ScrollToTop";
 import HomeNavigation from "@/components/common/HomeNavigation";
 import FastNavigationBar from "@/components/common/FastNavigation";
 import { PromotionOverlay } from "@/components/common/PromotionOverlay";
+import FloatingContact from "@/components/common/FloatingContact";
 // Tối ưu font loading
 const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
@@ -144,6 +145,8 @@ export default function RootLayout({
             },
           ]}
         />
+        {/* Contact Section - Liên hệ */}
+        <FloatingContact />
         <HomeNavigation />
       </body>
     </html>

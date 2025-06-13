@@ -192,8 +192,6 @@ export default async function Home({ searchParams }: HomeProps) {
         <HouseDesignSection />
         {/* Cost Calculator Section - Standalone section with eye-catching design */}
         <CalculatorSection />
-        {/* Contact Section - Liên hệ */}
-        <FloatingContact />
       </div>
     </Suspense>
   );
