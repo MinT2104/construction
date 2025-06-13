@@ -111,6 +111,23 @@ export default function RootLayout({
 
   return (
     <html lang="vi">
+      <head>
+        {/* Google Analytics */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-E7P1W5Q31J"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-E7P1W5Q31J');
+            `,
+          }}
+        />
+      </head>
       <body className={`${roboto.variable} antialiased`}>
         {/* Add Schema.org JSON-LD structured data */}
         <Script
@@ -120,6 +137,7 @@ export default function RootLayout({
             __html: JSON.stringify(organizationSchema),
           }}
         />
+
         <NavigationProgress />
         <Header />
         <PromotionOverlay />
