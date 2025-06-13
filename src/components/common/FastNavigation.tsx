@@ -23,7 +23,7 @@ const FastNavigationBar: React.FC<FastNavigationBarProps> = ({ buttons }) => {
             key={idx}
             href={btn.href}
             className={cn(
-              " text-nowrap text-center rounded-sm bg-primary border border-white shadow-lg text-white font-bold py-3 px-6 transition-transform duration-200 hover:scale-105 whitespace-pre-line",
+              " w-32 lg:w-fit text-center rounded-sm bg-primary border border-white shadow-lg text-white font-bold py-3 px-3 transition-transform duration-200 hover:scale-105 whitespace-pre-line",
               btn.className
             )}
             style={{ boxShadow: "0 4px 16px 0 rgba(0,64,0,0.15)" }}

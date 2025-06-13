@@ -132,6 +132,11 @@ export default function RootLayout({
             },
             { label: "Công trình bảo hành", href: "/cong-trinh-bao-hanh" },
             {
+              label:
+                "Kiến Tạo Nhà Đẹp hơn 10 năm kinh \n nghiệm, hơn 1000+ căn nhà",
+              href: "/gioi-thieu/ve-chung-toi",
+            },
+            {
               label: "093 6267 359",
               href: "tel:0936267359",
               className:
