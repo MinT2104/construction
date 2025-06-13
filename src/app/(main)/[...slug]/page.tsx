@@ -338,11 +338,7 @@ async function renderTagPage(
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const pageSize = 3; // Default page size
 
-  const cacheKey = `category-posts-${tag}-${page}-${pageSize}`;
-  const fetchedPosts = await cachedFetch(cacheKey, () =>
-    blogService.getBlogsByTag(tag, page, pageSize)
-  );
-  console.log("fetchedPosts", fetchedPosts);
+  const fetchedPosts = await blogService.getBlogsByTag(tag, page, pageSize);
 
   if (!fetchedPosts) return notFound();
 
@@ -407,10 +403,8 @@ async function renderRegularPage(
   if (currentItem.type === "single") {
     // start single
     // Sử dụng cache
-    const cacheKey = `single-category-${slug}`;
-    const fetchedPost = await cachedFetch(cacheKey, () =>
-      blogService.getBlogsByCategory(slug)
-    );
+
+    const fetchedPost = await blogService.getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
 
@@ -421,9 +415,7 @@ async function renderRegularPage(
       },
     ];
 
-    const relatedPosts = await cachedFetch(`related-posts-${slug}`, () =>
-      blogService.getBlogsByCategory(slug, 1, 3)
-    );
+    const relatedPosts = await blogService.getBlogsByCategory(slug, 1, 3);
 
     const post = fetchedPost.rows[0] as BlogPost;
     pageContent = (
@@ -439,9 +431,10 @@ async function renderRegularPage(
     const page = searchParams?.page ? Number(searchParams.page) : 1;
     const pageSize = 10; // Default page size
 
-    const cacheKey = `category-posts-${slug}-${page}-${pageSize}`;
-    const fetchedPosts = await cachedFetch(cacheKey, () =>
-      blogService.getBlogsByCategory(slug, page, pageSize)
+    const fetchedPosts = await blogService.getBlogsByCategory(
+      slug,
+      page,
+      pageSize
     );
 
     const posts = fetchedPosts.rows.map((post: any) => ({

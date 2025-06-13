@@ -142,6 +142,8 @@
   break-inside: avoid;
 }
 
-/* .ql-video {
+.ql-video {
   max-width: 100%;
-} */
+  height: auto;
+  aspect-ratio: 16/9;
+}

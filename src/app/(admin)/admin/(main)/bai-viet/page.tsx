@@ -245,6 +245,8 @@ const AdminBlogPage = () => {
     "Tư vấn giám sát",
     "Cẩm nang XD",
     "Liên Hệ",
+    "Công Trình Đang Thi Công",
+    "Công Trình Bảo Hành",
   ];
   const blogCategoryMenuItems = menuItems.filter((item) =>
     relevantBlogCategoryLabels.includes(item.label)

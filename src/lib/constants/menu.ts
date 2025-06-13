@@ -5,6 +5,7 @@ const menuItems: MenuItemType[] = [
     label: "Giới thiệu",
     path: "/gioi-thieu",
     isUseSidebar: true,
+    isShowInHeader: true,
     type: "category",
     submenu: [
       {
@@ -38,6 +39,7 @@ const menuItems: MenuItemType[] = [
     label: "Thiết kế",
     path: "/thiet-ke",
     isUseSidebar: true,
+    isShowInHeader: true,
     type: "category",
     submenu: [
       {
@@ -72,6 +74,7 @@ const menuItems: MenuItemType[] = [
     path: "/xay-nha",
     isUseSidebar: true,
     type: "category",
+    isShowInHeader: true,
     submenu: [
       {
         label: "Công trình tiêu biểu",
@@ -115,6 +118,7 @@ const menuItems: MenuItemType[] = [
     path: "/sua-nha",
     isUseSidebar: true,
     type: "category",
+    isShowInHeader: true,
     submenu: [
       {
         label: "Đơn giá sửa nhà các quận tại TP HCM",
@@ -137,6 +141,7 @@ const menuItems: MenuItemType[] = [
     label: "Mẫu Nhà Đẹp",
     path: "/mau-nha-dep",
     isUseSidebar: false,
+    isShowInHeader: true,
     type: "house-design",
     submenu: [
       {
@@ -176,12 +181,14 @@ const menuItems: MenuItemType[] = [
     label: "Tư vấn giám sát",
     path: "/tu-van-giam-sat",
     isUseSidebar: true,
+    isShowInHeader: true,
     type: "category",
   },
   {
     label: "Báo Giá",
     path: "/bao-gia",
     isUseSidebar: true,
+    isShowInHeader: true,
     type: "category",
     submenu: [
       {
@@ -215,6 +222,7 @@ const menuItems: MenuItemType[] = [
     label: "Cẩm nang XD",
     path: "/cam-nang",
     isUseSidebar: true,
+    isShowInHeader: true,
     type: "category",
     submenu: [
       {
@@ -243,7 +251,24 @@ const menuItems: MenuItemType[] = [
     label: "Liên Hệ",
     path: "/lien-he",
     isUseSidebar: true,
+    isShowInHeader: true,
     type: "single",
+  },
+  {
+    label: "Công Trình Đang Thi Công",
+    path: "/cong-trinh-dang-thi-cong",
+    isUseSidebar: true,
+    isShowInHeader: false,
+    type: "category",
+    submenu: [],
+  },
+  {
+    label: "Công Trình Bảo Hành",
+    path: "/cong-trinh-bao-hanh",
+    isUseSidebar: true,
+    isShowInHeader: false,
+    type: "category",
+    submenu: [],
   },
 ];
 

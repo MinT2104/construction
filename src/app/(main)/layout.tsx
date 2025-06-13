@@ -9,6 +9,8 @@ import PageTransitionProvider from "@/components/common/PageTransition";
 import NavigationProgress from "@/components/common/NProgress";
 import ScrollToTop from "@/components/common/ScrollToTop";
 import HomeNavigation from "@/components/common/HomeNavigation";
+import FastNavigationBar from "@/components/common/FastNavigation";
+import { PromotionOverlay } from "@/components/common/PromotionOverlay";
 // Tối ưu font loading
 const roboto = Roboto({
   subsets: ["latin", "vietnamese"],
@@ -118,12 +120,25 @@ export default function RootLayout({
           }}
         />
         <NavigationProgress />
-        {/* <PageTransitionProvider> */}
         <Header />
+        <PromotionOverlay />
         <main className="min-h-[60vh]">{children}</main>
         <Footer />
-        {/* </PageTransitionProvider> */}
-        <ScrollToTop />
+        <FastNavigationBar
+          buttons={[
+            {
+              label: "Công trình đang thi công",
+              href: "/cong-trinh-dang-thi-cong",
+            },
+            { label: "Công trình bảo hành", href: "/cong-trinh-bao-hanh" },
+            {
+              label: "093 6267 359",
+              href: "tel:0936267359",
+              className:
+                "text-yellow-400 text-lg border-yellow-400 animate-bounce hover:scale-105 duration-300",
+            },
+          ]}
+        />
         <HomeNavigation />
       </body>
     </html>

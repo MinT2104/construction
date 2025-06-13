@@ -15,6 +15,7 @@ interface MenuItemType {
   parentLabel?: string;
   parentPath?: string;
   description?: string;
+  isShowInHeader?: boolean;
 }
 
 export type { MenuItemType, BaseMenuItem };
