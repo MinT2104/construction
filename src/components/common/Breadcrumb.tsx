@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, Home } from "lucide-react";
+import { ChevronRight, Home } from "@/lib/icons";
 import { getBreadcrumbItems } from "@/lib/utils/menu-utils";
 import { MenuItemType } from "@/lib/types/common/menu.interface";
 

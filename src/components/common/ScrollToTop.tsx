@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ArrowUp } from "lucide-react"; // Bạn có thể thay đổi icon tùy ý
+import { ArrowUp } from "@/lib/icons";
 
 const ScrollToTop: React.FC = () => {
   const scrollToTop = () => {

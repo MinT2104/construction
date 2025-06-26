@@ -23,6 +23,10 @@ const Header = () => {
   const mainHeaderRef = useRef<HTMLDivElement>(null);
   const stickyNavRef = useRef<HTMLDivElement>(null);
 
+  // Refs for hover timeout management
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -103,13 +107,12 @@ const Header = () => {
   const submenuVariants = {
     hidden: {
       opacity: 0,
-      y: -5,
+      y: -10,
       scaleY: 0,
       scaleX: 0.95,
-      originY: 0,
-      originX: 0.5,
+      transformOrigin: "top center",
       transition: {
-        duration: 0.2,
+        duration: 0.15,
         ease: [0.4, 0, 0.2, 1],
       },
     },
@@ -118,13 +121,10 @@ const Header = () => {
       y: 0,
       scaleY: 1,
       scaleX: 1,
-      originY: 0,
-      originX: 0.5,
+      transformOrigin: "top center",
       transition: {
-        type: "spring",
-        stiffness: 400,
-        damping: 25,
-        mass: 0.5,
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1],
       },
     },
   };
@@ -137,6 +137,49 @@ const Header = () => {
   useEffect(() => {
     handleGetBanner();
   }, []);
+
+  // Clear timeouts on component unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+      if (leaveTimeoutRef.current) {
+        clearTimeout(leaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Handle mouse enter with delay to prevent flickering
+  const handleMouseEnter = (itemPath: string) => {
+    // Clear any pending leave timeout
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+
+    // Clear any pending hover timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+
+    // Immediately set hovered item path
+    setHoveredItemPath(itemPath);
+  };
+
+  // Handle mouse leave with delay to prevent flickering
+  const handleMouseLeave = () => {
+    // Clear any pending hover timeout
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+
+    // Set leave timeout to close menu after delay
+    leaveTimeoutRef.current = setTimeout(() => {
+      setHoveredItemPath(null);
+    }, 300); // 300ms delay for mouse leave
+  };
 
   return (
     <header className="relative z-50">
@@ -153,13 +196,14 @@ const Header = () => {
         {/* Top Banner - Full Width */}
         <div className="w-full bg-white" ref={mainHeaderRef}>
           <div className="container mx-auto px-4">
-            <div className="flex flex-col sm:flex-row items-center justify-between py-2 sm:py-0">
+            {/* Main Header Row - Logo and Company Name */}
+            <div className="flex items-center justify-between py-2">
               {/* Logo and Company Name */}
               <div
                 onClick={() => router.push("/")}
-                className="flex items-center justify-between w-full sm:justify-start select-none cursor-pointer my-2 sm:my-0"
+                className="flex items-center justify-between w-full xl:justify-start select-none cursor-pointer"
               >
-                <div className="flex items-center space-x-2 sm:space-x-4">
+                <div className="flex items-center space-x-3 sm:space-x-4">
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -173,7 +217,7 @@ const Header = () => {
                       width={0}
                       height={0}
                       sizes="100%"
-                      className="h-[40px] sm:h-[60px] w-auto transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
+                      className="h-[50px] sm:h-[55px] xl:h-[60px] w-auto transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
                       priority
                     />
                     <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
@@ -183,23 +227,23 @@ const Header = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
-                    className="hidden sm:block border-l border-gray-200/50 pl-4 w-full"
+                    className="border-l border-gray-200/50 pl-3 sm:pl-4"
                   >
-                    <p className="font-black text-lg sm:text-base md:text-xl tracking-wide bg-primary bg-clip-text text-transparent">
+                    <p className="font-black text-sm sm:text-base md:text-lg xl:text-xl tracking-wide bg-primary bg-clip-text text-transparent">
                       KIẾN TẠO NHÀ ĐẸP
                     </p>
                     <div className="mt-0.5">
-                      <p className="font-black uppercase text-secondary/90 leading-tight text-sm sm:text-base md:text-xl">
+                      <p className="font-black uppercase text-secondary/90 leading-tight text-xs sm:text-sm md:text-base xl:text-lg">
                         Kiến tạo không gian sống
                       </p>
                     </div>
                   </motion.div>
                 </div>
 
-                {/* Hamburger button for mobile - moved inside the logo div */}
+                {/* Hamburger button for mobile */}
                 <button
                   id="hamburger-button"
-                  className="block lg:hidden p-1 rounded focus:outline-none border border-gray-200"
+                  className="block xl:hidden p-1 rounded focus:outline-none border border-gray-200 flex-shrink-0"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   aria-label="Toggle menu"
                 >
@@ -218,24 +262,27 @@ const Header = () => {
                   </svg>
                 </button>
               </div>
+            </div>
 
-              {/* Contact button with modern design */}
-              <div
-                onClick={() => router.push("/")}
-                className="select-none hidden md:flex items-center space-x-4 max-w-[500px] sm:max-w-[750px] w-full h-full relative cursor-pointer order-2 sm:order-3 my-2 sm:my-0"
-              >
-                {headerBanner && (
+            {/* Banner Row - Full width for all devices */}
+            {headerBanner && (
+              <div className="border-t border-gray-100 py-1.5 sm:py-2">
+                <div
+                  onClick={() => router.push("/")}
+                  className="select-none cursor-pointer w-full"
+                >
                   <Image
-                    src={headerBanner || ""}
+                    src={headerBanner}
                     alt="Hotline"
                     width={0}
                     height={0}
                     sizes="100%"
-                    className="hidden md:block w-full h-full object-cover"
+                    className="w-full h-auto object-cover sm:object-contain"
+                    priority
                   />
-                )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -246,7 +293,7 @@ const Header = () => {
           }`}
         >
           <div className="container mx-auto">
-            <nav className="hidden lg:flex justify-center relative z-50  whitespace-nowrap">
+            <nav className="hidden xl:flex justify-center relative z-50  whitespace-nowrap">
               {menuItems.map(
                 (item, index) =>
                   item.isShowInHeader && (
@@ -261,18 +308,30 @@ const Header = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.1 }}
                       onMouseEnter={() => {
-                        if (item.submenu)
-                          setHoveredItemPath(item.path || `menu-${index}`);
+                        if (item.submenu) {
+                          handleMouseEnter(item.path || `menu-${index}`);
+                        }
                       }}
                       onMouseLeave={() => {
-                        if (item.submenu) setHoveredItemPath(null);
+                        if (item.submenu) {
+                          handleMouseLeave();
+                        }
                       }}
                     >
                       {item.path ? (
                         <Link
                           href={item.path}
                           onClick={() => {
-                            if (hoveredItemPath) setHoveredItemPath(null);
+                            // Clear all timeouts and immediately close any open menu
+                            if (hoverTimeoutRef.current) {
+                              clearTimeout(hoverTimeoutRef.current);
+                              hoverTimeoutRef.current = null;
+                            }
+                            if (leaveTimeoutRef.current) {
+                              clearTimeout(leaveTimeoutRef.current);
+                              leaveTimeoutRef.current = null;
+                            }
+                            setHoveredItemPath(null);
                           }}
                           className={`
                         uppercase px-3 sm:px-6 py-3 h-full text-white font-bold transition-all duration-300 text-[13px] sm:text-[15px] inline-flex items-center relative
@@ -313,17 +372,30 @@ const Header = () => {
                               ? "visible"
                               : "hidden"
                           }
-                          className="absolute bg-primary left-0 top-full min-w-[200px] shadow-lg z-[100] rounded-sm border-none mt-1 overflow-hidden backdrop-blur-sm bg-opacity-95 ring-1 ring-green-700/50"
-                          onMouseEnter={() =>
-                            setHoveredItemPath(item.path || `menu-${index}`)
-                          }
-                          onMouseLeave={() => setHoveredItemPath(null)}
+                          className="absolute bg-primary left-0 top-full min-w-[200px] shadow-lg z-[100] rounded-sm border-none mt-0 overflow-hidden backdrop-blur-sm bg-opacity-95 ring-1 ring-green-700/50"
+                          onMouseEnter={() => {
+                            handleMouseEnter(item.path || `menu-${index}`);
+                          }}
+                          onMouseLeave={() => {
+                            handleMouseLeave();
+                          }}
                         >
                           {item.submenu.map((subItem, subIdx) => (
                             <Link
                               key={subItem.path}
                               href={subItem.path}
-                              onClick={() => setHoveredItemPath(null)}
+                              onClick={() => {
+                                // Clear all timeouts and immediately close menu
+                                if (hoverTimeoutRef.current) {
+                                  clearTimeout(hoverTimeoutRef.current);
+                                  hoverTimeoutRef.current = null;
+                                }
+                                if (leaveTimeoutRef.current) {
+                                  clearTimeout(leaveTimeoutRef.current);
+                                  leaveTimeoutRef.current = null;
+                                }
+                                setHoveredItemPath(null);
+                              }}
                               className={`block uppercase px-5 py-3 font-bold text-[15px] text-white hover:text-yellow-200 hover:bg-green-900 transition-all duration-300 relative
                             before:absolute before:left-0 before:top-0 before:h-full before:w-0 before:bg-green-800 before:transition-all before:duration-300 before:opacity-0 hover:before:w-1 hover:before:opacity-100
                             ${
@@ -347,99 +419,104 @@ const Header = () => {
 
         {/* Scrolling Text Bar */}
         <div className="relative z-0 w-full bg-gradient-to-r from-green-50 via-white to-green-50 border-b border-green-200 shadow-sm overflow-visible">
-          <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between px-4 py-1.5">
-            {/* Logo and Sliding Slogan */}
-            <div className="flex items-center gap-3 flex-1 min-w-0 w-full">
-              <div className="flex items-center gap-3 cursor-pointer">
-                <Image
-                  onClick={() => router.push("/")}
-                  src="/images/logo.png"
-                  alt="Logo"
-                  width={0}
-                  height={0}
-                  sizes="100%"
-                  className="h-6 sm:h-8 w-auto flex-shrink-0 cursor-pointer"
-                />
-              </div>
-              <div className="relative overflow-hidden flex-1 w-full">
-                <div className="animate-slide-left-infinite whitespace-nowrap flex items-center">
-                  <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
-                    KIẾN TẠO KHÔNG GIAN SỐNG HOÀN HẢO - XÂY DỰNG TƯƠNG LAI BỀN
-                    VỮNG
-                  </span>
-                  <span className="inline-flex items-center text-primary mx-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                    </svg>
-                  </span>
-                  <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
-                    CHẤT LƯỢNG TẠO NIỀM TIN - UY TÍN DỰNG THƯƠNG HIỆU
-                  </span>
-                  <span className="inline-flex items-center text-primary mx-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                    </svg>
-                  </span>
-                  <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-4">
-                    THIẾT KẾ ĐỘT PHÁ - THI CÔNG CHUYÊN NGHIỆP
-                  </span>
-                  <span className="inline-flex items-center text-primary mx-2">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12"
-                      height="12"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                    </svg>
-                  </span>
+          <div className="container mx-auto px-4 py-1.5">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              {/* Logo and Sliding Slogan */}
+              <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 w-full">
+                <div className="flex items-center cursor-pointer flex-shrink-0">
+                  <Image
+                    onClick={() => router.push("/")}
+                    src="/images/logo.png"
+                    alt="Logo"
+                    width={0}
+                    height={0}
+                    sizes="100%"
+                    className="h-5 sm:h-6 md:h-8 w-auto cursor-pointer"
+                  />
+                </div>
+                <div className="relative overflow-hidden flex-1 w-full min-w-0">
+                  <div className="animate-slide-left-infinite whitespace-nowrap flex items-center">
+                    <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-3 sm:mx-4">
+                      KIẾN TẠO KHÔNG GIAN SỐNG HOÀN HẢO - XÂY DỰNG TƯƠNG LAI BỀN
+                      VỮNG
+                    </span>
+                    <span className="inline-flex items-center text-primary mx-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="sm:w-3 sm:h-3"
+                      >
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                      </svg>
+                    </span>
+                    <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-3 sm:mx-4">
+                      CHẤT LƯỢNG TẠO NIỀM TIN - UY TÍN DỰNG THƯƠNG HIỆU
+                    </span>
+                    <span className="inline-flex items-center text-primary mx-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="sm:w-3 sm:h-3"
+                      >
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                      </svg>
+                    </span>
+                    <span className="inline-block text-green-700 font-semibold text-xs md:text-sm mx-3 sm:mx-4">
+                      THIẾT KẾ ĐỘT PHÁ - THI CÔNG CHUYÊN NGHIỆP
+                    </span>
+                    <span className="inline-flex items-center text-primary mx-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="sm:w-3 sm:h-3"
+                      >
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                      </svg>
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Compact Search Bar */}
-            <div className="w-full sm:w-[200px] md:w-[250px] sm:ml-4 mt-2 sm:mt-0">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-full border border-green-200 focus:border-green-500 focus:ring-1 focus:ring-green-200 outline-none transition-all duration-300 text-xs"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSearchOpen(true);
-                  }}
-                  readOnly
-                />
-                <div
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-green-600 cursor-pointer"
-                  onClick={() => setSearchOpen(true)}
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+              {/* Compact Search Bar */}
+              <div className="w-full sm:w-[180px] md:w-[220px] xl:w-[250px] flex-shrink-0">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm..."
+                    className="w-full pl-8 pr-3 py-1.5 rounded-full border border-green-200 focus:border-green-500 focus:ring-1 focus:ring-green-200 outline-none transition-all duration-300 text-xs"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSearchOpen(true);
+                    }}
+                    readOnly
+                  />
+                  <div
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-green-600 cursor-pointer"
+                    onClick={() => setSearchOpen(true)}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
             </div>
@@ -450,7 +527,7 @@ const Header = () => {
       {/* Mobile Navigation Menu - Slide from left */}
       <div
         id="mobile-menu"
-        className={`lg:hidden fixed top-0 left-0 h-full w-[80%] max-w-[300px] bg-gradient-to-b from-white to-green-50 shadow-xl z-[100] transition-transform duration-300 ease-in-out transform ${
+        className={`xl:hidden fixed top-0 left-0 h-full w-[85%] max-w-[320px] bg-gradient-to-b from-white to-green-50 shadow-xl z-[100] transition-transform duration-300 ease-in-out transform ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         } overflow-y-auto`}
       >
@@ -486,9 +563,14 @@ const Header = () => {
                 </svg>
               </button>
             </div>
-            <p className="text-sm text-gray-700 font-semibold leading-relaxed bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              XÂY NIỀM TIN - DỰNG TƯƠNG LAI
-            </p>
+            <div>
+              <p className="text-sm text-gray-700 font-semibold leading-relaxed bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                KIẾN TẠO NHÀ ĐẸP
+              </p>
+              <p className="text-xs text-gray-600 font-medium mt-1">
+                Kiến tạo không gian sống
+              </p>
+            </div>
           </div>
 
           {/* Menu Items */}
@@ -510,7 +592,7 @@ const Header = () => {
       {/* Overlay when mobile menu is open */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[90] lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 bg-black/50 z-[90] xl:hidden transition-opacity duration-300"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}

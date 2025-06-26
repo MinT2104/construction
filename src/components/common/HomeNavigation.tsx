@@ -1,12 +1,16 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { ArrowUp, Home } from "lucide-react"; // Bạn có thể thay đổi icon tùy ý
-import { usePathname, useRouter } from "next/navigation";
-import ScrollToTop from "./ScrollToTop";
+import React from "react";
+import { useRouter } from "next/navigation";
+import { Home } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const ScrollToTop = dynamic(() => import("@/components/common/ScrollToTop"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const HomeNavigation: React.FC = () => {
   const router = useRouter();
-  const pathname = usePathname();
 
   return (
     <div className="flex flex-col gap-2 justify-between items-center fixed bottom-16 sm:bottom-6 right-2 sm:right-6 z-50">
