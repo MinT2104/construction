@@ -66,7 +66,6 @@ const Sidebar: FC = () => {
   };
 
   const menuItems: MenuItem[] = [
-    { href: "/admin/trang-chu", label: "Trang chủ", icon: LayoutDashboard },
     { href: "/admin/bai-viet", label: "Quản lý bài viết", icon: Newspaper },
     {
       label: "Cấu hình",

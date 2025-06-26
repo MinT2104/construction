@@ -406,7 +406,7 @@ const CalculatorSection = () => {
 
               <Card className="bg-white p-4 border-0">
                 <p className="font-medium text-lg mb-2">Hỗ trợ tư vấn 24/7</p>
-                <p className="text-2xl font-bold">096 1993 915</p>
+                <p className="text-2xl font-bold">093 6267 359</p>
               </Card>
             </div>
 
