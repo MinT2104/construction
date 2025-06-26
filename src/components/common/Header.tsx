@@ -201,7 +201,7 @@ const Header = () => {
               {/* Logo and Company Name */}
               <div
                 onClick={() => router.push("/")}
-                className="flex items-center justify-between w-full xl:justify-start select-none cursor-pointer"
+                className="flex items-center justify-between w-full xl:justify-start select-none cursor-pointer xl:flex-1"
               >
                 <div className="flex items-center space-x-3 sm:space-x-4">
                   <motion.div
@@ -262,11 +262,31 @@ const Header = () => {
                   </svg>
                 </button>
               </div>
+
+              {/* Desktop Banner - Same row as logo */}
+              {headerBanner && (
+                <div className="hidden xl:block xl:flex-1 xl:max-w-[600px] xl:ml-8">
+                  <div
+                    onClick={() => router.push("/")}
+                    className="select-none cursor-pointer w-full"
+                  >
+                    <Image
+                      src={headerBanner}
+                      alt="Hotline"
+                      width={0}
+                      height={0}
+                      sizes="100%"
+                      className="w-full h-auto object-contain"
+                      priority
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Banner Row - Full width for all devices */}
+            {/* Mobile/Tablet Banner Row - Separate row for smaller screens */}
             {headerBanner && (
-              <div className="border-t border-gray-100 py-1.5 sm:py-2">
+              <div className="xl:hidden border-t border-gray-100 py-1.5 sm:py-2">
                 <div
                   onClick={() => router.push("/")}
                   className="select-none cursor-pointer w-full"
