@@ -6,34 +6,7 @@ const menuItems: MenuItemType[] = [
     path: "/gioi-thieu",
     isUseSidebar: true,
     isShowInHeader: true,
-    type: "category",
-    submenu: [
-      {
-        label: "Về chúng tôi",
-        path: "/gioi-thieu/ve-chung-toi",
-        type: "single",
-      },
-      {
-        label: "Tầm nhìn sứ mệnh",
-        path: "/gioi-thieu/tam-nhin-su-menh",
-        type: "single",
-      },
-      {
-        label: "Giấy phép hoạt động, chứng chỉ",
-        path: "/gioi-thieu/giay-phep-hoat-dong-chung-chi",
-        type: "single",
-      },
-      {
-        label: "Cam kết chất lượng",
-        path: "/gioi-thieu/cam-ket-chat-luong",
-        type: "single",
-      },
-      {
-        label: "Tuyển dụng",
-        path: "/gioi-thieu/tuyen-dung",
-        type: "single",
-      },
-    ],
+    type: "single",
   },
   {
     label: "Thiết kế",

@@ -60,6 +60,7 @@ export const PromotionOverlay = () => {
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-0 z-[999] flex items-center justify-center transition-all duration-700 ease-out">
       {/* Background overlay with fade in effect */}
       <div
+        onClick={() => handleClose()}
         className={`absolute inset-0 bg-black transition-opacity duration-700 ease-out ${
           isAnimating ? "bg-opacity-50" : "bg-opacity-0"
         }`}
