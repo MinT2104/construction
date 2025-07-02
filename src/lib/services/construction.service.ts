@@ -53,28 +53,31 @@ export interface UnitPrice {
 }
 
 // API endpoints
-const endpoints = {
-  // Coefficients
-  coefficients: "/v1/construction-coefficients",
-  coefficientById: "/v1/construction-coefficients/:id",
-  coefficientByCode: "/v1/construction-coefficients/code/:code",
-  
-  // Construction Types
-  constructionTypes: "/v1/construction-types",
-  constructionTypeById: "/v1/construction-types/:id",
-  
-  // Build Packages
-  buildPackages: "/v1/build-packages",
-  buildPackageById: "/v1/build-packages/:id",
-  
-  // Investment Levels
+const publicEndpoints = {
+  coefficients: "/v1/construction/coefficients",
+  coefficientById: "/v1/construction/coefficients/:id",
+  constructionTypes: "/v1/construction/types",
+  constructionTypeById: "/v1/construction/types/:id",
+  buildPackages: "/v1/construction/packages",
+  buildPackageById: "/v1/construction/packages/:id",
   investmentLevels: "/v1/construction/investment-levels",
   investmentLevelById: "/v1/construction/investment-levels/:id",
-  
-  // Unit Prices
   unitPrices: "/v1/construction/unit-prices",
   unitPriceById: "/v1/construction/unit-prices/:id",
   unitPriceFilter: "/v1/construction/unit-prices/filter",
+};
+
+const adminEndpoints = {
+  coefficients: "/admin/construction/coefficients",
+  coefficientById: "/admin/construction/coefficients/:id",
+  constructionTypes: "/admin/construction/types",
+  constructionTypeById: "/admin/construction/types/:id",
+  buildPackages: "/admin/construction/packages",
+  buildPackageById: "/admin/construction/packages/:id",
+  investmentLevels: "/admin/construction/investment-levels",
+  investmentLevelById: "/admin/construction/investment-levels/:id",
+  unitPrices: "/admin/construction/unit-prices",
+  unitPriceById: "/admin/construction/unit-prices/:id",
 };
 
 class ConstructionService {
@@ -92,7 +95,7 @@ class ConstructionService {
   // Coefficients
   async getCoefficients(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Coefficient>> {
     try {
-      const response = await axiosInstance.get(endpoints.coefficients, {
+      const response = await axiosInstance.get(publicEndpoints.coefficients, {
         params: { page, limit }
       });
       const data = response.data.data;
@@ -111,7 +114,7 @@ class ConstructionService {
 
   async getCoefficientById(id: string): Promise<Coefficient | null> {
     try {
-      const response = await axiosInstance.get(endpoints.coefficientById.replace(":id", id));
+      const response = await axiosInstance.get(publicEndpoints.coefficientById.replace(":id", id));
       return response.data.data;
     } catch (error) {
       console.error(`Error fetching coefficient with id ${id}:`, error);
@@ -121,7 +124,7 @@ class ConstructionService {
 
   async createCoefficient(coefficient: Omit<Coefficient, '_id'>): Promise<Coefficient | null> {
     try {
-      const response = await axiosInstance.post(endpoints.coefficients, coefficient);
+      const response = await axiosInstance.post(adminEndpoints.coefficients, coefficient);
       return response.data.data;
     } catch (error) {
       console.error("Error creating coefficient:", error);
@@ -132,7 +135,7 @@ class ConstructionService {
   async updateCoefficient(id: string, coefficient: Partial<Coefficient>): Promise<Coefficient | null> {
     try {
       const response = await axiosInstance.put(
-        endpoints.coefficientById.replace(":id", id),
+        adminEndpoints.coefficientById.replace(":id", id),
         coefficient
       );
       return response.data.data;
@@ -144,7 +147,7 @@ class ConstructionService {
 
   async deleteCoefficient(id: string): Promise<boolean> {
     try {
-      await axiosInstance.delete(endpoints.coefficientById.replace(":id", id));
+      await axiosInstance.delete(adminEndpoints.coefficientById.replace(":id", id));
       return true;
     } catch (error) {
       console.error(`Error deleting coefficient with id ${id}:`, error);
@@ -155,7 +158,7 @@ class ConstructionService {
   // Construction Types
   async getConstructionTypes(page: number = 1, limit: number = 10): Promise<PaginatedResponse<ConstructionType>> {
     try {
-      const response = await axiosInstance.get(endpoints.constructionTypes, {
+      const response = await axiosInstance.get(publicEndpoints.constructionTypes, {
         params: { page, limit }
       });
       const data = response.data.data;
@@ -174,7 +177,7 @@ class ConstructionService {
 
   async getConstructionTypeById(id: string): Promise<ConstructionType | null> {
     try {
-      const response = await axiosInstance.get(endpoints.constructionTypeById.replace(":id", id));
+      const response = await axiosInstance.get(publicEndpoints.constructionTypeById.replace(":id", id));
       return response.data.data;
     } catch (error) {
       console.error(`Error fetching construction type with id ${id}:`, error);
@@ -184,7 +187,7 @@ class ConstructionService {
 
   async createConstructionType(constructionType: Omit<ConstructionType, '_id'>): Promise<ConstructionType | null> {
     try {
-      const response = await axiosInstance.post(endpoints.constructionTypes, constructionType);
+      const response = await axiosInstance.post(adminEndpoints.constructionTypes, constructionType);
       return response.data.data;
     } catch (error) {
       console.error("Error creating construction type:", error);
@@ -195,7 +198,7 @@ class ConstructionService {
   async updateConstructionType(id: string, constructionType: Partial<ConstructionType>): Promise<ConstructionType | null> {
     try {
       const response = await axiosInstance.put(
-        endpoints.constructionTypeById.replace(":id", id),
+        adminEndpoints.constructionTypeById.replace(":id", id),
         constructionType
       );
       return response.data.data;
@@ -207,7 +210,7 @@ class ConstructionService {
 
   async deleteConstructionType(id: string): Promise<boolean> {
     try {
-      await axiosInstance.delete(endpoints.constructionTypeById.replace(":id", id));
+      await axiosInstance.delete(adminEndpoints.constructionTypeById.replace(":id", id));
       return true;
     } catch (error) {
       console.error(`Error deleting construction type with id ${id}:`, error);
@@ -218,7 +221,7 @@ class ConstructionService {
   // Build Packages
   async getBuildPackages(page: number = 1, limit: number = 10): Promise<PaginatedResponse<BuildPackage>> {
     try {
-      const response = await axiosInstance.get(endpoints.buildPackages, {
+      const response = await axiosInstance.get(publicEndpoints.buildPackages, {
         params: { page, limit }
       });
       const data = response.data.data;
@@ -237,7 +240,7 @@ class ConstructionService {
 
   async getBuildPackageById(id: string): Promise<BuildPackage | null> {
     try {
-      const response = await axiosInstance.get(endpoints.buildPackageById.replace(":id", id));
+      const response = await axiosInstance.get(publicEndpoints.buildPackageById.replace(":id", id));
       return response.data.data;
     } catch (error) {
       console.error(`Error fetching build package with id ${id}:`, error);
@@ -247,7 +250,7 @@ class ConstructionService {
 
   async createBuildPackage(buildPackage: Omit<BuildPackage, '_id'>): Promise<BuildPackage | null> {
     try {
-      const response = await axiosInstance.post(endpoints.buildPackages, buildPackage);
+      const response = await axiosInstance.post(adminEndpoints.buildPackages, buildPackage);
       return response.data.data;
     } catch (error) {
       console.error("Error creating build package:", error);
@@ -258,7 +261,7 @@ class ConstructionService {
   async updateBuildPackage(id: string, buildPackage: Partial<BuildPackage>): Promise<BuildPackage | null> {
     try {
       const response = await axiosInstance.put(
-        endpoints.buildPackageById.replace(":id", id),
+        adminEndpoints.buildPackageById.replace(":id", id),
         buildPackage
       );
       return response.data.data;
@@ -270,7 +273,7 @@ class ConstructionService {
 
   async deleteBuildPackage(id: string): Promise<boolean> {
     try {
-      await axiosInstance.delete(endpoints.buildPackageById.replace(":id", id));
+      await axiosInstance.delete(adminEndpoints.buildPackageById.replace(":id", id));
       return true;
     } catch (error) {
       console.error(`Error deleting build package with id ${id}:`, error);
@@ -281,7 +284,7 @@ class ConstructionService {
   // Investment Levels
   async getInvestmentLevels(page: number = 1, limit: number = 10): Promise<PaginatedResponse<InvestmentLevel>> {
     try {
-      const response = await axiosInstance.get(endpoints.investmentLevels, {
+      const response = await axiosInstance.get(publicEndpoints.investmentLevels, {
         params: { page, limit }
       });
       const data = response.data.data;
@@ -300,7 +303,7 @@ class ConstructionService {
 
   async getInvestmentLevelById(id: string): Promise<InvestmentLevel | null> {
     try {
-      const response = await axiosInstance.get(endpoints.investmentLevelById.replace(":id", id));
+      const response = await axiosInstance.get(publicEndpoints.investmentLevelById.replace(":id", id));
       return response.data.data;
     } catch (error) {
       console.error(`Error fetching investment level with id ${id}:`, error);
@@ -310,7 +313,7 @@ class ConstructionService {
 
   async createInvestmentLevel(investmentLevel: Omit<InvestmentLevel, '_id'>): Promise<InvestmentLevel | null> {
     try {
-      const response = await axiosInstance.post(endpoints.investmentLevels, investmentLevel);
+      const response = await axiosInstance.post(adminEndpoints.investmentLevels, investmentLevel);
       return response.data.data;
     } catch (error) {
       console.error("Error creating investment level:", error);
@@ -321,7 +324,7 @@ class ConstructionService {
   async updateInvestmentLevel(id: string, investmentLevel: Partial<InvestmentLevel>): Promise<InvestmentLevel | null> {
     try {
       const response = await axiosInstance.put(
-        endpoints.investmentLevelById.replace(":id", id),
+        adminEndpoints.investmentLevelById.replace(":id", id),
         investmentLevel
       );
       return response.data.data;
@@ -333,7 +336,7 @@ class ConstructionService {
 
   async deleteInvestmentLevel(id: string): Promise<boolean> {
     try {
-      await axiosInstance.delete(endpoints.investmentLevelById.replace(":id", id));
+      await axiosInstance.delete(adminEndpoints.investmentLevelById.replace(":id", id));
       return true;
     } catch (error) {
       console.error(`Error deleting investment level with id ${id}:`, error);
@@ -344,7 +347,7 @@ class ConstructionService {
   // Unit Prices
   async getUnitPrices(page: number = 1, limit: number = 10): Promise<PaginatedResponse<UnitPrice>> {
     try {
-      const response = await axiosInstance.get(endpoints.unitPrices, {
+      const response = await axiosInstance.get(publicEndpoints.unitPrices, {
         params: { page, limit }
       });
       const data = response.data.data;
@@ -363,7 +366,7 @@ class ConstructionService {
 
   async getUnitPriceById(id: string): Promise<UnitPrice | null> {
     try {
-      const response = await axiosInstance.get(endpoints.unitPriceById.replace(":id", id));
+      const response = await axiosInstance.get(publicEndpoints.unitPriceById.replace(":id", id));
       return response.data.data;
     } catch (error) {
       console.error(`Error fetching unit price with id ${id}:`, error);
@@ -373,7 +376,7 @@ class ConstructionService {
 
   async createUnitPrice(unitPrice: Omit<UnitPrice, '_id'>): Promise<UnitPrice | null> {
     try {
-      const response = await axiosInstance.post(endpoints.unitPrices, unitPrice);
+      const response = await axiosInstance.post(adminEndpoints.unitPrices, unitPrice);
       return response.data.data;
     } catch (error) {
       console.error("Error creating unit price:", error);
@@ -384,7 +387,7 @@ class ConstructionService {
   async updateUnitPrice(id: string, unitPrice: Partial<UnitPrice>): Promise<UnitPrice | null> {
     try {
       const response = await axiosInstance.put(
-        endpoints.unitPriceById.replace(":id", id),
+        adminEndpoints.unitPriceById.replace(":id", id),
         unitPrice
       );
       return response.data.data;
@@ -396,7 +399,7 @@ class ConstructionService {
 
   async deleteUnitPrice(id: string): Promise<boolean> {
     try {
-      await axiosInstance.delete(endpoints.unitPriceById.replace(":id", id));
+      await axiosInstance.delete(adminEndpoints.unitPriceById.replace(":id", id));
       return true;
     } catch (error) {
       console.error(`Error deleting unit price with id ${id}:`, error);
@@ -412,7 +415,7 @@ class ConstructionService {
     limit?: number;
   }): Promise<PaginatedResponse<UnitPrice>> {
     try {
-      const response = await axiosInstance.get(endpoints.unitPriceFilter, {
+      const response = await axiosInstance.get(publicEndpoints.unitPriceFilter, {
         params: filters
       });
       return response.data.data || { 
