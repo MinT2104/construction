@@ -128,10 +128,38 @@ export async function generateMetadata(
   // Trang danh mục hoặc trang thông thường
   const currentItem = findMenuItemByPath(menuItems, path) as BaseMenuItem;
   if (currentItem) {
+    // Nếu là trang category hoặc single, lấy bài viết để lấy meta
+    if (currentItem.type === "category" || currentItem.type === "single") {
+      try {
+        const categoryPosts = await blogService.getBlogsByCategory(slug, 1, 1);
+        if (categoryPosts.rows.length > 0) {
+          const firstPost = categoryPosts.rows[0] as BlogPost;
+
+          // Sử dụng meta từ bài viết (cho cả single và category)
+          return generateCategoryMetadata(
+            currentItem.label,
+            slug,
+            currentItem.description,
+            {
+              seoTitle: firstPost.meta?.seoTitle,
+              seoDescription: firstPost.meta?.seoDescription,
+              canonicalUrl: firstPost.meta?.canonicalUrl,
+              socialPreviewImage:
+                firstPost.meta?.socialPreviewImage ||
+                firstPost.featuredImage?.url,
+            }
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching posts for metadata:", error);
+      }
+    }
+
+    // Fallback về metadata mặc định cho house-design hoặc khi không có bài viết
     return generateCategoryMetadata(
       currentItem.label,
       slug,
-      currentItem.description || ""
+      currentItem.description
     );
   }
 

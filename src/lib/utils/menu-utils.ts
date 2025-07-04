@@ -31,6 +31,7 @@ export function findMenuItemByPath(
               parentLabel: parentItem.label,
               parentPath: parentItem.path,
               type: item.type,
+              description: item.description,
             }
           : item;
       }
@@ -46,6 +47,7 @@ export function findMenuItemByPath(
               parentLabel: item.label,
               parentPath: item.path,
               type: subItem.type,
+              description: subItem.description,
             };
           }
         }

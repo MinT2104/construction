@@ -92,12 +92,28 @@ export function generateBlogPostMetadata(
 export function generateCategoryMetadata(
   categoryName: string,
   categorySlug: string,
-  description?: string
+  description?: string,
+  meta?: {
+    seoTitle?: string;
+    seoDescription?: string;
+    canonicalUrl?: string;
+    socialPreviewImage?: string;
+  }
 ): Metadata {
   const categoryUrl = `${SITE_URL}/${categorySlug}`;
-  const title = `${categoryName} - ${SITE_NAME}`;
+  // Ưu tiên seoTitle từ meta, nếu không có thì dùng categoryName + SITE_NAME
+  const title = meta?.seoTitle || `${categoryName} - ${SITE_NAME}`;
+  // Ưu tiên seoDescription từ meta
   const categoryDescription =
-    description || `Các bài viết về ${categoryName} từ ${SITE_NAME}`;
+    meta?.seoDescription ||
+    description ||
+    `Các bài viết về ${categoryName} từ ${SITE_NAME}`;
+
+  // Ưu tiên socialPreviewImage từ meta
+  const ogImage = meta?.socialPreviewImage || `${SITE_URL}/og-image.jpg`;
+
+  // Ưu tiên canonicalUrl từ meta
+  const canonicalUrl = meta?.canonicalUrl || categoryUrl;
 
   return {
     title: title,
@@ -111,7 +127,7 @@ export function generateCategoryMetadata(
       siteName: SITE_NAME,
       images: [
         {
-          url: `${SITE_URL}/og-image.jpg`,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: categoryName,
@@ -122,10 +138,10 @@ export function generateCategoryMetadata(
       card: "summary_large_image",
       title: title,
       description: categoryDescription,
-      images: [`${SITE_URL}/og-image.jpg`],
+      images: [ogImage],
     },
     alternates: {
-      canonical: categoryUrl,
+      canonical: canonicalUrl,
     },
   };
 }
