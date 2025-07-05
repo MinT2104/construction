@@ -2,22 +2,10 @@ import { Banner, HeroItem } from "@/lib/types/modules/banner.interface";
 import axiosInstance from "@/lib/configs/axiosInstance";
 import { bannerEndpoints } from "@/lib/endpoints/banner.endpoint";
 
-// Cache data
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const CACHE_STALE_TTL = 60 * 1000; // 1 minute - time when data is considered "stale"
-
-interface CacheItem<T> {
-  data: T;
-  timestamp: number;
-}
-
 class BannerService {
   private static instance: BannerService;
-  private cache: Map<string, CacheItem<any>>;
 
-  private constructor() {
-    this.cache = new Map();
-  }
+  private constructor() {}
 
   public static getInstance(): BannerService {
     if (!BannerService.instance) {
@@ -26,120 +14,36 @@ class BannerService {
     return BannerService.instance;
   }
 
-  // Cache check and fetch data if needed
-  private async getWithCache<T>(
-    cacheKey: string,
-    fetcher: () => Promise<T>,
-    options: { ttl?: number; staleWhileRevalidate?: boolean } = {}
-  ): Promise<T> {
-    const now = Date.now();
-    const ttl = options.ttl || CACHE_TTL;
-    const cached = this.cache.get(cacheKey);
-
-    // Cache valid - return immediately
-    if (cached && now - cached.timestamp < ttl) {
-      return cached.data;
-    }
-
-    // Cache stale but usable - return cached data and revalidate in background
-    if (cached && options.staleWhileRevalidate) {
-      // Background revalidation
-      this.revalidateCache(cacheKey, fetcher);
-      return cached.data;
-    }
-
-    // No cache or expired - fetch fresh data
-    return this.revalidateCache(cacheKey, fetcher);
-  }
-
-  // Revalidate cache and return fresh data
-  private async revalidateCache<T>(
-    cacheKey: string,
-    fetcher: () => Promise<T>
-  ): Promise<T> {
-    try {
-      const freshData = await fetcher();
-      this.cache.set(cacheKey, {
-        data: freshData,
-        timestamp: Date.now(),
-      });
-      return freshData;
-    } catch (error) {
-      // If error and we have stale data, return it
-      const cached = this.cache.get(cacheKey);
-      if (cached) {
-        console.warn(
-          `Error fetching fresh data, using stale cache for ${cacheKey}`
-        );
-        return cached.data;
-      }
-      throw error;
-    }
-  }
-
-  // Clear cache when data changes
-  private invalidateCache(pattern?: string) {
-    if (!pattern) {
-      this.cache.clear();
-      return;
-    }
-
-    // Delete by pattern
-    for (const key of this.cache.keys()) {
-      if (key.includes(pattern)) {
-        this.cache.delete(key);
-      }
-    }
-  }
-
   // Get all banner data (only one document expected)
   async getAllBanner(): Promise<Banner | null> {
-    const cacheKey = "all-banner";
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const response = await axiosInstance.get(
-            bannerEndpoints.getAllBanner
-          );
-          return (
-            response.data.data || {
-              headerBanner: "",
-              heroBanner: [],
-              updatedAt: new Date().toISOString(),
-            }
-          );
-        } catch (error) {
-          console.error("Error fetching banner:", error);
-          return {
-            headerBanner: "",
-            heroBanner: [],
-            updatedAt: new Date().toISOString(),
-          };
+    try {
+      const response = await axiosInstance.get(bannerEndpoints.getAllBanner);
+      return (
+        response.data.data || {
+          headerBanner: "",
+          heroBanner: [],
+          updatedAt: new Date().toISOString(),
         }
-      },
-      { staleWhileRevalidate: true }
-    );
+      );
+    } catch (error) {
+      console.error("Error fetching banner:", error);
+      return {
+        headerBanner: "",
+        heroBanner: [],
+        updatedAt: new Date().toISOString(),
+      };
+    }
   }
 
   // Get just the header banner
   async getHeaderBanner(): Promise<string> {
-    const cacheKey = "header-banner";
-
-    return this.getWithCache(
-      cacheKey,
-      async () => {
-        try {
-          const banner = await this.getAllBanner();
-          return banner?.headerBanner || "";
-        } catch (error) {
-          console.error("Error fetching header banner:", error);
-          return "";
-        }
-      },
-      { staleWhileRevalidate: true }
-    );
+    try {
+      const banner = await this.getAllBanner();
+      return banner?.headerBanner || "";
+    } catch (error) {
+      console.error("Error fetching header banner:", error);
+      return "";
+    }
   }
 
   // Update header banner
@@ -149,10 +53,6 @@ class BannerService {
         bannerEndpoints.updateHeaderBanner,
         { url }
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
       console.error("Error updating header banner:", error);
@@ -174,10 +74,6 @@ class BannerService {
         bannerEndpoints.addHeroBanner,
         heroItem
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
       console.error("Error adding hero banner:", error);
@@ -195,13 +91,9 @@ class BannerService {
         bannerEndpoints.updateHeroBanner(id),
         updateData
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
-      console.error(`Error updating hero banner with id ${id}:`, error);
+      console.error("Error updating hero banner:", error);
       throw error;
     }
   }
@@ -212,13 +104,9 @@ class BannerService {
       const response = await axiosInstance.delete(
         bannerEndpoints.deleteHeroBanner(id)
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
-      console.error(`Error deleting hero banner with id ${id}:`, error);
+      console.error("Error deleting hero banner:", error);
       throw error;
     }
   }
@@ -229,31 +117,20 @@ class BannerService {
       const response = await axiosInstance.patch(
         bannerEndpoints.toggleHeroBannerVisibility(id)
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
-      console.error(
-        `Error toggling hero banner visibility for id ${id}:`,
-        error
-      );
+      console.error("Error toggling hero banner visibility:", error);
       throw error;
     }
   }
 
-  // Create a new banner (not commonly used as we usually just update the existing one)
+  // Create new banner (creates the first/main banner document)
   async createBanner(banner: Partial<Banner>): Promise<Banner | null> {
     try {
       const response = await axiosInstance.post(
         bannerEndpoints.createBanner,
         banner
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
       console.error("Error creating banner:", error);
@@ -261,7 +138,7 @@ class BannerService {
     }
   }
 
-  // Update banner by ID
+  // Update banner
   async updateBanner(
     id: string,
     banner: Partial<Banner>
@@ -271,28 +148,20 @@ class BannerService {
         bannerEndpoints.updateBanner(id),
         banner
       );
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return response.data.data;
     } catch (error) {
-      console.error(`Error updating banner with id ${id}:`, error);
+      console.error("Error updating banner:", error);
       throw error;
     }
   }
 
-  // Delete banner by ID
+  // Delete banner
   async deleteBanner(id: string): Promise<boolean> {
     try {
       await axiosInstance.delete(bannerEndpoints.deleteBanner(id));
-
-      // Invalidate cache
-      this.invalidateCache();
-
       return true;
     } catch (error) {
-      console.error(`Error deleting banner with id ${id}:`, error);
+      console.error("Error deleting banner:", error);
       throw error;
     }
   }

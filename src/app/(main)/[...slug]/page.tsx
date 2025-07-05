@@ -172,32 +172,6 @@ export async function generateMetadata(
   };
 }
 
-// Giữ kết quả data fetching vào memory cache
-const memoryCache = new Map();
-const CACHE_TTL = 10 * 60 * 1000; // 10 phút
-
-async function cachedFetch(key: string, fetchFn: () => Promise<any>) {
-  const now = Date.now();
-  const cached = memoryCache.get(key);
-
-  if (cached && now - cached.timestamp < CACHE_TTL) {
-    return cached.data;
-  }
-
-  try {
-    const data = await fetchFn();
-    memoryCache.set(key, { data, timestamp: now });
-    return data;
-  } catch (error) {
-    console.error(`Error fetching data for key ${key}:`, error);
-    // Nếu có dữ liệu cache cũ, vẫn có thể sử dụng
-    if (cached) {
-      return cached.data;
-    }
-    throw error;
-  }
-}
-
 async function Page({
   params,
   searchParams,
@@ -238,11 +212,7 @@ async function Page({
 }
 
 async function renderBlogPost(slug: string, slugParams: string[]) {
-  // Sử dụng cache
-  const cacheKey = `blog-post-${slug}`;
-  const fetchedPost = await cachedFetch(cacheKey, () =>
-    blogService.getPostBySlug(slug)
-  );
+  const fetchedPost = await blogService.getPostBySlug(slug);
 
   // Tăng lượt xem cho bài viết
   try {
@@ -264,8 +234,10 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
     },
   ];
 
-  const relatedPosts = await cachedFetch(`related-posts-${post.slug}`, () =>
-    blogService.getBlogsByCategory(post.categories?.[1]?.slug || "", 1, 3)
+  const relatedPosts = await blogService.getBlogsByCategory(
+    post.categories?.[1]?.slug || "",
+    1,
+    3
   );
 
   return (
@@ -280,10 +252,7 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
 }
 
 async function renderPromotionPage(slugParams: string[]) {
-  const cacheKey = `promotion-${slugParams[1]}`;
-  const fetchedPost = await cachedFetch(cacheKey, () =>
-    promotionService.getPromotionBySlug(slugParams[1])
-  );
+  const fetchedPost = await promotionService.getPromotionBySlug(slugParams[1]);
 
   if (!fetchedPost) return notFound();
 
@@ -311,12 +280,8 @@ async function renderPromotionPage(slugParams: string[]) {
 async function renderVideoPage(slugParams: string[]) {
   // List of videos
   if (slugParams.length === 1) {
-    // Sử dụng cache
-    const cacheKey = "videos-list";
-    const videoResponse: getAllVideosResponse = await cachedFetch(
-      cacheKey,
-      () => videoService.getTrongHoaiXayDungVideos()
-    );
+    const videoResponse: getAllVideosResponse =
+      await videoService.getTrongHoaiXayDungVideos();
 
     const menuItemData = [{ label: "Videos", path: "/videos" }];
 
@@ -336,10 +301,8 @@ async function renderVideoPage(slugParams: string[]) {
   const url = `https://www.youtube.com/watch?v=${videoId}`;
   const encodedUrl = encodeURIComponent(url);
 
-  // Sử dụng cache
-  const cacheKey = `video-${videoId}`;
-  const videoResponse: VideoResponse = await cachedFetch(cacheKey, () =>
-    videoService.getVideoByUrl(encodedUrl)
+  const videoResponse: VideoResponse = await videoService.getVideoByUrl(
+    encodedUrl
   );
 
   const menuItemData = [
@@ -430,8 +393,6 @@ async function renderRegularPage(
 
   if (currentItem.type === "single") {
     // start single
-    // Sử dụng cache
-
     const fetchedPost = await blogService.getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
@@ -455,7 +416,6 @@ async function renderRegularPage(
     !currentItem.path.includes("/mau-nha-dep")
   ) {
     // start category
-    // Sử dụng cache
     const page = searchParams?.page ? Number(searchParams.page) : 1;
     const pageSize = 10; // Default page size
 
@@ -495,11 +455,7 @@ async function renderRegularPage(
     currentItem.path.includes("/mau-nha-dep")
   ) {
     // start house design
-    // Sử dụng cache
-    const cacheKey = `house-design-${slug}`;
-    const fetchedPost = await cachedFetch(cacheKey, () =>
-      blogService.getBlogsByCategory(slug)
-    );
+    const fetchedPost = await blogService.getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
 
