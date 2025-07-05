@@ -323,9 +323,7 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
 }
 
 async function renderPromotionPage(slugParams: string[]) {
-  const fetchedPost = await (
-    promotionService
-  ).getPromotionBySlug(slugParams[1]);
+  const fetchedPost = await promotionService.getPromotionBySlug(slugParams[1]);
 
   if (!fetchedPost) return notFound();
 
@@ -353,9 +351,8 @@ async function renderPromotionPage(slugParams: string[]) {
 async function renderVideoPage(slugParams: string[]) {
   // List of videos
   if (slugParams.length === 1) {
-    const videoResponse: getAllVideosResponse = await (
-      videoService
-    ).getTrongHoaiXayDungVideos();
+    const videoResponse: getAllVideosResponse =
+      await videoService.getTrongHoaiXayDungVideos();
 
     const menuItemData = [{ label: "Videos", path: "/videos" }];
 
@@ -375,9 +372,9 @@ async function renderVideoPage(slugParams: string[]) {
   const url = `https://www.youtube.com/watch?v=${videoId}`;
   const encodedUrl = encodeURIComponent(url);
 
-  const videoResponse: VideoResponse = await (
-    videoService
-  ).getVideoByUrl(encodedUrl);
+  const videoResponse: VideoResponse = await videoService.getVideoByUrl(
+    encodedUrl
+  );
 
   const menuItemData = [
     { label: "Videos", path: "/videos" },
@@ -403,9 +400,7 @@ async function renderTagPage(
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const pageSize = 3; // Default page size
 
-  const fetchedPosts = await (
-    blogService
-  ).getBlogsByTag(tag, page, pageSize);
+  const fetchedPosts = await blogService.getBlogsByTag(tag, page, pageSize);
 
   if (!fetchedPosts) return notFound();
 
@@ -469,9 +464,7 @@ async function renderRegularPage(
 
   if (currentItem.type === "single") {
     // start single
-    const fetchedPost = await (
-      blogService
-    ).getBlogsByCategory(slug);
+    const fetchedPost = await blogService.getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
 
@@ -482,9 +475,7 @@ async function renderRegularPage(
       },
     ];
 
-    const relatedPosts = await (
-      blogService
-    ).getBlogsByCategory(slug, 1, 3);
+    const relatedPosts = await blogService.getBlogsByCategory(slug, 1, 3);
 
     const post = fetchedPost.rows[0] as BlogPost;
     pageContent = (
@@ -499,9 +490,11 @@ async function renderRegularPage(
     const page = searchParams?.page ? Number(searchParams.page) : 1;
     const pageSize = 10; // Default page size
 
-    const fetchedPosts = await (
-      blogService
-    ).getBlogsByCategory(slug, page, pageSize);
+    const fetchedPosts = await blogService.getBlogsByCategory(
+      slug,
+      page,
+      pageSize
+    );
 
     const posts = fetchedPosts.rows.map((post: any) => ({
       ...post,
@@ -533,9 +526,7 @@ async function renderRegularPage(
     currentItem.path.includes("/mau-nha-dep")
   ) {
     // start house design
-    const fetchedPost = await (
-      blogService
-    ).getBlogsByCategory(slug);
+    const fetchedPost = await blogService.getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
 
