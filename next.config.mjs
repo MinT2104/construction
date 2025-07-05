@@ -1,8 +1,11 @@
-import withBundleAnalyzer from "@next/bundle-analyzer";
+/** @type {import('next').NextConfig} */
 
-const withBundleAnalyzerConfig = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
-});
+const withBundleAnalyzer =
+  process.env.ANALYZE === "true"
+    ? (await import("@next/bundle-analyzer")).default({
+        enabled: true,
+      })
+    : (config) => config;
 
 const nextConfig = {
   /* config options here */
@@ -51,6 +54,9 @@ const nextConfig = {
     swcMinify: true,
     // Tối ưu runtime
     instrumentationHook: process.env.NODE_ENV === "production",
+    // Enable modern bundling (disabled due to critters issue)
+    // optimizeCss: true,
+    // Server actions are enabled by default in Next.js 14
   },
   webpack: (config, { dev, isServer }) => {
     // Production optimizations
@@ -199,6 +205,14 @@ const nextConfig = {
       },
     ];
   },
+  // Enable static optimization
+  trailingSlash: false,
+  // Compiler optimizations
+  compiler: {
+    // Remove console logs in production
+    removeConsole: process.env.NODE_ENV === "production",
+  },
+  generateEtags: false,
 };
 
-export default withBundleAnalyzerConfig(nextConfig);
+export default withBundleAnalyzer(nextConfig);

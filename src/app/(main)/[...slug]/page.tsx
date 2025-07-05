@@ -6,18 +6,11 @@ import {
   fetchPostsByCategory,
 } from "@/lib/services/post.service";
 import { blogService } from "@/lib/services/blog.service";
+import { videoService } from "@/lib/services/video.service";
+import { promotionService } from "@/lib/services/promotion.service";
 import { BaseMenuItem } from "@/lib/types/common/menu.interface";
 import { Post } from "@/lib/types/modules/post.interface";
-import {
-  PageLayout,
-  SinglePostView,
-  CategoryView,
-  HouseDesignView,
-  DefaultView,
-} from "@/components/application/Page";
 import { BlogPost } from "@/lib/types/modules/blog.interface";
-import VideoView from "@/components/application/Page/VideoView";
-import { videoService } from "@/lib/services/video.service";
 import {
   getAllVideosResponse,
   VideoResponse,
@@ -30,7 +23,85 @@ import {
 } from "@/lib/utils/seo-utils";
 import { Metadata, ResolvingMetadata } from "next";
 import TAGS from "@/lib/constants/tags";
-import { promotionService } from "@/lib/services/promotion.service";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
+
+// Dynamic imports with loading fallbacks
+const PageLayout = dynamic(
+  () => import("@/components/application/Page/PageLayout"),
+  {
+    loading: () => (
+      <div className="animate-pulse bg-gray-200 min-h-screen"></div>
+    ),
+  }
+);
+
+const SinglePostView = dynamic(
+  () => import("@/components/application/Page/SinglePostView"),
+  {
+    loading: () => (
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded mb-4"></div>
+        <div className="h-64 bg-gray-200 rounded"></div>
+      </div>
+    ),
+  }
+);
+
+const CategoryView = dynamic(
+  () => import("@/components/application/Page/CategoryView"),
+  {
+    loading: () => (
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded mb-4"></div>
+        <div className="grid gap-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-40 bg-gray-200 rounded"></div>
+          ))}
+        </div>
+      </div>
+    ),
+  }
+);
+
+const HouseDesignView = dynamic(
+  () => import("@/components/application/Page/HouseDesignView"),
+  {
+    loading: () => (
+      <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-64 bg-gray-200 rounded"></div>
+        ))}
+      </div>
+    ),
+  }
+);
+
+const DefaultView = dynamic(
+  () => import("@/components/application/Page/DefaultView"),
+  {
+    loading: () => (
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded mb-4"></div>
+        <div className="h-32 bg-gray-200 rounded"></div>
+      </div>
+    ),
+  }
+);
+
+const VideoView = dynamic(
+  () => import("@/components/application/Page/VideoView"),
+  {
+    loading: () => (
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded mb-4"></div>
+        <div className="aspect-video bg-gray-200 rounded"></div>
+      </div>
+    ),
+  }
+);
+
+// Dynamic imports cho components để giảm bundle size
 
 // Sử dụng kiểu tham số chính xác cho Next.js 14
 type Props = {
@@ -252,7 +323,9 @@ async function renderBlogPost(slug: string, slugParams: string[]) {
 }
 
 async function renderPromotionPage(slugParams: string[]) {
-  const fetchedPost = await promotionService.getPromotionBySlug(slugParams[1]);
+  const fetchedPost = await (
+    promotionService
+  ).getPromotionBySlug(slugParams[1]);
 
   if (!fetchedPost) return notFound();
 
@@ -280,8 +353,9 @@ async function renderPromotionPage(slugParams: string[]) {
 async function renderVideoPage(slugParams: string[]) {
   // List of videos
   if (slugParams.length === 1) {
-    const videoResponse: getAllVideosResponse =
-      await videoService.getTrongHoaiXayDungVideos();
+    const videoResponse: getAllVideosResponse = await (
+      videoService
+    ).getTrongHoaiXayDungVideos();
 
     const menuItemData = [{ label: "Videos", path: "/videos" }];
 
@@ -301,9 +375,9 @@ async function renderVideoPage(slugParams: string[]) {
   const url = `https://www.youtube.com/watch?v=${videoId}`;
   const encodedUrl = encodeURIComponent(url);
 
-  const videoResponse: VideoResponse = await videoService.getVideoByUrl(
-    encodedUrl
-  );
+  const videoResponse: VideoResponse = await (
+    videoService
+  ).getVideoByUrl(encodedUrl);
 
   const menuItemData = [
     { label: "Videos", path: "/videos" },
@@ -329,7 +403,9 @@ async function renderTagPage(
   const page = searchParams?.page ? Number(searchParams.page) : 1;
   const pageSize = 3; // Default page size
 
-  const fetchedPosts = await blogService.getBlogsByTag(tag, page, pageSize);
+  const fetchedPosts = await (
+    blogService
+  ).getBlogsByTag(tag, page, pageSize);
 
   if (!fetchedPosts) return notFound();
 
@@ -393,7 +469,9 @@ async function renderRegularPage(
 
   if (currentItem.type === "single") {
     // start single
-    const fetchedPost = await blogService.getBlogsByCategory(slug);
+    const fetchedPost = await (
+      blogService
+    ).getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
 
@@ -404,7 +482,9 @@ async function renderRegularPage(
       },
     ];
 
-    const relatedPosts = await blogService.getBlogsByCategory(slug, 1, 3);
+    const relatedPosts = await (
+      blogService
+    ).getBlogsByCategory(slug, 1, 3);
 
     const post = fetchedPost.rows[0] as BlogPost;
     pageContent = (
@@ -419,11 +499,9 @@ async function renderRegularPage(
     const page = searchParams?.page ? Number(searchParams.page) : 1;
     const pageSize = 10; // Default page size
 
-    const fetchedPosts = await blogService.getBlogsByCategory(
-      slug,
-      page,
-      pageSize
-    );
+    const fetchedPosts = await (
+      blogService
+    ).getBlogsByCategory(slug, page, pageSize);
 
     const posts = fetchedPosts.rows.map((post: any) => ({
       ...post,
@@ -455,7 +533,9 @@ async function renderRegularPage(
     currentItem.path.includes("/mau-nha-dep")
   ) {
     // start house design
-    const fetchedPost = await blogService.getBlogsByCategory(slug);
+    const fetchedPost = await (
+      blogService
+    ).getBlogsByCategory(slug);
 
     if (!fetchedPost) return notFound();
 
