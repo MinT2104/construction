@@ -124,7 +124,6 @@ export default function ImageSettings({ form }: ImageSettingsProps) {
                 }`}
               />
               <p className="text-sm text-muted-foreground">
-                Kéo và thả hoặc{" "}
                 <span className="font-semibold text-primary">
                   nhấp để tải lên
                 </span>

@@ -19,6 +19,7 @@ import {
   MoveUp,
   MoveDown,
   Plus,
+  AlertTriangle,
 } from "lucide-react";
 import MediaService from "@/lib/services/media.service";
 import {
@@ -30,23 +31,6 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const AdminBannerPage = () => {
@@ -59,19 +43,25 @@ const AdminBannerPage = () => {
   const [newHeroName, setNewHeroName] = useState("");
   const [newHeroUrl, setNewHeroUrl] = useState("");
   const [newHeroVisible, setNewHeroVisible] = useState(true);
+
+  // Separate state for edit form
+  const [editHeroName, setEditHeroName] = useState("");
+  const [editHeroUrl, setEditHeroUrl] = useState("");
+  const [editHeroVisible, setEditHeroVisible] = useState(true);
+  const [isUploadingEditHero, setIsUploadingEditHero] = useState(false);
+
   const [previewMode, setPreviewMode] = useState(false);
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
 
+  // Confirm dialog state
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [confirmTitle, setConfirmTitle] = useState("");
+  const [confirmMessage, setConfirmMessage] = useState("");
+
   const headerImageInputRef = useRef<HTMLInputElement>(null);
   const heroImageInputRef = useRef<HTMLInputElement>(null);
-
-  // DnD sensors for reordering
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  const editHeroImageInputRef = useRef<HTMLInputElement>(null);
 
   const fetchBanner = async () => {
     setLoading(true);
@@ -89,6 +79,27 @@ const AdminBannerPage = () => {
   useEffect(() => {
     fetchBanner();
   }, []);
+
+  // Confirm dialog functions
+  const showConfirm = (title: string, message: string, action: () => void) => {
+    setConfirmTitle(title);
+    setConfirmMessage(message);
+    setConfirmAction(() => action);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmYes = () => {
+    if (confirmAction) {
+      confirmAction();
+    }
+    setShowConfirmDialog(false);
+    setConfirmAction(null);
+  };
+
+  const handleConfirmNo = () => {
+    setShowConfirmDialog(false);
+    setConfirmAction(null);
+  };
 
   // Header Banner Functions
   const uploadHeaderBanner = async (file: File) => {
@@ -157,6 +168,31 @@ const AdminBannerPage = () => {
     }
   };
 
+  const uploadEditHeroImage = async (file: File) => {
+    if (!file) return;
+    setIsUploadingEditHero(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      const response = await MediaService.upload(formData);
+      let imageUrl = "";
+      if (response && response.data && response.data.url) {
+        imageUrl = response.data.url;
+      } else if (response && response.url) {
+        imageUrl = response.url;
+      } else {
+        throw new Error("Không nhận được URL ảnh từ server");
+      }
+
+      setEditHeroUrl(imageUrl);
+    } catch (error) {
+      console.error("Lỗi khi tải lên hình ảnh hero banner:", error);
+      toast.error("Tải lên hình ảnh hero banner thất bại");
+    } finally {
+      setIsUploadingEditHero(false);
+    }
+  };
+
   const addHeroBanner = async () => {
     if (!newHeroName || !newHeroUrl) {
       toast.error("Vui lòng nhập tên và tải lên hình ảnh");
@@ -182,20 +218,19 @@ const AdminBannerPage = () => {
   };
 
   const updateHeroBanner = async () => {
-    if (!editingHero || !newHeroName || !newHeroUrl) {
+    if (!editingHero || !editHeroName || !editHeroUrl) {
       toast.error("Thông tin không hợp lệ");
       return;
     }
 
     try {
       await bannerService.updateHeroBanner(editingHero._id!, {
-        name: newHeroName,
-        url: newHeroUrl,
-        isShow: newHeroVisible,
+        name: editHeroName,
+        url: editHeroUrl,
+        isShow: editHeroVisible,
       });
       toast.success("Cập nhật hero banner thành công!");
-      setIsEditing(false);
-      setEditingHero(null);
+      closeEditModal();
       fetchBanner();
     } catch (error) {
       console.error("Lỗi khi cập nhật hero banner:", error);
@@ -204,16 +239,22 @@ const AdminBannerPage = () => {
   };
 
   const deleteHeroBanner = async (id: string) => {
-    if (!confirm("Bạn có chắc chắn muốn xóa banner này?")) return;
+    const performDelete = async () => {
+      try {
+        await bannerService.deleteHeroBanner(id);
+        toast.success("Xóa hero banner thành công!");
+        fetchBanner();
+      } catch (error) {
+        console.error("Lỗi khi xóa hero banner:", error);
+        toast.error("Xóa hero banner thất bại");
+      }
+    };
 
-    try {
-      await bannerService.deleteHeroBanner(id);
-      toast.success("Xóa hero banner thành công!");
-      fetchBanner();
-    } catch (error) {
-      console.error("Lỗi khi xóa hero banner:", error);
-      toast.error("Xóa hero banner thất bại");
-    }
+    showConfirm(
+      "Xác nhận xóa",
+      "Bạn có chắc chắn muốn xóa banner này? Hành động này không thể hoàn tác.",
+      performDelete
+    );
   };
 
   const toggleHeroBannerVisibility = async (id: string) => {
@@ -229,60 +270,24 @@ const AdminBannerPage = () => {
 
   const openEditModal = (hero: HeroItem) => {
     setEditingHero(hero);
-    setNewHeroName(hero.name);
-    setNewHeroUrl(hero.url);
-    setNewHeroVisible(hero.isShow);
+    setEditHeroName(hero.name);
+    setEditHeroUrl(hero.url);
+    setEditHeroVisible(hero.isShow);
     setIsEditing(true);
   };
 
-  // Handle drag end for reordering
-  const handleDragEnd = async (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id && banner) {
-      const oldIndex = banner.heroBanner.findIndex(
-        (item) => item._id === active.id
-      );
-      const newIndex = banner.heroBanner.findIndex(
-        (item) => item._id === over.id
-      );
-
-      if (oldIndex !== -1 && newIndex !== -1) {
-        // Update local state for immediate UI update
-        const newHeroBanner = arrayMove(banner.heroBanner, oldIndex, newIndex);
-        setBanner({
-          ...banner,
-          heroBanner: newHeroBanner,
-        });
-
-        // TODO: Add API call to update the order in the backend
-        // This would require a new endpoint in your API
-        toast.success("Đã thay đổi thứ tự banner!");
-      }
-    }
+  const closeEditModal = () => {
+    setIsEditing(false);
+    setEditingHero(null);
+    setEditHeroName("");
+    setEditHeroUrl("");
+    setEditHeroVisible(true);
   };
 
-  // Sortable Hero Banner Item component
-  const SortableHeroBannerItem = ({ hero }: { hero: HeroItem }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } =
-      useSortable({
-        id: hero._id!,
-      });
-
-    const style = {
-      transform: CSS.Transform.toString(transform),
-      transition,
-    };
-
+  // Hero Banner Item component
+  const HeroBannerItem = ({ hero }: { hero: HeroItem }) => {
     return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="flex items-center gap-4 border rounded-md p-3 mb-2 bg-white"
-      >
-        <div className="cursor-move touch-none" {...attributes} {...listeners}>
-          ⋮⋮
-        </div>
+      <div className="flex items-center gap-4 border rounded-md p-3 mb-2 bg-white">
         <div className="relative h-16 w-24 rounded-md overflow-hidden flex-shrink-0">
           <Image
             src={hero.url}
@@ -370,7 +375,6 @@ const AdminBannerPage = () => {
               <div className="space-y-1 text-center">
                 <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
                 <p className="text-sm text-muted-foreground">
-                  Kéo và thả hoặc{" "}
                   <span className="font-semibold text-primary">
                     nhấp để tải lên
                   </span>
@@ -517,7 +521,6 @@ const AdminBannerPage = () => {
                         <div className="space-y-1 text-center">
                           <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
                           <p className="text-sm text-muted-foreground">
-                            Kéo và thả hoặc{" "}
                             <span className="font-semibold text-primary">
                               nhấp để tải lên
                             </span>
@@ -567,20 +570,9 @@ const AdminBannerPage = () => {
                 <h3 className="font-medium mb-4">Danh sách Hero Banner</h3>
                 {banner?.heroBanner && banner.heroBanner.length > 0 ? (
                   <ScrollArea className="h-[400px] pr-4">
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <SortableContext
-                        items={banner.heroBanner.map((hero) => hero._id!)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                        {banner.heroBanner.map((hero) => (
-                          <SortableHeroBannerItem key={hero._id} hero={hero} />
-                        ))}
-                      </SortableContext>
-                    </DndContext>
+                    {banner.heroBanner.map((hero) => (
+                      <HeroBannerItem key={hero._id} hero={hero} />
+                    ))}
                   </ScrollArea>
                 ) : (
                   <div className="flex items-center justify-center h-40 border rounded-md">
@@ -594,7 +586,7 @@ const AdminBannerPage = () => {
       </Card>
 
       {/* Edit Hero Banner Dialog */}
-      <Dialog open={isEditing} onOpenChange={setIsEditing}>
+      <Dialog open={isEditing} onOpenChange={closeEditModal}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Chỉnh Sửa Hero Banner</DialogTitle>
@@ -604,16 +596,16 @@ const AdminBannerPage = () => {
               <Label htmlFor="edit-name">Tên Banner</Label>
               <Input
                 id="edit-name"
-                value={newHeroName}
-                onChange={(e) => setNewHeroName(e.target.value)}
+                value={editHeroName}
+                onChange={(e) => setEditHeroName(e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <Label>Hình Ảnh</Label>
-              {newHeroUrl && (
+              {editHeroUrl && (
                 <div className="relative h-40 w-full rounded-md overflow-hidden border">
                   <Image
-                    src={newHeroUrl}
+                    src={editHeroUrl}
                     alt="Hero Banner"
                     layout="fill"
                     objectFit="cover"
@@ -624,27 +616,68 @@ const AdminBannerPage = () => {
               <Button
                 variant="outline"
                 type="button"
-                onClick={() => heroImageInputRef.current?.click()}
+                onClick={() => editHeroImageInputRef.current?.click()}
                 className="w-full"
+                disabled={isUploadingEditHero}
               >
-                <UploadCloud className="mr-2 h-4 w-4" />
-                Thay đổi ảnh
+                {isUploadingEditHero ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <UploadCloud className="mr-2 h-4 w-4" />
+                )}
+                {isUploadingEditHero ? "Đang tải lên..." : "Thay đổi ảnh"}
               </Button>
+              <Input
+                ref={editHeroImageInputRef}
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    uploadEditHeroImage(e.target.files[0]);
+                  }
+                }}
+              />
             </div>
             <div className="flex items-center space-x-2">
               <Switch
                 id="edit-visibility"
-                checked={newHeroVisible}
-                onCheckedChange={setNewHeroVisible}
+                checked={editHeroVisible}
+                onCheckedChange={setEditHeroVisible}
               />
               <Label htmlFor="edit-visibility">Hiển thị banner</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditing(false)}>
+            <Button variant="outline" onClick={closeEditModal}>
               Hủy
             </Button>
             <Button onClick={updateHeroBanner}>Lưu thay đổi</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirm Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={handleConfirmNo}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+              {confirmTitle}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {confirmMessage}
+            </p>
+          </div>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={handleConfirmNo}>
+              Hủy
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmYes} autoFocus>
+              Xác nhận
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

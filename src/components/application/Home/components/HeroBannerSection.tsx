@@ -71,46 +71,50 @@ const HeroBannerSection = ({
       </div>
 
       {/* Navigation buttons with improved styling */}
-      <button
-        onClick={prevImage}
-        className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
-        aria-label="Previous slide"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
-      <button
-        onClick={nextImage}
-        className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
-        aria-label="Next slide"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M9 18l6-6-6-6" />
-        </svg>
-      </button>
+      {bannerImages.length > 1 && (
+        <>
+          <button
+            onClick={prevImage}
+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+            aria-label="Previous slide"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <button
+            onClick={nextImage}
+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/30 hover:bg-black/50 text-white w-8 h-8 sm:w-10 md:w-12 sm:h-10 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+            aria-label="Next slide"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+        </>
+      )}
     </section>
   );
 };
