@@ -119,7 +119,7 @@ const Sidebar: FC = () => {
           )}
         >
           <Link
-            href="/admin/trang-chu"
+            href="/admin/bai-viet"
             className={cn(
               "flex items-center gap-2",
               isSidebarCollapsed && "justify-center"
