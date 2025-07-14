@@ -90,6 +90,7 @@ const AdminPromotionPage = () => {
       setIsDeleting(false);
       setShowDeleteDialog(false);
       setDeleteId(null);
+      setCurrentPage(1);
       loadPromotions();
     } catch (error: any) {
       console.error("Error deleting promotion:", error);
