@@ -73,7 +73,11 @@ export const PromotionOverlay = () => {
         }`}
       >
         <div className="relative">
-          <Link href={`/khuyen-mai/${promotion.slug}`} className="block group">
+          <Link
+            onClick={handleClose}
+            href={`/khuyen-mai/${promotion.slug}`}
+            className="block group"
+          >
             <div className="relative rounded-xl overflow-hidden shadow-2xl">
               <Image
                 src={promotion.featuredImage?.url || ""}
